@@ -40,9 +40,9 @@
                     <i class="fas fa-shoe-prints"></i>
                 </span>
                 <div class="form-group label-floating">
-                    <label class="control-label">Talla de zapatos <small>(30 a 45)</small></label>
+                    <label class="control-label">Talla de zapatos <small>(34 a 45)</small></label>
                     @if(Auth::user()->cliente != null)
-                        <input name="tallaZapato" type="number" step="any" min="15" class="form-control" required
+                        <input name="tallaZapato" type="number" step="any" min="34" class="form-control" required
                                value="{{number_format(Auth::user()->cliente->talla_zapato, 2)}}">
                     @else
                         <input name="tallaZapato" type="number" step="any" class="form-control" required>

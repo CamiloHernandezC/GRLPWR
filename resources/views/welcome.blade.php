@@ -9,7 +9,6 @@
         <meta name="description" content="Recibe Ofertas de Entrenadores Personales, Compara y Elige al Entrenador Correcto por el Precio que Quieres"/>
         <link rel="canonical" href="{{env('APP_URL')}}/"/>
 
-        <link rel="stylesheet" href="{{asset('css/review.css')}}">
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,900|K2D" rel="stylesheet" type="text/css">
 
@@ -52,7 +51,6 @@
 
             gtag('config', 'G-N08XQ68NZ4');
         </script>
-
     </head>
     <body data-spy="scroll" data-target=".navbar">
 
@@ -86,9 +84,9 @@
                 <img src="{{asset('images/brand/imago_fondo_oscuro.png')}}" width="50%" height="50%">
             </div>
             <h4 class="mb-5">El refugio donde las <strong style="font-size: xx-large">Mujeres</strong> desarrollan todo su <strong style="font-size: xx-large">Potencial</strong></h4>
-            <a class="btn btn-success d-inline" style="font-size: 20px; padding: 7px 35px;" href="{{ route('register') }}">
-                ¡Quiero Registrarme!
-            </a>
+            <button class="btn btn-success d-block ml-auto mr-auto" data-toggle="modal"
+                    data-target="#scheduleCourtesyModal">¡Agendar Cortesía!
+            </button>
         </div>
     </div>
     <div class="section" id="welcome">
@@ -295,6 +293,10 @@
         </div>
     </div>
 
+    @include('cliente.scheduleCourtesyModal')
+
+    @stack('modals')
+
     <!--Instagram-->
     <script
             src="https://cdn2.woxo.tech/a.js#616af38872a6520016a29c25"
@@ -359,6 +361,8 @@
             });*/
         });
     </script>
+
+    @stack('scripts')
 
     </body>
 </html>

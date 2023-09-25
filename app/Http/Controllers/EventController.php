@@ -95,9 +95,30 @@ class EventController extends Controller
         }
     }
 
-    public static function nextSessions(int $branchId = null){
+    public static function nextSessions(int $branchId = null, int $classTypeId = null){
+
+        $events = self::loadNextSessions($branchId, $classTypeId);
+
+        return view('proximasSesiones', compact('events'));
+    }
+
+    public static function ajaxNextSessions(Request $request){
+
+
+        $events = self::loadNextSessions(null, $request->query('classTypeId'));
+
+        return response()->json([
+            'success' => true,
+            'events' => $events
+        ], 200);
+    }
+
+    public static function loadNextSessions(int $branchId = null, int $classTypeId = null){
         $editedEvents = EditedEvent::when($branchId, function ($query, $branchId) {
-                return $query->where('branch_id', $branchId);
+            return $query->where('branch_id', $branchId);
+        })
+            ->when($classTypeId, function ($query, $classTypeId) {
+                return $query->where('class_type_id', $classTypeId);
             })
             ->where('fecha_inicio', '>=', today())
             ->where('fecha_fin', '<=', today()->addWeek())
@@ -108,12 +129,24 @@ class EventController extends Controller
                 return $element;
             });
         $uniqueEvents = Evento::doesntHave('edited_events')
+            ->when($branchId, function ($query, $branchId) {
+                return $query->where('branch_id', $branchId);
+            })
+            ->when($classTypeId, function ($query, $classTypeId) {
+                return $query->where('class_type_id', $classTypeId);
+            })
             ->where('repeatable', '=', false)
             ->where('fecha_inicio', '>=', today())
             ->where('fecha_fin', '<=', today()->addWeek())
             ->orderBy('fecha_inicio', 'asc')
             ->get();
-        $repeatableEvents = Evento::where('repeatable', '=', true)
+        $repeatableEvents = Evento::when($branchId, function ($query, $branchId) {
+            return $query->where('branch_id', $branchId);
+        })
+            ->when($classTypeId, function ($query, $classTypeId) {
+                return $query->where('class_type_id', $classTypeId);
+            })
+            ->where('repeatable', '=', true)
             ->join('event_hours', 'eventos.id', 'event_hours.event_id')
             ->get();
 
@@ -143,6 +176,6 @@ class EventController extends Controller
             ['hora_inicio', 'asc'],
         ]);
 
-        return view('proximasSesiones', compact('events'));
+        return $events;
     }
 }
