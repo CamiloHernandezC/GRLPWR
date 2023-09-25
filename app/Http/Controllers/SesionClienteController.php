@@ -77,21 +77,20 @@ class SesionClienteController extends Controller
     {
         $client = Cliente::find($clientId);
         switch ($client->talla_zapato){
+            case 34:
             case 35:
             case 36:
-            case 37:
-                $tallaKangoo = ["S"];
+                $tallaKangoo = ["XS", "S"];
                 break;
+            case 37:
             case 38:
+            case 39:
                 $tallaKangoo = ["S", "M"];
                 break;
-            case 39:
-                $tallaKangoo = ["M"];
-                break;
             case 40:
+            case 41:
                 $tallaKangoo = ["M", "L"];
                 break;
-            case 41:
             case 42:
             case 43:
             case 44:
