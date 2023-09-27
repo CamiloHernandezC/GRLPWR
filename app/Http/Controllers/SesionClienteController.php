@@ -193,9 +193,16 @@ class SesionClienteController extends Controller
 
     public function cancelTraining(){
         $session = SesionCliente::find(request()->entrenamientoCancelar);
-        if($session->fecha_inicio > now()) {
+        if($session->fecha_inicio <= now() ) {
             Session::put('msg_level', 'danger');
             Session::put('msg', __('general.message_late_cancellation'));
+            Session::save();
+            return back();
+        }
+        if($session->fecha_inicio->subHours(12) < now()){
+            $session->delete();
+            Session::put('msg_level', 'warning');
+            Session::put('msg', __('general.message_enable_late_cancellation'));
             Session::save();
             return back();
         }
@@ -203,6 +210,7 @@ class SesionClienteController extends Controller
         Session::put('msg_level', 'success');
         Session::put('msg', __('general.successfully_cancelled'));
         Session::save();
+        SesionClienteController::returnRemainingClassesAfterCancellation();
         return back();
     }
 
@@ -220,4 +228,23 @@ class SesionClienteController extends Controller
         }
         return back();
     }
+
+    public function returnRemainingClassesAfterCancellation(){
+        $clientPlanRepository = new ClientPlanRepository();
+        $clientPlan = $clientPlanRepository->findValidClientPlan();
+        if ($clientPlan && $clientPlan->isNotEmpty()) {
+            $clientPlan = $clientPlan->first();
+            $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
+            if ($remainingClass->unlimited == 0) {
+                if ($remainingClass->remaining_classes == null) {
+                    $clientPlan->remaining_shared_classes = $clientPlan->remaining_shared_classes + 1;
+                    $clientPlan->save();
+                } elseif ($remainingClass->remaining_classes >= 0) {
+                    $remainingClass->remaining_classes = $remainingClass->remaining_classes + 1;
+                    $remainingClass->save();
+                }
+            }
+        }
+    }
+
 }
