@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use App\EditedEvent;
 use App\Model\Cliente;
-use App\Model\ClientPlan;
 use App\Model\Evento;
 use App\Model\Review;
 use App\Model\ReviewSession;
 use App\Model\SesionCliente;
-use App\Model\SesionEvento;
 use App\RemainingClass;
 use App\Repositories\ClientPlanRepository;
 use App\Utils\KangooResistancesEnum;
@@ -21,7 +19,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
-use Validator;
 
 class SesionClienteController extends Controller
 {
@@ -127,7 +124,7 @@ class SesionClienteController extends Controller
         })->where('kangoos.estado', KangooStatesEnum::Available)
             ->whereIn('talla', $tallaKangoo)
             ->where('kangoos.resistencia', '>=', $resistance)
-            ->orderBy('kangoos.resistencia', 'asc')
+            ->orderBy('kangoos.resistencia')
             ->select('kangoos.id', 'kangoos.resistencia')
             ->get();
 
@@ -199,7 +196,7 @@ class SesionClienteController extends Controller
             Session::save();
             return back();
         }
-        if($session->fecha_inicio->subHours(12) < now()){
+        if($session->fecha_inicio->subHours(HOURS_TO_CANCEL_TRAINING) < now()){
             $session->delete();
             Session::put('msg_level', 'warning');
             Session::put('msg', __('general.message_enable_late_cancellation'));
@@ -210,7 +207,7 @@ class SesionClienteController extends Controller
         Session::put('msg_level', 'success');
         Session::put('msg', __('general.successfully_cancelled'));
         Session::save();
-        SesionClienteController::returnRemainingClassesAfterCancellation();
+        $this->returnRemainingClassesAfterCancellation($session->event);
         return back();
     }
 
@@ -229,9 +226,9 @@ class SesionClienteController extends Controller
         return back();
     }
 
-    public function returnRemainingClassesAfterCancellation(){
+    public function returnRemainingClassesAfterCancellation(Evento $event){
         $clientPlanRepository = new ClientPlanRepository();
-        $clientPlan = $clientPlanRepository->findValidClientPlan();
+        $clientPlan = $clientPlanRepository->findValidClientPlan($event, false);
         if ($clientPlan && $clientPlan->isNotEmpty()) {
             $clientPlan = $clientPlan->first();
             $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
