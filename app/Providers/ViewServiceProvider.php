@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Branch;
 use App\ClassType;
 use App\Model\Evento;
-use App\View\Composers\BranchSelectorComposer;
 use App\View\Composers\EventComposer;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades;

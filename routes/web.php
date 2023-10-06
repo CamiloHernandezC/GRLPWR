@@ -74,7 +74,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/planes/{plan}', [PlanController::class, 'show'])->name('plan');
 
     Route::get('/nextSessions/{branchId}',[EventController::class, 'nextSessions'])->name('nextSessions');
-
 });
 
 /*Open routes*/
@@ -97,4 +96,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/reply/{comentario}', 'BlogsController@replyComentario')->name('replyComentario');
 
     Route::get('/loadSessions',[EventController::class, 'ajaxNextSessions'])->name('loadSessions');
+
+    Route::post('/scheduleCourtesy',[SesionClienteController::class, 'scheduleCourtesy'])->name('scheduleCourtesy');
 /*End Open routes*/

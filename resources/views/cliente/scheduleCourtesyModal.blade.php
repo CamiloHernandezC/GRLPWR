@@ -43,9 +43,8 @@
                 <!--      Wizard container        -->
                 <div class="wizard-container">
                     <div class="wizard-card" data-color="green" id="wizardProfile">
-                        <!--enctype="multipart/form-data" en el form para que cargue la imagen cuando cambien la foto de perfil-->
-                        <form id="scheduleCourtesyForm" method="post" action="{{route('actualizarPerfil', ['user'=> 1])}}" enctype="multipart/form-data">
-                            @method('PUT')
+                        <form id="scheduleCourtesyForm" method="post" action="{{route('scheduleCourtesy')}}" enctype="multipart/form-data">
+                            @method('POST')
                             @csrf
                             <!--        You can switch " data-color="purple" "  with one of the next bright colors: "green", "orange", "red", "blue"       -->
                             <div class="wizard-header">
@@ -98,7 +97,18 @@
                                                 </span>
                                                     <div class="form-group label-floating">
                                                         <label class="control-label">Talla de zapatos <small>(34 a 45)</small></label>
-                                                        <input id="shoeSize" name="shoeSize" type="number" step="any" min="34" max="45" a class="form-control" required>
+                                                        <input id="shoeSize" name="shoeSize" type="number" step="any" min="34" max="45" class="form-control" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-10 mt-3 mx-auto renting" style="display: none">
+                                                <div class="input-group">
+                                                <span class="input-group-addon iconos">
+                                                    <i class="fas fa-weight"></i>
+                                                </span>
+                                                    <div class="form-group label-floating">
+                                                        <label class="control-label">Peso <small>(Kg)</small></label>
+                                                        <input id="weight" name="weight" type="number" step="1" min="34" max="200" class="form-control" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -110,7 +120,7 @@
                                                 </span>
                                                 <div class="form-group label-floating">
                                                     <label class="control-label">Día <small>(requerido)</small></label>
-                                                    <select class="form-control pl-1" id="daySelector" name="daySelector">
+                                                    <select class="form-control pl-1" id="daySelector" name="event">
                                                     </select>
                                                 </div>
                                             </div>
@@ -139,7 +149,7 @@
                                                                 </span>
                                                 <div class="form-group label-floating">
                                                     <label class="control-label">Celular <small>(requerido)</small></label>
-                                                    <input name="numCel"  class="form-control" required>
+                                                    <input name="cellphone"  class="form-control" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,7 +166,7 @@
                                         </div>
                                         @include('termsAndConditions')
 
-                                        <p class="renting mt-3 col-sm-11 m-auto text-justify" style="display: none">* Cómo tenemos botas limitadas, debemos cobrar $10.000 para la reserva de las botas, este valor será abonado al plan que adquieras o se te devolverá si asistes a la cortesía y no deseas inscribirte</p>
+                                        <p class="mt-3 col-sm-11 m-auto text-justify" style="display: none">* Cómo tenemos botas limitadas, debemos cobrar $10.000 para la reserva de las botas, este valor será abonado al plan que adquieras o se te devolverá si asistes a la cortesía y no deseas inscribirte</p>
                                     </div>
                                 </div>
                             </div>
@@ -252,9 +262,14 @@
                     // Agrega las nuevas opciones desde el resultado de la llamada AJAX
                     $.each(data.events, function(key, value) {
                         select.append($('<option></option>')
+                            //JSON format
                             .attr('value',
-                                'id: ' + value.id + ',' +
-                                'date: ' + value.fecha_inicio.slice(0,10) + ' ' + value.start_hour)
+                                '{"id": ' + value.id + ',' +
+                                '"startDate": "' + value.fecha_inicio.slice(0,10) + '",' +
+                                '"startHour": "' + value.start_hour + '",' +
+                                '"endDate": "' + value.fecha_fin.slice(0,10) + '",' +
+                                '"endHour": "' + value.end_hour +
+                                '"}')
                             .text(value.fecha_inicio.slice(0,10) + ' ' + value.start_hour));
                     });
                 },

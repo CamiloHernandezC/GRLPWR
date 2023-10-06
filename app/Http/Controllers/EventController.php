@@ -4,24 +4,32 @@ namespace App\Http\Controllers;
 
 use App\EditedEvent;
 use App\EventHour;
+use App\Exceptions\ShoeSizeNotSupportedException;
 use App\Http\Controllers\Auth\SeguridadController;
+use App\Http\Services\KangooService;
 use App\Model\Evento;
-use App\Model\SesionEvento;
 use App\Repositories\ClientPlanRepository;
 use App\Utils\Constantes;
 use App\Utils\DaysEnum;
+use App\Utils\KangooStatesEnum;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class EventController extends Controller
 {
+    protected KangooService $kangooService;
+
+    public function __construct(KangooService $kangooService)
+    {
+        $this->kangooService = $kangooService;
+    }
+
     public function create(){
         SeguridadController::verificarRol(Constantes::ROL_ADMIN);
         return view('sessions.createSession');
-        //return view('cliente.crearSolicitudServicio');
 
     }
 
@@ -95,17 +103,19 @@ class EventController extends Controller
         }
     }
 
-    public static function nextSessions(int $branchId = null, int $classTypeId = null){
+    public function nextSessions(int $branchId = null, int $classTypeId = null){
 
-        $events = self::loadNextSessions($branchId, $classTypeId);
+        $events = $this->loadNextSessions($branchId, $classTypeId);
 
         return view('proximasSesiones', compact('events'));
     }
 
-    public static function ajaxNextSessions(Request $request){
+    public function ajaxNextSessions(Request $request){
 
-
-        $events = self::loadNextSessions(null, $request->query('classTypeId'));
+        $events = $this->loadNextSessions(null, $request->query('classTypeId'));
+        if($request->query('rentEquipment') === "true"){
+            $events = $this->filterEvents($events, $request->query('shoeSize'));
+        }
 
         return response()->json([
             'success' => true,
@@ -113,10 +123,35 @@ class EventController extends Controller
         ], 200);
     }
 
-    public static function loadNextSessions(int $branchId = null, int $classTypeId = null){
+    public function filterEvents($events, int $shoeSize){
+        try {
+            $kangooSizes = $this->kangooService->getKangooSizes($shoeSize);
+        } catch (ShoeSizeNotSupportedException $e) { //TODO if you add resistance, you can use the bellow code catch (ShoeSizeNotSupportedException | MiExcepcion2 $e) {
+            Session::put('msg_level', 'danger');
+            Session::put('msg', $e->getMessage());
+            Session::save();
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        }
+
+        return $events->filter(function ($event) use ($kangooSizes) {
+
+            $availableKangoos = DB::table('kangoos')->whereNotIn('id', function($q) use($event){
+                $q->select('kangoos.id')->from('kangoos')
+                    ->leftJoin('sesiones_cliente', 'kangoos.id', '=', 'sesiones_cliente.kangoo_id')
+                    ->where('sesiones_cliente.fecha_fin', '>=', Carbon::parse($event->fecha_fin)->format('Y-m-d') . ' ' . $event->start_hour)
+                    ->where('sesiones_cliente.fecha_inicio', '<=', Carbon::parse($event->fecha_inicio)->format('Y-m-d') . ' ' . $event->end_hour);
+            })->where('kangoos.estado', KangooStatesEnum::Available)
+                ->whereIn('talla', $kangooSizes)
+                ->count();
+
+            return $availableKangoos > 0;
+        });
+    }
+
+    public function loadNextSessions(int $branchId = null, int $classTypeId = null){
         $editedEvents = EditedEvent::when($branchId, function ($query, $branchId) {
-            return $query->where('branch_id', $branchId);
-        })
+                return $query->where('branch_id', $branchId);
+            })
             ->when($classTypeId, function ($query, $classTypeId) {
                 return $query->where('class_type_id', $classTypeId);
             })
@@ -128,6 +163,7 @@ class EventController extends Controller
                 $element['id'] = $element->evento_id;
                 return $element;
             });
+
         $uniqueEvents = Evento::doesntHave('edited_events')
             ->when($branchId, function ($query, $branchId) {
                 return $query->where('branch_id', $branchId);
@@ -141,8 +177,8 @@ class EventController extends Controller
             ->orderBy('fecha_inicio', 'asc')
             ->get();
         $repeatableEvents = Evento::when($branchId, function ($query, $branchId) {
-            return $query->where('branch_id', $branchId);
-        })
+                return $query->where('branch_id', $branchId);
+            })
             ->when($classTypeId, function ($query, $classTypeId) {
                 return $query->where('class_type_id', $classTypeId);
             })
@@ -171,9 +207,9 @@ class EventController extends Controller
             $dateTime = $dateTime->addDay();
         }
 
-        $events->sortBy([
+        $events = $events->sortBy([
             ['fecha_inicio', 'asc'],
-            ['hora_inicio', 'asc'],
+            ['start_hour', 'asc'],
         ]);
 
         return $events;
