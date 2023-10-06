@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Exceptions\NoAvailableEquipmentException;
 use App\Exceptions\ShoeSizeNotSupportedException;
+use App\Exceptions\WeightNotSupportedException;
 use App\Model\Cliente;
 use App\Model\Evento;
 use App\Model\SesionCliente;
@@ -17,13 +18,14 @@ class KangooService
 {
     /**
      * @throws ShoeSizeNotSupportedException
+     * @throws WeightNotSupportedException
      * @throws NoAvailableEquipmentException
      */
-    public function assignKangoo(Cliente $client, $startDateTime, $endDateTime)
+    public function assignKangoo(int $shoeSize, int $weight, $startDateTime, $endDateTime)
     {
 
-        $kangooSizes = $this->getKangooSizes($client->talla_zapato);
-        $resistance = $this->getKangooResistance($client->peso()->peso);
+        $kangooSizes = $this->getKangooSizes($shoeSize);
+        $resistance = $this->getKangooResistance($weight);
 
         $assignedKangooId = DB::table('kangoos')->whereNotIn('id', function($q) use($startDateTime, $endDateTime){
             $q->select('kangoos.id')->from('kangoos')
@@ -41,9 +43,12 @@ class KangooService
             throw new NoAvailableEquipmentException();
         }
 
-        return $assignedKangooId;
+        return $assignedKangooId->id;
     }
 
+    /**
+     * @throws ShoeSizeNotSupportedException
+     */
     public function getKangooSizes(int $shoeSize)
     {
         switch ($shoeSize){
@@ -67,6 +72,9 @@ class KangooService
         }
     }
 
+    /**
+     * @throws WeightNotSupportedException
+     */
     public function getKangooResistance($weight)
     {
         if ($weight < 55){
@@ -77,6 +85,8 @@ class KangooService
             $resistance = 3;
         } elseif ($weight < 80) {
             $resistance = 4;
+        } elseif ($weight > 80) {
+            $resistance = 5;
         }else{
            throw new WeightNotSupportedException();
         }

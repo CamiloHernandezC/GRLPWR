@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\EditedEvent;
 use App\EventHour;
+use App\Exceptions\NoAvailableEquipmentException;
 use App\Exceptions\ShoeSizeNotSupportedException;
+use App\Exceptions\WeightNotSupportedException;
 use App\Http\Controllers\Auth\SeguridadController;
 use App\Http\Services\KangooService;
 use App\Model\Evento;
@@ -114,7 +116,7 @@ class EventController extends Controller
 
         $events = $this->loadNextSessions(null, $request->query('classTypeId'));
         if($request->query('rentEquipment') === "true"){
-            $events = $this->filterEvents($events, $request->query('shoeSize'));
+            $events = $this->filterEvents($events, $request->query('shoeSize'), $request->query('weight'));
         }
 
         return response()->json([
@@ -123,29 +125,21 @@ class EventController extends Controller
         ], 200);
     }
 
-    public function filterEvents($events, int $shoeSize){
+    public function filterEvents($events, int $shoeSize, int $weight){
         try {
-            $kangooSizes = $this->kangooService->getKangooSizes($shoeSize);
-        } catch (ShoeSizeNotSupportedException $e) { //TODO if you add resistance, you can use the bellow code catch (ShoeSizeNotSupportedException | MiExcepcion2 $e) {
+            return $events->filter(function ($event) use ($shoeSize, $weight) {
+                $startDateTime = Carbon::parse($event->fecha_fin)->format('Y-m-d') . ' ' . $event->start_hour;
+                $endDateTime = Carbon::parse($event->fecha_inicio)->format('Y-m-d') . ' ' . $event->end_hour;
+                    $kangooId = $this->kangooService->assignKangoo($shoeSize, $weight, $startDateTime, $endDateTime);
+                    return $kangooId != null;
+            });
+
+        } catch (ShoeSizeNotSupportedException | WeightNotSupportedException | NoAvailableEquipmentException $e) {
             Session::put('msg_level', 'danger');
             Session::put('msg', $e->getMessage());
             Session::save();
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         }
-
-        return $events->filter(function ($event) use ($kangooSizes) {
-
-            $availableKangoos = DB::table('kangoos')->whereNotIn('id', function($q) use($event){
-                $q->select('kangoos.id')->from('kangoos')
-                    ->leftJoin('sesiones_cliente', 'kangoos.id', '=', 'sesiones_cliente.kangoo_id')
-                    ->where('sesiones_cliente.fecha_fin', '>=', Carbon::parse($event->fecha_fin)->format('Y-m-d') . ' ' . $event->start_hour)
-                    ->where('sesiones_cliente.fecha_inicio', '<=', Carbon::parse($event->fecha_inicio)->format('Y-m-d') . ' ' . $event->end_hour);
-            })->where('kangoos.estado', KangooStatesEnum::Available)
-                ->whereIn('talla', $kangooSizes)
-                ->count();
-
-            return $availableKangoos > 0;
-        });
     }
 
     public function loadNextSessions(int $branchId = null, int $classTypeId = null){

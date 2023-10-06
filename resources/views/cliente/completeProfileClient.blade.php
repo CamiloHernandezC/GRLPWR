@@ -41,7 +41,7 @@
                 </span>
                 <div class="form-group label-floating">
                     <label class="control-label">Talla de zapatos <small>(34 a 45)</small></label>
-                    @if(Auth::user()->cliente != null)
+                    @if(Auth::user()->cliente != null && Auth::user()->cliente->talla_zapato)
                         <input name="tallaZapato" type="number" step="any" min="34" class="form-control" required
                                value="{{number_format(Auth::user()->cliente->talla_zapato, 2)}}">
                     @else

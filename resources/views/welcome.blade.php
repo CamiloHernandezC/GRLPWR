@@ -78,6 +78,27 @@
         </div>
     </nav>
 
+    @if(session('msg'))
+        <script>
+            $(document).ready(function(){
+                $('#msgModal').modal({show: true});
+            });
+        </script>
+    @endif
+
+    <div class="modal fade justify-content-center align-items-center" id="msgModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background: none; border: none">
+                <div class="modal-body" style="padding: 0 0 3vh 0">
+                    <div class="alert bg-{{session('msg_level')}} color-white redondeado">
+                        <p>{{session('msg')}}</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="welcome" class="flex-center position-ref full-height">
         <div class="content">
             <div class="title mb-3">

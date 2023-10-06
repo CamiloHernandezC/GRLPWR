@@ -15,7 +15,7 @@
 <script src="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
 <script src="{{asset('js/datetimePicker.js')}}"></script>
 
-@if($errors->scheduleCourtesy->all() != null)
+@if($errors->all() != null)
     <script>
         $(document).ready(function(){
             $('#scheduleCourtesyModal').modal({show: true});
@@ -27,10 +27,10 @@
     <div class="modal-dialog wizard-schedule-courtesy" role="document">
         <div class="modal-content">
             <div class="modal-body" style="padding: 0 0 3vh 0">
-                @if ($errors->scheduleCourtesy->all() != null)
+                @if ($errors->all() != null)
                     <div class="alert alert-danger redondeado">
                         <ul>
-                            @foreach($errors->scheduleCourtesy->all() as $error)
+                            @foreach($errors->all() as $error)
                                 <li>
                                     <span class="invalid-feedback" role="alert" style="color: white">
                                         <strong>{{ $error}}</strong>
@@ -76,9 +76,9 @@
                                         </div>
                                         <div>
                                             <div class="col-sm-10 m-auto kangooForm" style="display: none">
-                                            <span class="iconos">
-                                                    <i class="material-icons">snowshoeing</i>
-                                            </span>
+                                                <span class="iconos">
+                                                        <i class="material-icons">snowshoeing</i>
+                                                </span>
                                                 <div class="custom-control custom-radio custom-control-inline">
 
                                                     <input type="radio" id="rentEquipment1" name="rentEquipment" value="1" class="custom-control-input" required>
@@ -92,20 +92,20 @@
                                             </div>
                                             <div class="col-sm-10 mt-3 mx-auto renting" style="display: none">
                                                 <div class="input-group">
-                                                <span class="input-group-addon iconos">
-                                                    <i class="fas fa-shoe-prints"></i>
-                                                </span>
+                                                    <span class="input-group-addon iconos">
+                                                        <i class="fas fa-shoe-prints"></i>
+                                                    </span>
                                                     <div class="form-group label-floating">
                                                         <label class="control-label">Talla de zapatos <small>(34 a 45)</small></label>
                                                         <input id="shoeSize" name="shoeSize" type="number" step="any" min="34" max="45" class="form-control" required>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-sm-10 mt-3 mx-auto renting" style="display: none">
+                                            <div class="col-sm-10 mx-auto weight" style="display: none">
                                                 <div class="input-group">
-                                                <span class="input-group-addon iconos">
-                                                    <i class="fas fa-weight"></i>
-                                                </span>
+                                                    <span class="input-group-addon iconos">
+                                                        <i class="fas fa-weight"></i>
+                                                    </span>
                                                     <div class="form-group label-floating">
                                                         <label class="control-label">Peso <small>(Kg)</small></label>
                                                         <input id="weight" name="weight" type="number" step="1" min="34" max="200" class="form-control" required>
@@ -202,15 +202,18 @@
 
     <script>
         const select = document.getElementById('classTypeSelector');
+        const shoeSize = document.getElementById('shoeSize');
+        const weight = document.getElementById('weight');
         document.addEventListener('DOMContentLoaded', function() {
             const rentEquipment = document.getElementById('rentEquipment1');
             const notRentEquipment = document.getElementById('rentEquipment2');
-            const shoeSize = document.getElementById('shoeSize');
 
-            select.addEventListener('change', function() {
+
+            select.addEventListener('change', function () {
                 rentEquipment.checked = false;
                 notRentEquipment.checked = false;
                 $(".renting").css("display", "none");
+                $(".weight").css("display", "none");
                 if (select.value === "1") {
                     $(".kangooForm").css("display", "flex");
                     $(".daySelector").css("display", "none");
@@ -221,23 +224,29 @@
                 }
             });
 
-            rentEquipment.addEventListener('change', function() {
+            rentEquipment.addEventListener('change', function () {
                 if (rentEquipment.checked) {
                     shoeSize.value = '';
+                    weight.value = '';
                     $(".renting").css("display", "block");
                     $(".daySelector").css("display", "none");
                 }
 
             });
-            notRentEquipment.addEventListener('change', function() {
+            notRentEquipment.addEventListener('change', function () {
                 loadSessions(false);
                 if (notRentEquipment.checked) {
                     $(".daySelector").css("display", "flex");
                     $(".renting").css("display", "none");
+                    $(".weight").css("display", "none");
                 }
             });
-            shoeSize.addEventListener('change', function() {
-                loadSessions(false);
+            shoeSize.addEventListener('change', function () {
+                $(".weight").css("display", "block");
+            });
+
+            weight.addEventListener('change', function () {
+                loadSessions(true);
                 $(".daySelector").css("display", "flex");
             });
         });
@@ -251,7 +260,9 @@
                 method: "GET",
                 data: {
                     classTypeId: select.value,
-                    rentEquipment: rentEquipment
+                    rentEquipment: rentEquipment,
+                    shoeSize: shoeSize.value,
+                    weight: weight.value
                 },
 
                 success: function (data) {

@@ -49,7 +49,8 @@ class SesionClienteController extends Controller
 
     public function scheduleEvent(Request $request){
         try {
-            return schedule();
+            $client = Cliente::find($request->clientId);
+            return $this->schedule($request->eventId, $request->startDate, $request->startHour, $request->endDate, $request->endHour, $client, $request->rentEquipment, false);
         }catch (Exception $exception){
             Session::put('msg_level', 'danger');
             Session::put('msg', $exception->getMessage());
@@ -64,20 +65,25 @@ class SesionClienteController extends Controller
         $request->merge(['password' => '1234']);
         $user = $registerController->create($request->all());
 
+
         $client = new Cliente();
         $client->usuario_id = $user->id;
-        $client->talla_zapato = $request->shoeSize;
+        if($request->shoeSize){
+            $client->talla_zapato = $request->shoeSize;
+        }
         $client->save();
         $client->usuario_id = $user->id;
 
-        Peso::updateOrCreate(
-            ['usuario_id' => $user->id],
-            ['peso' => $request->weight, 'unidad_medida' => 0]
-        );
+        if($request->weight){
+            Peso::updateOrCreate(
+                ['usuario_id' => $user->id],
+                ['peso' => $request->weight, 'unidad_medida' => 0]
+            );
+        }
 
         try {
             $eventArray = json_decode($request->event, true);
-            return $this->schedule($eventArray['id'], $eventArray['startDate'], $eventArray['startHour'], $eventArray['endDate'], $eventArray['endHour'], $client);
+            return $this->schedule($eventArray['id'], $eventArray['startDate'], $eventArray['startHour'], $eventArray['endDate'], $eventArray['endHour'], $client, $request->get('rentEquipment'), true);
         }catch (Exception $exception){
             return redirect()->back()->with('errors', $exception->getMessage());
         }
@@ -89,7 +95,7 @@ class SesionClienteController extends Controller
      * @throws NoAvailableEquipmentException
      *
      */
-    private function schedule($id, $startDate, $startHour, $endDate, $endHour, $client){
+    private function schedule($id, $startDate, $startHour, $endDate, $endHour, $client, $isRenting, $isCourtesy){
         $editedEvent = EditedEvent::where('evento_id', $id)
             ->where('fecha_inicio', '=', $startDate)
             ->where('start_hour', '=', $startHour)
@@ -104,10 +110,10 @@ class SesionClienteController extends Controller
            throw new NoVacancyException();
         }
 
-        if(filter_var($request->get('rentEquipment'), FILTER_VALIDATE_BOOLEAN)){
-            $kangooId = $this->assignEquipment($event, $client, $startDateTime, $endDateTime);
+        if(filter_var($isRenting, FILTER_VALIDATE_BOOLEAN)){
+            $kangooId = $this->assignEquipment($event, $client->talla_zapato, $client->peso()->peso, $startDateTime, $endDateTime);
         }
-        return $this->validatePlan($client->usuario_id, $event, $startDateTime, $endDateTime, $kangooId ?? null);
+        return $this->registerSession($client->usuario_id, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId ?? null);
 
     }
 
@@ -115,9 +121,9 @@ class SesionClienteController extends Controller
      * @throws ShoeSizeNotSupportedException
      * @throws NoAvailableEquipmentException
      */
-    public function assignEquipment(Evento $event, $client, $startDateTime, $endDateTime){
+    public function assignEquipment(Evento $event, $shoeSize, $weight, $startDateTime, $endDateTime){
         if(strcasecmp($event->classType->type, PlanTypesEnum::Kangoo->value) == 0){
-            return $this->kangooService->assignKangoo($client, $startDateTime, $endDateTime);
+            return $this->kangooService->assignKangoo($shoeSize, $weight, $startDateTime, $endDateTime);
         }
     }
 
@@ -140,7 +146,7 @@ class SesionClienteController extends Controller
      * @param null $kangooId
      * @return JsonResponse
      */
-    public function validatePlan($clientId, $event, $startDateTime, $endDateTime, $kangooId=null)
+    public function registerSession($clientId, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId=null)
     {
         $sesionCliente = new SesionCliente;
         $sesionCliente->cliente_id = $clientId;
@@ -150,6 +156,14 @@ class SesionClienteController extends Controller
         }
         $sesionCliente->fecha_inicio = $startDateTime;
         $sesionCliente->fecha_fin = $endDateTime;
+
+        if($isCourtesy){
+            $sesionCliente->save();
+            Session::put('msg_level', 'success');
+            Session::put('msg', __('general.success_courtesy'));
+            Session::save();
+            return redirect()->back();
+        }
 
         $clientPlanRepository = new ClientPlanRepository();
         $clientPlan = $clientPlanRepository->findValidClientPlan($event);
