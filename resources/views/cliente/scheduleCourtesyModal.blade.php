@@ -149,7 +149,7 @@
                                                                 </span>
                                                 <div class="form-group label-floating">
                                                     <label class="control-label">Celular <small>(requerido)</small></label>
-                                                    <input name="cellphone"  class="form-control" required>
+                                                    <input name="cellphone" type="number" min="1000000000" max="9999999999" class="form-control" required>
                                                 </div>
                                             </div>
                                         </div>
