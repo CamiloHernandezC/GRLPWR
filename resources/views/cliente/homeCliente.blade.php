@@ -8,6 +8,8 @@
 
 @section('modals')
 
+    <link rel="stylesheet" href="{{asset('css/chats.css')}}">
+
     <!--solicitud modal ELIMINAR-->
     <!--Solo se utiliza para clientes ya que los entrenadores pueder ir a la info de la solictud y eliminar su oferta-->
     <div class="modal fade" id="solicitudModalEliminar" tabindex="-1" role="dialog">
@@ -76,6 +78,13 @@
     @endif
 @endpush
 
+    <div class="floating_button">
+        <div class="chats">
+            <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quisiera%20recibir%20mas%20informacion&app_absent=0" class="icon-whatsapp" target=”_blank”>
+                <img class="icon" width="100%" height="100%" alt="whatsapp" src="<?php echo e(asset('images/wathsapp_icon.png')); ?>">
+            </a>
+        </div>
+    </div>
 @push('scripts')
     <!--Pop-up Review Session-->
     <script type="text/javascript">
