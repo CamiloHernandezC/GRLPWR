@@ -137,7 +137,7 @@
 
     <div class="floating_button">
         <div class="chats">
-            <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quisiera%20recibir%20mas%20informacion&app_absent=0" class="icon-whatsapp" target=”_blank”>
+            <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20necesito%20ayuda%20con%20la%20plataforma&app_absent=0" class="icon-whatsapp" target=”_blank”>
                 <img class="icon" width="100%" height="100%" alt="whatsapp" src="<?php echo e(asset('images/wathsapp_icon.png')); ?>">
             </a>
         </div>
