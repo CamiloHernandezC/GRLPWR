@@ -194,7 +194,7 @@
                             <div class="wizard-footer">
                                 <div class="float-right">
                                     <input type='button' class='btn btn-next btn-fill btn-success btn-wd' name='next' value='Siguiente' onclick="validar()"/>
-                                    <input type='submit' class='btn btn-finish btn-fill btn-success btn-wd' name='finish' value='Finalizar' onclick="validar()"/>
+                                    <input type='submit' class='btn btn-finish btn-fill btn-success btn-wd' name='finish' value='Finalizar' onclick="scheduleCourtesy()"/>
                                 </div>
 
                                 <div class="float-left">
@@ -329,6 +329,7 @@
                 if (typeof $("input[name='rentEquipment']:checked").val() === "undefined") {
                     $('.rentEquipmentLabel').css("cssText", "color: red!important;")
                     $('.rentEquipmentLabel').css("border-color", "red");
+                    return false;
                 }
             }
 
@@ -336,8 +337,10 @@
                 if (!$("input[name='aceptacion']").is(":checked")) {
                     $('.terms-label').css("cssText", "color: red!important;")
                     $('.terms-label').css("border-color", "red");
+                    return false;
                 }
             }
+            return true;
         }
 
         $(document).ready(function () {
@@ -350,5 +353,24 @@
                 $('.terms-label').css("border-color", "");
             });
         });
+
+        function scheduleCourtesy() {
+            if(validar()){
+                gtag_report_conversion({{env('APP_URL')}}+'scheduleCourtesy');
+            }
+        }
+        <!-- Event snippet for schedule courtesy conversion page -->
+        function gtag_report_conversion(url) {
+            var callback = function () {
+                if (typeof(url) != 'undefined') {
+                    window.location = url;
+                }
+            };
+            gtag('event', 'conversion', {
+                'send_to': 'AW-780220913/9vIhCNCpjO0YEPHzhPQC',
+                'event_callback': callback
+            });
+            return false;
+        }
     </script>
 @endpush

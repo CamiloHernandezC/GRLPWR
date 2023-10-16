@@ -6,6 +6,7 @@
         document.getElementById("registerForm").onsubmit = function(){
             gtag_report_conversion();
         };
+        
         function gtag_report_conversion(url) {
             var callback = function () {
                 if (typeof(url) != 'undefined') {
