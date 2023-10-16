@@ -329,7 +329,6 @@
                 if (typeof $("input[name='rentEquipment']:checked").val() === "undefined") {
                     $('.rentEquipmentLabel').css("cssText", "color: red!important;")
                     $('.rentEquipmentLabel').css("border-color", "red");
-                    return false;
                 }
             }
 
@@ -337,11 +336,10 @@
                 if (!$("input[name='aceptacion']").is(":checked")) {
                     $('.terms-label').css("cssText", "color: red!important;")
                     $('.terms-label').css("border-color", "red");
-                    return false;
                 }
             }
-            return true;
         }
+
         $(document).ready(function () {
             $("input[name='rentEquipment']").click(function () {
                 $('.rentEquipmentLabel').css("cssText", "color:'';")
