@@ -330,6 +330,7 @@
                 $('.terms-label').css("border-color", "");
             });
         });
+
     </script>
     <script>
         document.getElementById("scheduleCourtesyForm").addEventListener("submit", report_courtesy_conversion, true);
