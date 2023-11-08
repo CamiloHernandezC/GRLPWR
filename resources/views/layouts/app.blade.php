@@ -27,6 +27,8 @@
 
     <link rel="stylesheet" href="{{asset('css/general.css')}}">
 
+    <link rel="stylesheet" href="{{asset('css/chats.css')}}">
+
     <script src="{{asset('js/general.js')}}"></script>
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
@@ -66,13 +68,13 @@
     <!--Fin Scrollbar -->
 
     <!-- Google tag (gtag.js) -->
-    <<script async src="https://www.googletagmanager.com/gtag/js?id=G-N08XQ68NZ4"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{env('GTAG')}}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-N08XQ68NZ4');
+        gtag('config', '{{env('GTAG')}}');
     </script>
 
     @auth
@@ -84,6 +86,19 @@
     @stack('head-content')
 </head>
 <body>
+    <div class="modal fade justify-content-center align-items-center" id="msgModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background: none; border: none">
+                <div class="modal-body" style="padding: 0 0 3vh 0">
+                    <div class="alert bg-{{session('msg_level')}} color-white redondeado">
+                        <p>{{session('msg')}}</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="app">
         <div id="top-navbar" class="navbar navbar-dark fixed-top">
             <a class="navbar-brand position-absolute" style="width: 60px" href="@auth{{route('home', ['user'=> Auth::user()->slug])}}@else # @endauth">
@@ -155,13 +170,15 @@
     @endfeature
 
     <div class="container-fluid w-100">
-        @if(session('msg'))
-            <div class=" alert-{{session('msg_level')}} ">
-                <p>{{session('msg')}}</p>
-            </div>
-            @php(\Illuminate\Support\Facades\Session::forget('msg'))
-        @endif
         @yield('content')
+
+        <div class="floating_button">
+            <div class="chats">
+                <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20necesito%20ayuda%20con%20la%20plataforma&app_absent=0" class="icon-whatsapp" target=”_blank”>
+                    <img class="icon" width="100%" height="100%" alt="whatsapp" src="<?php echo e(asset('images/wathsapp_icon.png')); ?>">
+                </a>
+            </div>
+        </div>
     </div>
 
     @auth
@@ -170,6 +187,14 @@
 
     @stack('scripts')
 
+    @if(session('msg'))
+        <script>
+            $(document).ready(function(){
+                $('#msgModal').modal({show: true});
+            });
+        </script>
+        @php(\Illuminate\Support\Facades\Session::forget('msg'))
+    @endif
     <!--Navbar color effect
     <script>
         $(window).on("scroll", function() {
@@ -191,17 +216,6 @@
     </script>
     <script type="text/javascript" src="https://cdn.subscribers.com/assets/subscribers.js"></script>
     -->
-
-    <!--google analytics-->
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-128937544-1', 'auto');
-        ga('send', 'pageview');
-    </script>
 
 </body>
 </html>

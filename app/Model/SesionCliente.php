@@ -6,6 +6,7 @@ use App\Utils\Constantes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class SesionCliente extends Model
 {
@@ -30,11 +31,17 @@ class SesionCliente extends Model
     public function scopeEntrenamientosAgendados($query, $tipoUsuario){
         switch ($tipoUsuario){
             case Constantes::ROL_CLIENTE:
-                 return $query->join('eventos', 'sesiones_cliente.evento_id', 'eventos.id')
+                 return $query->leftJoin('edited_events', function ($join) {
+                            $join->on('sesiones_cliente.evento_id', '=', 'edited_events.evento_id')
+                                ->whereRaw('sesiones_cliente.fecha_inicio = CONCAT(edited_events.fecha_inicio, " ", edited_events.start_hour)');
+                        })
+                     ->leftJoin('eventos', 'sesiones_cliente.evento_id', 'eventos.id')
                      ->leftJoin('kangoos', 'sesiones_cliente.kangoo_id', 'kangoos.id')
                      ->where('sesiones_cliente.fecha_inicio', '>=', today())
-                     ->select('sesiones_cliente.id','sesiones_cliente.fecha_inicio','sesiones_cliente.fecha_fin', 'eventos.lugar',
-                                'eventos.nombre', 'kangoos.SKU');
+                     ->select('sesiones_cliente.id','sesiones_cliente.fecha_inicio','sesiones_cliente.fecha_fin',
+                         DB::raw('COALESCE(edited_events.nombre, eventos.nombre) as nombre'),
+                         DB::raw('COALESCE(edited_events.lugar, eventos.lugar) as lugar'),
+                        'kangoos.SKU');
             case Constantes::ROL_ENTRENADOR:
                 //TODO
         }
@@ -46,11 +53,11 @@ class SesionCliente extends Model
     }
 
     public function kangoo(){
-        return $this->hasOne(Kangoo::class,'id', 'kangoo_id');
+        return $this->hasOne(Kangoo::class,'id', 'kangoo_id')->withTrashed();
     }
 
     public function event(){
-        return $this->belongsTo(Evento::class,'evento_id', 'id');
+        return $this->belongsTo(Evento::class,'evento_id', 'id')->withTrashed();
     }
 
 }
