@@ -13,11 +13,9 @@ use App\Model\Evento;
 use App\Repositories\ClientPlanRepository;
 use App\Utils\Constantes;
 use App\Utils\DaysEnum;
-use App\Utils\KangooStatesEnum;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class EventController extends Controller
@@ -38,21 +36,27 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  Evento  $event
+     * @param  $event
      * @return View
      */
-    public function show(Evento $event, $date, $hour)
+    public function show($event, $date, $hour, $isEdited)
     {
         $date = Carbon::parse($date)->format('Y-m-d');
-        $editedEvent = EditedEvent::where('fecha_inicio', '=', $date)->first();
-        if ($editedEvent){
-            $event = $editedEvent;
-        }elseif ($event->repeatable){
-            $event->fecha_inicio = $date;
-            $event->fecha_fin = $date;
-            $eventHour = EventHour::where('day', '=', Carbon::parse($date)->format('l'))->where('start_hour', $hour)->first();
-            $event->start_hour = $eventHour->start_hour;
-            $event->end_hour = $eventHour->end_hour;
+        if($isEdited){
+            $event = EditedEvent::where('evento_id', '=', $event)
+                        ->where('fecha_inicio', '=', $date)
+                        ->where('start_hour', '=', $hour)
+                        ->first();
+            $event->id = $event->evento_id;
+        } else{
+            $event = Evento::find($event);
+            if ($event->repeatable){
+                $event->fecha_inicio = $date;
+                $event->fecha_fin = $date;
+                $eventHour = EventHour::where('day', '=', Carbon::parse($date)->format('l'))->where('start_hour', $hour)->first();
+                $event->start_hour = $eventHour->start_hour;
+                $event->end_hour = $eventHour->end_hour;
+            }
         }
 
         $clientPlanRepository = new ClientPlanRepository();
@@ -116,7 +120,14 @@ class EventController extends Controller
 
         $events = $this->loadNextSessions(null, $request->query('classTypeId'));
         if($request->query('rentEquipment') === "true"){
-            $events = $this->filterEvents($events, $request->query('shoeSize'), $request->query('weight'));
+            try{
+                $events = $this->filterEvents($events, $request->query('shoeSize'), $request->query('weight'));
+            }catch (ShoeSizeNotSupportedException | WeightNotSupportedException $e) {
+                Session::put('msg_level', 'danger');
+                Session::put('msg', $e->getMessage());
+                Session::save();
+                return response()->json(['error' => $e->getMessage()], $e->getCode());
+            }
         }
 
         return response()->json([
@@ -125,21 +136,21 @@ class EventController extends Controller
         ], 200);
     }
 
+    /**
+     * @throws ShoeSizeNotSupportedException
+     * @throws WeightNotSupportedException
+     */
     public function filterEvents($events, int $shoeSize, int $weight){
-        try {
-            return $events->filter(function ($event) use ($shoeSize, $weight) {
-                $startDateTime = Carbon::parse($event->fecha_fin)->format('Y-m-d') . ' ' . $event->start_hour;
-                $endDateTime = Carbon::parse($event->fecha_inicio)->format('Y-m-d') . ' ' . $event->end_hour;
-                    $kangooId = $this->kangooService->assignKangoo($shoeSize, $weight, $startDateTime, $endDateTime);
-                    return $kangooId != null;
-            });
-
-        } catch (ShoeSizeNotSupportedException | WeightNotSupportedException | NoAvailableEquipmentException $e) {
-            Session::put('msg_level', 'danger');
-            Session::put('msg', $e->getMessage());
-            Session::save();
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
-        }
+        return $events->filter(function ($event) use ($shoeSize, $weight) {
+            $startDateTime = Carbon::parse($event->fecha_fin)->format('Y-m-d') . ' ' . $event->start_hour;
+            $endDateTime = Carbon::parse($event->fecha_inicio)->format('Y-m-d') . ' ' . $event->end_hour;
+            try {
+                $kangooId = $this->kangooService->assignKangoo($shoeSize, $weight, $startDateTime, $endDateTime);
+                return $kangooId != null;
+            } catch (NoAvailableEquipmentException $e){
+                return false;
+            }
+        });
     }
 
     public function loadNextSessions(int $branchId = null, int $classTypeId = null){
@@ -149,9 +160,9 @@ class EventController extends Controller
             ->when($classTypeId, function ($query, $classTypeId) {
                 return $query->where('class_type_id', $classTypeId);
             })
-            ->where('fecha_inicio', '>=', today())
+            ->where('fecha_inicio', '>=', today()) //It is only comparing by date because if it compares also with hour the repeted events that were edited will not be filtered
             ->where('fecha_fin', '<=', today()->addWeek())
-            ->where('deleted', '!=', '0')
+            ->where('deleted', '==', '0')
             ->orderBy('fecha_inicio', 'asc')
             ->get()->map(function($element) {
                 $element['id'] = $element->evento_id;
@@ -166,11 +177,15 @@ class EventController extends Controller
                 return $query->where('class_type_id', $classTypeId);
             })
             ->where('repeatable', '=', false)
-            ->where('fecha_inicio', '>=', today())
-            ->where('fecha_fin', '<=', today()->addWeek())
+            ->whereRaw('CONCAT(fecha_inicio, " ", start_hour) >= ?', [today()])
+            ->whereRaw('CONCAT(fecha_fin, " ", end_hour) <= ?', [today()->addWeek()])
             ->orderBy('fecha_inicio', 'asc')
             ->get();
-        $repeatableEvents = Evento::when($branchId, function ($query, $branchId) {
+
+        $repeatableEvents = Evento::selectRaw(
+            'eventos.*, event_hours.*, eventos.id as id'
+            )
+            ->when($branchId, function ($query, $branchId) {
                 return $query->where('branch_id', $branchId);
             })
             ->when($classTypeId, function ($query, $classTypeId) {
@@ -182,11 +197,16 @@ class EventController extends Controller
 
         $events = $editedEvents->concat($uniqueEvents);
 
-        $dateTime = today();
+
+        $dateTime =  Carbon::now();
         for ($i = 0; $i < 7; $i++) {
             $dayName = $dateTime->format('l');
-            $updatedCollection = $repeatableEvents->where('day', '=', $dayName)->map(function($element) use ($dateTime, $editedEvents) {
-                if ($editedEvents->where('fecha_inicio', '=', $dateTime->format('Y-m-d'))->count() > 0) {
+
+            $updatedCollection = $repeatableEvents->where('day', '=', $dayName)
+                ->map(function($element) use ($dateTime, $editedEvents) {
+                if ($editedEvents->filter(function ($model) use ($dateTime, $element) {
+                        return $model->evento_id == $element->id && $model->fecha_inicio->equalTo($dateTime->format('Y-m-d'));
+                    })->count() > 0) {
                     return null;
                 }else{
                     $element['id'] = $element->event_id;
@@ -196,16 +216,19 @@ class EventController extends Controller
                 }
             })->filter(function($item) {
                 return $item !== null;
-            });;
+            });
+
             $events = $events->concat($updatedCollection);
             $dateTime = $dateTime->addDay();
         }
 
-        $events = $events->sortBy([
-            ['fecha_inicio', 'asc'],
-            ['start_hour', 'asc'],
+        return $events->filter(function ($event) {
+            $dateTime = Carbon::now();
+            $eventDateTime = Carbon::parse($event->fecha_inicio->format('Y-m-d') . ' ' . $event->start_hour);
+            return $eventDateTime->gte($dateTime);
+        })->sortBy([
+                ['fecha_inicio', 'asc'],
+                ['start_hour', 'asc'],
         ]);
-
-        return $events;
     }
 }

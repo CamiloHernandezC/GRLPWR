@@ -1,3 +1,4 @@
+<!--This code can't be in the push head-content -->
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
@@ -82,7 +83,7 @@
                                                 <div class="custom-control custom-radio custom-control-inline">
 
                                                     <input type="radio" id="rentEquipment1" name="rentEquipment" value="1" class="custom-control-input" required>
-                                                    <label class="custom-control-label rentEquipmentLabel" for="rentEquipment1">Alquilar Kangoos</label>
+                                                    <label class="custom-control-label rentEquipmentLabel" for="rentEquipment1">Separar Kangoos</label>
                                                 </div>
                                                 <div class="custom-control custom-radio custom-control-inline">
 
@@ -318,6 +319,7 @@
                 }
             }
         }
+
         $(document).ready(function () {
             $("input[name='rentEquipment']").click(function () {
                 $('.rentEquipmentLabel').css("cssText", "color:'';")
@@ -328,5 +330,17 @@
                 $('.terms-label').css("border-color", "");
             });
         });
+
+    </script>
+    <script>
+        document.getElementById("scheduleCourtesyForm").addEventListener("submit", report_courtesy_conversion, true);
+
+        <!-- Event snippet for schedule courtesy conversion page -->
+        function report_courtesy_conversion() {
+            gtag('event', 'conversion', {
+                'send_to': 'AW-780220913/9vIhCNCpjO0YEPHzhPQC'
+            });
+            return false;
+        }
     </script>
 @endpush

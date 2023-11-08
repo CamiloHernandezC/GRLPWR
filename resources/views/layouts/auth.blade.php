@@ -41,30 +41,13 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N08XQ68NZ4"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{env('GTAG')}}"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        gtag('config', 'G-N08XQ68NZ4');
-    </script>
-
-    <!-- Event snippet for Registro conversion page
-        In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
-    <script>
-        function gtag_report_conversion(url) {
-            var callback = function () {
-                if (typeof(url) != 'undefined') {
-                    window.location = url;
-                }
-            };
-            gtag('event', 'conversion', {
-                'send_to': 'AW-780220913/8DZwCOa_i40BEPHzhPQC',
-                'event_callback': callback
-            });
-            return false;
-        }
+        gtag('config', '{{env('GTAG')}}');
     </script>
 
     @stack('head-content')
@@ -135,16 +118,7 @@
     <script type="text/javascript" src="https://cdn.subscribers.com/assets/subscribers.js"></script>
     -->
 
-    <!--google analytics-->
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-128937544-1', 'auto');
-        ga('send', 'pageview');
-    </script>
+    @stack('scripts')
 
 </body>
 </html>

@@ -43,13 +43,13 @@
         <link rel="stylesheet" href="{{asset('css/chats.css')}}">
 
         <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-N08XQ68NZ4"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{env('GTAG')}}"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'G-N08XQ68NZ4');
+            gtag('config', '{{env('GTAG')}}');
         </script>
     </head>
     <body data-spy="scroll" data-target=".navbar">
@@ -84,6 +84,7 @@
                 $('#msgModal').modal({show: true});
             });
         </script>
+        @php(\Illuminate\Support\Facades\Session::forget('msg'))
     @endif
 
     <div class="modal fade justify-content-center align-items-center" id="msgModal" tabindex="-1" role="dialog">
@@ -322,17 +323,6 @@
     <script
             src="https://cdn2.woxo.tech/a.js#616af38872a6520016a29c25"
             async data-usrc>
-    </script>
-
-    <!--google analytics-->
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-128937544-1', 'auto');
-        ga('send', 'pageview');
     </script>
 
     <script src="{{asset('js/bootstrap-swipe-carousel.min.js')}}" type="text/javascript"></script>

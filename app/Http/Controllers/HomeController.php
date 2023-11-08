@@ -55,7 +55,6 @@ class HomeController extends Controller
             $clientPlans = $clientPlanRepository->findValidClientPlan();
 
             $Aleatorynumber = rand(1, 100);
-
             if ($Aleatorynumber <= config('app.probability_to_show_review_modal', 60)) {
                 $lastSessionWithoutReview = DB::table('sesiones_cliente')
                     ->leftJoin('reviews_session', 'reviews_session.session_id', '=', 'sesiones_cliente.id')
