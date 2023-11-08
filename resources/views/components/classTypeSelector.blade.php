@@ -1,5 +1,5 @@
 <div class="form-group">
-    <label for="exampleFormControlSelect1">Tipo de clase</label>
+    <label for="classTypeSelector">Tipo de clase</label>
     <select class="form-control pl-1 bg-dark" id="classTypeSelector" name="classType">
         <option value="all" selected>Todas</option>
         @foreach($classTypes as $classType)
