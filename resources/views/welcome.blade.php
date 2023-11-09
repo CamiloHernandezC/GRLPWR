@@ -53,6 +53,7 @@
         </script>
     </head>
     <body data-spy="scroll" data-target=".navbar">
+    <img id="background-image" src="{{asset('images/landing.jpg')}}">
 
     <!--Navbar color effect
     <script>
@@ -100,21 +101,24 @@
         </div>
     </div>
 
-    <div id="welcome2" class="flex-center position-ref full-height">
+    <div id="welcome" class="flex-center position-ref full-height">
         <div class="content">
             <div class="title mb-3">
-                <video autoplay loop muted>
-                    <source src="video/video.mp4" type="video/mp4">
+                <video autoplay muted class="portrait-video landingVideo" src="{{asset('video/landing_page_portrait.mp4')}}" preload="auto"></video>
+                <video muted class="landscape-video landingVideo" src="{{asset('video/landing_page_portrait.mp4')}}" preload="none"></video>
+                <button id="schedule-courtesy" class="btn btn-success ml-auto mr-auto" data-toggle="modal"
+                        data-target="#scheduleCourtesyModal">¡Agendar Cortesía!
+                </button>
+                <button id="sound" class="btn position-absolute bg-dark color-white" style="bottom:5vh; left: 5vh; height: 40px; line-height: 0">
+                    <span id="volume_off" class="material-icons" style="font-size: smaller">volume_off</span>
+                    <span id="volume_on" class="material-icons" style="font-size: smaller; display: none">volume_up</span>
+                </button>
+
             </div>
-                <button class="btn btn-success d-block ml-auto mr-auto" data-toggle="modal"
-                    data-target="#scheduleCourtesyModal">¡Agendar Cortesía!
-
-
-            </button>
         </div>
     </div>
 
-    <div class="section" id="welcome">
+    <div class="section">
         <div class="sub-section-info">
             <h1 class="mb-5">¿Porqué Girl Power?</h1>
             <p class="text-justify">
@@ -127,7 +131,7 @@
         </div>
         --}}
     </div>
-    <div class="section text-center d-block" id="welcome">
+    <div class="section text-center d-block">
         <h1>Modalidades</h1>
 
         <div id="immediateDeliveryCarousel" class="carousel slide mt-3" data-ride="carousel">
@@ -199,7 +203,7 @@
         </div>
     </div>
 
-    <div class="section text-center d-block color-white" id="welcome">
+    <div class="section text-center d-block color-white">
         <h1 class="text-center">
             Síguenos en nuestras redes sociales
         </h1>
@@ -280,14 +284,14 @@
         <div class="footer-center">
 
             <div>
-                <a href="https://goo.gl/maps/SZKV84zvwuorBJha8" target=”_blank”>
+                <a href="https://goo.gl/maps/SZKV84zvwuorBJha8" target="_blank">
                     <i class="fa fa-map-marker"></i>
                     <p><span>Av. Esperanza #75-25</span> Modelia, Bogotá</p>
                 </a>
             </div>
 
             <div>
-                <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" target=”_blank”>
+                <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" target="_blank">
                     <i class="fa fa-phone"></i>
                     <p>312 378 11 74</p>
                 </a>
@@ -312,7 +316,7 @@
 
     <div class="floating_button">
         <div class="chats">
-            <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" class="icon-whatsapp" target=”_blank”>
+            <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" class="icon-whatsapp" target="_blank">
                 <img class="icon" width="100%" height="100%" alt="whatsapp" src="{{asset('images/wathsapp_icon.png')}}">
             </a>
         </div>
@@ -321,7 +325,54 @@
     @include('cliente.scheduleCourtesyModal')
 
     @stack('modals')
+    <script>
+        $(document).ready(function() {
+            $("#schedule-courtesy").delay(2000).fadeIn()
+        });
+    </script>
 
+    <script>
+        var button = document.getElementById('sound');
+        var videos = document.querySelectorAll('.landingVideo');
+        var volume_off = document.getElementById("volume_off")
+        var volume_on = document.getElementById("volume_on")
+
+        button.onclick = function (){
+
+            volume_off.style.display=window.getComputedStyle(volume_off).display === "none" ? "block" : "none";
+            volume_on.style.display=window.getComputedStyle(volume_on).display === "none" ? "block" : "none";
+
+
+            videos.forEach(video => {    // adding observer for all videos
+                if(window.getComputedStyle(video).display !== "none")
+                    video.muted = !video.muted;
+            });
+        };
+
+        $(document).ready(function() {
+            let options = {
+                root: null,    // browser viewport
+                rootMargin: '0px',
+                threshold: 0.5 // target element visible 50%
+            }
+
+            let observer = new IntersectionObserver(playOnFocus, options);
+            let targets = document.querySelectorAll('.landingVideo');
+            targets.forEach(target => {    // adding observer for all videos
+                observer.observe(target);
+            });
+        });
+
+        const playOnFocus = (entries, observer) => {    // callback
+            entries.forEach((entry) => {
+                if(entry.isIntersecting) {
+                    entry.target.play();    // play target video
+                } else {
+                    entry.target.pause();    // pause video
+                }
+            });
+        };
+    </script>
     <!--Instagram-->
     <script
             src="https://cdn2.woxo.tech/a.js#616af38872a6520016a29c25"
