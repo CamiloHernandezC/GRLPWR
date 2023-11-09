@@ -105,11 +105,12 @@
             <div class="title mb-3">
                 <video autoplay loop muted>
                     <source src="video/video.mp4" type="video/mp4">
-                </video>
-                <button class="btn btn-success d-block ml-auto mr-auto" data-toggle="modal"
-                        data-target="#scheduleCourtesyModal">¡Agendar Cortesía!
-                </button>
             </div>
+                <button class="btn btn-success d-block ml-auto mr-auto" data-toggle="modal"
+                    data-target="#scheduleCourtesyModal">¡Agendar Cortesía!
+
+
+            </button>
         </div>
     </div>
 
