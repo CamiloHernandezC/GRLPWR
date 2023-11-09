@@ -40,6 +40,14 @@
         background-position: 0px;*/
         background: url("../images/landing.jpg") no-repeat center center fixed;
     }
+    #welcome2::after {
+        background-size: 180% 100%!important;
+        /*MOVING IMAGE
+        instead of background put this:
+        background-image: url(../images/botas.jpg);
+        background-position: 0px;*/
+        background: url("../images/landing.jpg") no-repeat center center fixed;
+    }
 }
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
@@ -62,14 +70,26 @@
         width: 10vw;
         bottom: 10vw;
     }
+
+    #welcome2::after {
+        /*MOVING VIDEO
+        instead of background put this:
+        background-image: url(../images/botas.jpg);
+        background-position: 214px;*/
+        background: url("../images/landing.jpg") no-repeat 0px center fixed;
+        background-size: 120% 120% !important;
+
+    }
     #welcome::after {
         /*MOVING IMAGE
         instead of background put this:
         background-image: url(../images/botas.jpg);
         background-position: 214px;*/
         background: url("../images/landing.jpg") no-repeat 0px center fixed;
-        background-size: 120% 120%!important;
+        background-size: 120% 120% !important
     }
+
+
 }
 .full-height {
     height: 100vh;
@@ -138,6 +158,28 @@ body{
     position: absolute;/*necesario para que solo se vea en la primera parte*/
     z-index: -1;
 }
+#welcome2::after {
+    content: "";
+    opacity: 0.4;
+    top: 0;
+    left: 0px;
+    bottom: 0;
+    right: 0;
+    position: fixed; /*necesario para que solo se vea en la primera parte*/
+    z-index: -1;
+}
+
+#welcome2 btn-success d-block ml-auto mr-auto::after {
+    content: "";
+    opacity: 0.4;
+    top: 0;
+    left: 0px;
+    bottom: 0;
+    right: 0;
+    position: absolute; /*necesario para que solo se vea en la primera parte*/
+    z-index: 3;
+}
+
 .brand-name{
     color:  #ffffff;
     font: normal 36px 'Cookie', cursive;
