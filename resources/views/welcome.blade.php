@@ -100,7 +100,7 @@
         </div>
     </div>
 
-    <div id="welcome" class="flex-center position-ref full-height">
+    <div id="welcome2" class="flex-center position-ref full-height">
         <div class="content">
             <div class="title mb-3">
                 <video autoplay loop muted>
