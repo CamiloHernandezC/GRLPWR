@@ -53,6 +53,7 @@
         </script>
     </head>
     <body data-spy="scroll" data-target=".navbar">
+    <img id="background-image" src="{{asset('images/landing.jpg')}}">
 
     <!--Navbar color effect
     <script>
@@ -100,10 +101,13 @@
         </div>
     </div>
 
-    <div id="welcome2" class="flex-center position-ref full-height">
+    <div id="welcome" class="flex-center position-ref full-height">
         <div class="content">
             <div class="title mb-3">
-                <video autoplay loop muted>
+                <video class="landScape-video landingVideo"  autoplay loop muted>
+                    <source src="video/boda.mp4" type="video/mp4">
+                </video>
+                <video class="portrait-video landingVideo"  autoplay loop muted>
                     <source src="video/video.mp4" type="video/mp4">
                 </video>
                 <button class="btn btn-success d-block ml-auto mr-auto" data-toggle="modal"
@@ -113,7 +117,7 @@
         </div>
     </div>
 
-    <div class="section" id="welcome">
+    <div class="section">
         <div class="sub-section-info">
             <h1 class="mb-5">¿Porqué Girl Power?</h1>
             <p class="text-justify">
@@ -126,7 +130,7 @@
         </div>
         --}}
     </div>
-    <div class="section text-center d-block" id="welcome">
+    <div class="section text-center d-block">
         <h1>Modalidades</h1>
 
         <div id="immediateDeliveryCarousel" class="carousel slide mt-3" data-ride="carousel">
@@ -198,7 +202,7 @@
         </div>
     </div>
 
-    <div class="section text-center d-block color-white" id="welcome">
+    <div class="section text-center d-block color-white">
         <h1 class="text-center">
             Síguenos en nuestras redes sociales
         </h1>
@@ -279,14 +283,14 @@
         <div class="footer-center">
 
             <div>
-                <a href="https://goo.gl/maps/SZKV84zvwuorBJha8" target=”_blank”>
+                <a href="https://goo.gl/maps/SZKV84zvwuorBJha8" target="_blank">
                     <i class="fa fa-map-marker"></i>
                     <p><span>Av. Esperanza #75-25</span> Modelia, Bogotá</p>
                 </a>
             </div>
 
             <div>
-                <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" target=”_blank”>
+                <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" target="_blank">
                     <i class="fa fa-phone"></i>
                     <p>312 378 11 74</p>
                 </a>
@@ -311,7 +315,7 @@
 
     <div class="floating_button">
         <div class="chats">
-            <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" class="icon-whatsapp" target=”_blank”>
+            <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" class="icon-whatsapp" target="_blank">
                 <img class="icon" width="100%" height="100%" alt="whatsapp" src="{{asset('images/wathsapp_icon.png')}}">
             </a>
         </div>

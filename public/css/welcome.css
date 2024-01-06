@@ -32,21 +32,12 @@
     .overflow-text{/*Si el texto es demasiado grande para dispositivos mobiles*/
         font-size: 3rem;
     }
-    #welcome::after {
-        background-size: 180% 100%!important;
-        /*MOVING IMAGE
-        instead of background put this:
-        background-image: url(../images/botas.jpg);
-        background-position: 0px;*/
-        background: url("../images/landing.jpg") no-repeat center center fixed;
+
+    .landScape-video{
+        display: none;
     }
-    #welcome2::after {
-        background-size: 180% 100%!important;
-        /*MOVING IMAGE
-        instead of background put this:
-        background-image: url(../images/botas.jpg);
-        background-position: 0px;*/
-        background: url("../images/landing.jpg") no-repeat center center fixed;
+    .portrait-video{
+        display: block;
     }
 }
 /* Medium devices (landscape tablets, 768px and up) */
@@ -71,23 +62,13 @@
         bottom: 10vw;
     }
 
-    #welcome2::after {
-        /*MOVING VIDEO
-        instead of background put this:
-        background-image: url(../images/botas.jpg);
-        background-position: 214px;*/
-        background: url("../images/landing.jpg") no-repeat 0px center fixed;
-        background-size: 120% 120% !important;
+    .landScape-video{
+        display: block;
+    }
+    .portrait-video{
+        display: none;
+    }
 
-    }
-    #welcome::after {
-        /*MOVING IMAGE
-        instead of background put this:
-        background-image: url(../images/botas.jpg);
-        background-position: 214px;*/
-        background: url("../images/landing.jpg") no-repeat 0px center fixed;
-        background-size: 120% 120% !important;
-    }
 }
 .full-height {
     height: 100vh;
@@ -141,45 +122,62 @@ body{
     background: rgb(67,5,68);
     overflow-x: hidden;
     font-family: 'Barlow Regular', sans-serif;
+    color: white;
 }
-#welcome{
-    color: white!important;
-    min-height: 400px;
-}
-#welcome::after {
-    content: "";
-    opacity: 0.4;
+#background-image{
+    position: fixed;
     top: 0;
-    left: 0px;
-    bottom: 0;
-    right: 0;
-    position: absolute;/*necesario para que solo se vea en la primera parte*/
-    z-index: -1;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0.5; /* Ajusta la transparencia de la imagen (0 a 1) */
+    z-index: -1; /* Coloca la imagen detrás del contenido */
 }
-#welcome2::after {
-    content: "";
-    opacity: 0.4;
-    top: 0;
-    left: 0px;
-    bottom: 0;
-    right: 0;
-    position: absolute; /*necesario para que solo se vea en la primera parte*/
-    z-index: -1;
+footer{
+    background: rgb(67,5,68);
 }
+
+.landingVideo{
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover; /*   Ajusta el video para cubrir el contenedor sin distorsión */
+    position: relative;
+}
+
 
 button[class="btn btn-success d-block ml-auto mr-auto"]  {
     position: absolute;
-    top: 50%; /* Ajusta la posición vertical según tus necesidades */
+    top: 85%; /* Ajusta la posición vertical según tus necesidades */
     left: 50%; /* Ajusta la posición horizontal según tus necesidades */
     transform: translate(-50%, -50%); /* Centra el botón */
     padding: 15px 20px; /* Ajusta el tamaño y el espaciado del botón */
-    background: #3498db; /* Color de fondo del botón */
+    background: #28a745; /* Color de fondo del botón */
     color: #fff; /* Color del texto del botón */
     border: none;
     border-radius: 5px;
     cursor: pointer;
     z-index: 2; /* Asegura que el botón esté por encima del video */
 }
+
+.mr-auto {
+    opacity: 0;
+    visibility: visible;
+    transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+
+
+}
+
+/* Clase para animar la aparición del botón */
+@keyframes showButton {
+    to {
+        opacity: 1;
+        visibility: visible;
+        z-index: 2; /* Ajusta el índice de apilamiento */
+
+    }
+}
+
+
 
 .brand-name{
     color:  #ffffff;
@@ -289,5 +287,5 @@ h1{
 .bg-semi-transparent{
     background-color: rgb(67,5,68, 0.9);
     color: white;
-}
+    }
 
