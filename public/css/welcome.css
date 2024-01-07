@@ -68,8 +68,6 @@
     .portrait-video{
         display: none;
     }
-
-
 }
 .full-height {
     height: 100vh;
@@ -159,14 +157,6 @@ footer{
     display: none; /*to show after some time*/
 }
 
-/* Clase para animar la aparición del botón */
-@keyframes showButton {
-    to {
-        opacity: 1;
-        visibility: visible;
-        z-index: 2; /* Ajusta el índice de apilamiento */
-    }
-}
 .brand-name{
     color:  #ffffff;
     font: normal 36px 'Cookie', cursive;
