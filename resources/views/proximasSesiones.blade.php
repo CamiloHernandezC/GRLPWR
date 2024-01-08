@@ -49,6 +49,7 @@
                 {
                     $("#functional").removeClass("d-none").addClass("d-md-flex");
                 }else{
+                    $("#functional").removeClass("d-md-flex").addClass("d-none");
                     if (filterType === 'all') {
                         $(".next-session").removeClass("d-none").addClass("d-md-flex");
                     } else {
@@ -58,8 +59,7 @@
             });
             $('#hourSelector').on('change', function () {
                 var filterHour = $(this).val();
-                console.log("filterType: "+filterType)
-                console.log("filterDay: "+filterHour)
+                $(".next-session").removeClass("d-md-flex").addClass("d-none");
                 $('.next-session[class-type="' + filterType + '"][day="' + filterHour + '"]').removeClass("d-none").addClass("d-md-flex");
             });
         });
