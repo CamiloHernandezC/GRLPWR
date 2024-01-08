@@ -214,7 +214,7 @@
 
         <div class="footer-left">
 
-            <img src="{{asset('images/brand/imago_sin_fondo_oscuro.png')}}" width="70%" height="70%">
+            <img class="mb-3" src="{{asset('images/brand/imago_sin_fondo_oscuro.png')}}" width="70%" height="70%">
 
             <!--<p class="footer-links">
                 <a href="#quienesSomos">Quienes somos</a>
@@ -237,20 +237,20 @@
 
             <div>
                 <a href="https://goo.gl/maps/SZKV84zvwuorBJha8" target="_blank">
-                    <i class="fa fa-map-marker"></i>
+                    <i class="fa fa-map-marker m-0"></i>
                     <p><span>Av. Esperanza #75-25</span> Modelia, Bogotá</p>
                 </a>
             </div>
 
             <div>
                 <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" target="_blank">
-                    <i class="fa fa-phone"></i>
+                    <i class="fa fa-phone m-0"></i>
                     <p>312 378 11 74</p>
                 </a>
             </div>
 
             <div>
-                <i class="fa fa-envelope"></i>
+                <i class="fa fa-envelope m-0"></i>
                 <p><a href="mailto:contacto@girlpower.com.co">contacto@girlpower.com.co</a></p>
             </div>
 
@@ -259,7 +259,7 @@
         <div class="footer-right">
             <!--<a href="#"><i class="fab fa-facebook"></i></a>-->
             <a href="https://www.instagram.com/girlpowerstudio/">
-                <i class="fab fa-instagram" style="font-size: 25px"></i>
+                <i class="fab fa-instagram m-0" style="font-size: 25px"></i>
                 <p>@girlpowerstudio</p>
             </a>
         </div>
