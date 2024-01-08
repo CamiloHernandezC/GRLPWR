@@ -118,19 +118,10 @@
     position: relative;/*necesario para que las imágenes se ubiquen donde debe ser*/
 }
 body{
-    background: rgb(67,5,68);
     overflow-x: hidden;
-    font-family: 'Barlow Regular', sans-serif;
-    color: white;
-}
-#background-image{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    opacity: 0.5; /* Ajusta la transparencia de la imagen (0 a 1) */
-    z-index: -1; /* Coloca la imagen detrás del contenido */
+    /*font-family: 'Barlow Regular', sans-serif;*/
+    font-family: 'Cinzel'!important;
+    font-weight: 200!important;
 }
 footer{
     background: rgb(67,5,68);
@@ -266,4 +257,16 @@ h1{
     background-color: rgb(67,5,68, 0.9);
     color: white;
 }
-
+.bg-brand-primary-gradient{
+    background: linear-gradient(90deg, rgba(67,0,36,1) 0%, rgba(67,5,68,1) 72%, rgba(87,6,88,1) 100%);
+}
+.fade-in-section {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1.2s ease-out, transform 1.2s ease-out;
+    will-change: opacity, visibility;
+}
+.fade-in-section.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
