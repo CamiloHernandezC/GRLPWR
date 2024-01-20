@@ -161,7 +161,7 @@ class EventController extends Controller
             ->when($classTypeId, function ($query, $classTypeId) {
                 return $query->where('class_type_id', $classTypeId);
             })
-            ->where('fecha_inicio', '>=', today()) //It is only comparing by date because if it compares also with hour the repeted events that were edited will not be filtered
+            ->where('fecha_inicio', '>=', today()) //It is only comparing by date because if it compares also with hour the repeated events that were edited will not be filtered
             ->where('fecha_fin', '<=', today()->addDays(8))
             ->orderBy('fecha_inicio', 'asc')
             ->get()->map(function($element) {
