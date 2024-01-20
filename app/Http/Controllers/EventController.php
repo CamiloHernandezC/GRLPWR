@@ -31,7 +31,6 @@ class EventController extends Controller
     public function create(){
         SeguridadController::verificarRol(Constantes::ROL_ADMIN);
         return view('sessions.createSession');
-
     }
 
     /**
