@@ -81,6 +81,7 @@ class SesionClienteController extends Controller
             $request->merge(['password' => config('app.default_password')]);
             $user = $registerController->create($request->all());
         }
+
         $client = Cliente::updateOrCreate(
             ['usuario_id' => $user->id],
             [
