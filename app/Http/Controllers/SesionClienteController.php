@@ -191,11 +191,8 @@ class SesionClienteController extends Controller
             if($isCourtesy){
                 $sesionCliente->save();
 
-                /*Mail::to($client->usuario->email)
-                    ->queue(new CourtesyScheduled($sesionCliente));*/
-                Mail::to("camilo.hernandez.castillo@gmail.com")
+                Mail::to($client->usuario->email)
                     ->queue(new CourtesyScheduled($sesionCliente));
-
 
                 Session::put('msg_level', 'success');
                 Session::put('msg', __('general.success_courtesy'));

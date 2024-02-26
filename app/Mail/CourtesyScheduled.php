@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CourtesyScheduled extends Mailable
+class CourtesyScheduled extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -44,7 +44,7 @@ class CourtesyScheduled extends Mailable
     public function content()
     {
         return new Content(
-            view: 'emails.courtesyEmail',
+            view: 'mail.courtesyEmail',
         );
     }
 
