@@ -68,7 +68,7 @@
 @push('cards')
     @if(!$visitante)
         <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : ""}} p-3 mb-3">
-            <div class="mb-2 d-flex justify-content-between">
+            <div class="mb-3 d-flex justify-content-between">
                 <h3>Próximas sesiones:</h3>
             </div>
             @include('proximasSesiones')
@@ -80,7 +80,7 @@
     <!--Pop-up Review Session-->
     <script type="text/javascript">
         $(document).ready(function(){
-            if({{!session('msg')}} && !sessionStorage.getItem('training-review-showed') && {{isset($reviewFor) ? 1 : 0}}) {
+            if({{session('msg') ? 0 : 1}} && !sessionStorage.getItem('training-review-showed') && {{isset($reviewFor) ? 1 : 0}}) {
                 sessionStorage.setItem('training-review-showed', 'true');//at the beginning, it won't be present in the session, and if we get it, it will be false
                 setTimeout(function() {$('#reviewEntrenamiento').modal('show');},
                     3000);

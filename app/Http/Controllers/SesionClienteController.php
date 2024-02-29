@@ -9,6 +9,7 @@ use App\Exceptions\ShoeSizeNotSupportedException;
 use App\Exceptions\WeightNotSupportedException;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Services\KangooService;
+use App\Mail\CourtesyScheduled;
 use App\Model\Cliente;
 use App\Model\Evento;
 use App\Model\Peso;
@@ -17,6 +18,7 @@ use App\Model\ReviewSession;
 use App\Model\SesionCliente;
 use App\RemainingClass;
 use App\Repositories\ClientPlanRepository;
+use App\User;
 use App\Utils\PlanTypesEnum;
 use Carbon\Carbon;
 use Exception;
@@ -25,6 +27,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -53,7 +56,7 @@ class SesionClienteController extends Controller
     public function scheduleEvent(Request $request){
         try {
             $client = Cliente::find($request->clientId);
-            return $this->schedule($request->eventId, $request->startDate, $request->startHour, $request->endDate, $request->endHour, $client, $request->rentEquipment, false);
+            return $this->schedule($request->eventId, $request->startDate, $request->startHour, $request->endDate, $request->endHour, $client, $request->rentEquipment, $request->isCourtesy ?? false, $request->validateVacancy ?? false);
         }catch (Exception $exception){
             Session::put('msg_level', 'danger');
             Session::put('msg', $exception->getMessage());
@@ -64,17 +67,34 @@ class SesionClienteController extends Controller
 
     public function scheduleCourtesy(Request $request){
 
-        $registerController = new RegisterController();
-        $request->merge(['password' => config('app.default_password')]);
-        $user = $registerController->create($request->all());
+        $user = User::where('email', $request->email)
+                    ->orWhere('telefono', $request->cellphone)
+                    ->first();
 
-
-        $client = new Cliente();
-        $client->usuario_id = $user->id;
-        if($request->shoeSize){
-            $client->talla_zapato = $request->shoeSize;
+        if($user){
+            if(SesionCliente::where('cliente_id', $user->id)->first()){
+                Session::put('msg_level', 'danger');
+                Session::put('msg', __('general.already_registered_for_courtesy'));
+                Session::save();
+                return redirect()->back();
+            }
+        }else{
+            $registerController = new RegisterController();
+            $request->merge(['password' => config('app.default_password')]);
+            $user = $registerController->create($request->all());
         }
-        $client->save();
+
+        $client = Cliente::updateOrCreate(
+            ['usuario_id' => $user->id],
+            [
+                'talla_zapato' => $request->shoeSize ?? null,
+                'objective' => $request->objective,
+                'pathology' => $request->pathology,
+                'channel' => $request->channel
+                //'peso_ideal' => request()->pesoIdeal,
+                //'biotipo' => request()->tipoCuerpo
+            ]
+        );
         $client->usuario_id = $user->id;
 
         if($request->weight){
@@ -86,7 +106,7 @@ class SesionClienteController extends Controller
 
         try {
             $eventArray = json_decode($request->event, true);
-            return $this->schedule($eventArray['id'], $eventArray['startDate'], $eventArray['startHour'], $eventArray['endDate'], $eventArray['endHour'], $client, $request->get('rentEquipment'), true);
+            return $this->schedule($eventArray['id'], $eventArray['startDate'], $eventArray['startHour'], $eventArray['endDate'], $eventArray['endHour'], $client, $request->get('rentEquipment'), true, true);
         }catch (Exception $exception){
             return redirect()->back()->with('errors', $exception->getMessage());
         }
@@ -99,25 +119,27 @@ class SesionClienteController extends Controller
      * @throws WeightNotSupportedException
      *
      */
-    private function schedule($id, $startDate, $startHour, $endDate, $endHour, $client, $isRenting, $isCourtesy){
+    private function schedule($id, $startDate, $startHour, $endDate, $endHour, $client, $isRenting, $isCourtesy, $validateVacancy): JsonResponse|\Illuminate\Http\RedirectResponse
+    {
         $editedEvent = EditedEvent::where('evento_id', $id)
             ->where('fecha_inicio', '=', $startDate)
             ->where('start_hour', '=', $startHour)
             ->first();
         $event = $editedEvent ?: Evento::find($id);
-        $startDateTime = $startDate . ' ' . $startHour;
-        $endDateTime = $endDate . ' ' . $endHour ;
+        $startDateTime = Carbon::parse($startDate)->format('Y-m-d') . ' ' . $startHour;
+        $endDateTime = Carbon::parse($endDate)->format('Y-m-d') . ' ' . $endHour;
         $scheduled_clients = SesionCliente::where('evento_id', $event->id)
             ->where('fecha_inicio', '=', $startDateTime)
             ->where('fecha_fin', '=', $endDateTime)->count();
-        if($event->cupos <= $scheduled_clients){
+        if(filter_var($validateVacancy, FILTER_VALIDATE_BOOLEAN) && $event->cupos <= $scheduled_clients){
            throw new NoVacancyException();
         }
 
         if(filter_var($isRenting, FILTER_VALIDATE_BOOLEAN)){
             $kangooId = $this->assignEquipment($event, $client->talla_zapato, $client->peso()->peso, $startDateTime, $endDateTime);
         }
-        return $this->registerSession($client->usuario_id, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId ?? null);
+        $isCourtesy = filter_var($isCourtesy, FILTER_VALIDATE_BOOLEAN);
+        return $this->registerSession($client, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId ?? null);
 
     }
 
@@ -127,7 +149,7 @@ class SesionClienteController extends Controller
      * @throws WeightNotSupportedException
      */
     public function assignEquipment(Evento $event, $shoeSize, $weight, $startDateTime, $endDateTime){
-        if(strcasecmp($event->classType->type, PlanTypesEnum::Kangoo->value) == 0){
+        if(strcasecmp($event->classType->type, PlanTypesEnum::KANGOO->value) == 0 || strcasecmp($event->classType->type, PlanTypesEnum::KANGOO_KIDS->value) == 0){
             return $this->kangooService->assignKangoo($shoeSize, $weight, $startDateTime, $endDateTime);
         }
     }
@@ -151,13 +173,13 @@ class SesionClienteController extends Controller
      * @param null $kangooId
      * @return JsonResponse | \Illuminate\Http\RedirectResponse
      */
-    public function registerSession($clientId, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId=null)
+    public function registerSession($client, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId=null)
     {
         DB::beginTransaction();
 
         try{
             $sesionCliente = new SesionCliente;
-            $sesionCliente->cliente_id = $clientId;
+            $sesionCliente->cliente_id = $client->usuario_id;
             $sesionCliente->evento_id = $event->id;
             if($kangooId){
                 $sesionCliente->kangoo_id = $kangooId;
@@ -168,6 +190,10 @@ class SesionClienteController extends Controller
 
             if($isCourtesy){
                 $sesionCliente->save();
+
+                Mail::to($client->usuario->email)
+                    ->queue(new CourtesyScheduled($sesionCliente));
+
                 Session::put('msg_level', 'success');
                 Session::put('msg', __('general.success_courtesy'));
                 Session::save();
@@ -176,21 +202,28 @@ class SesionClienteController extends Controller
             }
 
             $clientPlanRepository = new ClientPlanRepository();
-            $clientPlan = $clientPlanRepository->findValidClientPlan($event);
+            $event->fecha_inicio = $startDateTime;
+            $event->fecha_fin = $endDateTime;
+            $clientPlan = $clientPlanRepository->findValidClientPlan($event, $client->usuario_id);
 
-            if ($clientPlan && $clientPlan->isNotEmpty()) {
+            if ($clientPlan) {
                 $sesionCliente->save();
-                $clientPlan = $clientPlan->first();
-                $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
-                if($remainingClass->unlimited == 0) {
-                    if ($remainingClass->remaining_classes == null){
-                        $clientPlan->remaining_shared_classes--;
-                        $clientPlan->save();
-                    }elseif($remainingClass->remaining_classes >= 0){
-                        $remainingClass->remaining_classes--;
-                        $remainingClass->save();
+                if($clientPlan->remaining_shared_classes != null){
+                    $clientPlan->remaining_shared_classes--;
+                    $clientPlan->save();
+                }
+                /*FIT-57: Uncomment this if you want specific classes*/
+                else{
+                    $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
+                    if($remainingClass) {
+                        if($remainingClass->unlimited == 0){
+                            $remainingClass->remaining_classes--;
+                            $remainingClass->save();
+                        }
                     }
                 }
+                /*FIT-57: end block code*/
+
                 Session::put('msg_level', 'success');
                 Session::put('msg', __('general.success_purchase'));
                 Session::save();
@@ -211,7 +244,7 @@ class SesionClienteController extends Controller
             DB::rollBack();
             Log::error("ERROR SesionClienteController - registerSession - courtesy: " . $exception->getMessage());
             Session::put('msg_level', 'danger');
-            Session::put('msg', __('general.error_schedule'));
+            Session::put('msg', __('general.error_general'));
             Session::save();
             if($isCourtesy){
                 return redirect()->back();
@@ -221,26 +254,37 @@ class SesionClienteController extends Controller
     }
 
     public function cancelTraining(){
-        $session = SesionCliente::find(request()->entrenamientoCancelar);
-        if($session->fecha_inicio <= now() ) {
-            Session::put('msg_level', 'danger');
-            Session::put('msg', __('general.message_late_cancellation'));
-            Session::save();
-            return back();
-        }
-        if($session->fecha_inicio->subHours(HOURS_TO_CANCEL_TRAINING) < now()){
-            $session->delete();
-            Session::put('msg_level', 'warning');
-            Session::put('msg', __('general.message_enable_late_cancellation'));
-            Session::save();
-            return back();
-        }
-        $session->delete();
-        Session::put('msg_level', 'success');
-        Session::put('msg', __('general.successfully_cancelled'));
-        Session::save();
-        $this->returnRemainingClassesAfterCancellation($session->event);
-        return back();
+        return DB::transaction(function () {
+            try {
+                $session = SesionCliente::find(request()->entrenamientoCancelar);
+                if($session->fecha_inicio <= now() ) {
+                    Session::put('msg_level', 'danger');
+                    Session::put('msg', __('general.message_late_cancellation'));
+                    Session::save();
+                    return back();
+                }
+                if($session->fecha_inicio->subHours(HOURS_TO_CANCEL_TRAINING) < now()){
+                    $session->delete();
+                    Session::put('msg_level', 'warning');
+                    Session::put('msg', __('general.message_enable_late_cancellation'));
+                    Session::save();
+                    return back();
+                }
+                $session->delete();
+                Session::put('msg_level', 'success');
+                Session::put('msg', __('general.successfully_cancelled'));
+                Session::save();
+                $session->event->fecha_inicio = $session->fecha_inicio;
+                $session->event->fecha_fin = $session->fecha_fin;
+                $this->returnClassAfterCancellation($session->event);
+                return back();
+            } catch (Exception $exception) {
+                Log::error("ERROR SesionClienteController - cancelTraining: " . $exception->getMessage());
+                Session::put('msg_level', 'danger');
+                Session::put('msg', __('general.error_general'));
+                return back();
+            }
+        });
     }
 
     public function darReview(){
@@ -258,22 +302,35 @@ class SesionClienteController extends Controller
         return back();
     }
 
-    public function returnRemainingClassesAfterCancellation(Evento $event){
+    public function returnClassAfterCancellation(Evento $event){
         $clientPlanRepository = new ClientPlanRepository();
-        $clientPlan = $clientPlanRepository->findValidClientPlan($event, false);
-        if ($clientPlan && $clientPlan->isNotEmpty()) {
-            $clientPlan = $clientPlan->first();
-            $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
-            if ($remainingClass->unlimited == 0) {
-                if ($remainingClass->remaining_classes == null) {
-                    $clientPlan->remaining_shared_classes = $clientPlan->remaining_shared_classes + 1;
-                    $clientPlan->save();
-                } elseif ($remainingClass->remaining_classes >= 0) {
-                    $remainingClass->remaining_classes = $remainingClass->remaining_classes + 1;
+        $clientPlan = $clientPlanRepository->findValidClientPlan(event: $event, withRemainingClasses: false);
+        if ($clientPlan) {
+            if($clientPlan->remaining_shared_classes != null){
+                $clientPlan->remaining_shared_classes++;
+                $clientPlan->save();
+            }
+            /*FIT-57: Uncomment this if you want specific classes*/
+            else{
+                $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
+                if($remainingClass && $remainingClass->unlimited == 0) {
+                    $remainingClass->remaining_classes++;
                     $remainingClass->save();
                 }
             }
+            /*FIT-57: end block code*/
         }
+    }
+
+    public function checkAttendee(Request $request): JsonResponse
+    {
+        $clientSession = SesionCliente::find($request->clientSessionId);
+        $clientSession->attended = $request->checked === "true";
+        $clientSession->save();
+
+        return response()->json([
+            'success' => true
+        ], 200);
     }
 
 }

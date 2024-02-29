@@ -6,9 +6,11 @@
 <link href="{{asset('css/profileWizard.css')}}" rel="stylesheet"/>
 <link href="{{asset('css/scheduleCourtesyModal.css')}}" rel="stylesheet"/>
 
-<!--     Fonts and icons     -->
+<!-- Fonts and icons -->
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+
+<script src="https://kit.fontawesome.com/2ccdb5d1d9.js" crossorigin="anonymous"></script>
 
 <!--datetimePicker-->
 <link href="//cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
@@ -65,15 +67,7 @@
                                     <div class="row">
                                         <h4 class="info-text"></h4>
                                         <div class="col-sm-10 m-auto">
-                                            <div class="input-group">
-                                                <span class="iconos">
-                                                    <i class="material-icons">fitness_center</i>
-                                                </span>
-                                                <div class="form-group label-floating">
-                                                    <label class="control-label">Tipo de clase <small>(requerido)</small></label>
-                                                    @include('components.classTypeSelector')
-                                                </div>
-                                            </div>
+                                            @include('components.classTypeSelector', ['color' => 'color-black', 'bg' => 'bg-light'])
                                         </div>
                                         <div>
                                             <div class="col-sm-10 m-auto kangooForm" style="display: none">
@@ -165,9 +159,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @include('termsAndConditions')
+                                        <div class="col-sm-10 m-auto">
+                                            @include('components.requestPathology')
+                                        </div>
+                                        <div class="col-sm-10 m-auto text-justify">
+                                            @include('termsAndConditionsModal')
 
-                                        <p class="mt-3 col-sm-11 m-auto text-justify" style="display: none">* Cómo tenemos botas limitadas, debemos cobrar $10.000 para la reserva de las botas, este valor será abonado al plan que adquieras o se te devolverá si asistes a la cortesía y no deseas inscribirte</p>
+                                            <p class="mt-3 col-sm-11 m-auto text-justify" style="display: none">* Cómo tenemos botas limitadas, debemos cobrar $10.000 para la reserva de las botas, este valor será abonado al plan que adquieras o se te devolverá si asistes a la cortesía y no deseas inscribirte</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -198,7 +197,7 @@
     <script src="{{asset('js/validate-scheduleCourtesy.js')}}"></script>
     <script src="{{asset('js/wizard.js')}}"></script>
 
-    <!--  More information about jquery.validate here: http://jqueryvalidation.org/	 -->f
+    <!--  More information about jquery.validate here: http://jqueryvalidation.org/	 -->
     <script src="{{asset('js/jquery.validate.min.js')}}"></script>
 
     <script>

@@ -53,6 +53,10 @@ class KangooService
      */
     public function getKangooSizes(int $shoeSize)
     {
+        if($shoeSize < 34){
+            return ["J"];
+        }
+
         switch ($shoeSize){
             case 34:
             case 35:
@@ -87,7 +91,7 @@ class KangooService
             $resistance = 3;
         } elseif ($weight < 80) {
             $resistance = 4;
-        } elseif ($weight > 80) {
+        } elseif ($weight >= 80) {
             $resistance = 5;
         }else{
            throw new WeightNotSupportedException();

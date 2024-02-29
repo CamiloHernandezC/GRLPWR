@@ -46,16 +46,13 @@ $(document).ready(function(){
         },
 
         onInit : function(tab, navigation, index){
-            //check number of tabs and fill the entire row
             var $wizard = navigation.closest('.wizard-card');
-
             $first_li = navigation.find('li:first-child a').html();
             $moving_div = $('<div class="moving-tab">' + $first_li + '</div>');
             $('.wizard-card .wizard-navigation').append($moving_div);
-
             refreshAnimation($wizard, index);
-
             $('.moving-tab').css('transition','transform 0s');
+            $wizard.find('.nav li').css('width',$li_width + '%');
         },
 
         onTabClick : function(tab, navigation, index, nextIndex){
@@ -186,9 +183,9 @@ function refreshAnimation($wizard, index){
     mobile_device = $(document).width() < 600 && $total > 3;
 
     if(mobile_device){
-        move_distance = $wizard.width() / 2;
+        move_distance =  $wizard.width() / 2;
         index_temp = index % 2;
-        $li_width = 50;
+        $li_width = $li_width*2;
     }
 
     $wizard.find('.nav li').css('width',$li_width + '%');
@@ -206,10 +203,11 @@ function refreshAnimation($wizard, index){
 
     if(mobile_device){
         vertical_level = parseInt(index / 2);
-        vertical_level = vertical_level * 38;
+        vertical_level = vertical_level * 50;
     }
 
-    $wizard.find('.moving-tab').css('width', step_width);
+    $wizard.find('.moving-tab').css('width', step_width === 0 ? $li_width + '%' : step_width);
+
     $('.moving-tab').css({
         'transform':'translate3d(' + move_distance + 'px, ' + vertical_level +  'px, 0)',
         'transition': 'all 0.5s cubic-bezier(0.29, 1.42, 0.79, 1)'

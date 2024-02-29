@@ -4,5 +4,6 @@ namespace App\Utils;
 
 enum PlanTypesEnum: string
 {
-    case Kangoo = 'Kangoo';
+    case KANGOO = 'Fit Flyr';
+    case KANGOO_KIDS = 'Kids - Fit Flyr';
 }

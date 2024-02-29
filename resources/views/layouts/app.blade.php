@@ -25,6 +25,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <!-- End bootstrap -->
 
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
+
     <link rel="stylesheet" href="{{asset('css/general.css')}}">
 
     <link rel="stylesheet" href="{{asset('css/chats.css')}}">
@@ -32,6 +38,7 @@
     <script src="{{asset('js/general.js')}}"></script>
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/2ccdb5d1d9.js" crossorigin="anonymous"></script>
 
     <!--brand-name-->
     <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet" type="text/css">

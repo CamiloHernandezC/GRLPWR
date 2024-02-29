@@ -4,18 +4,31 @@ namespace App\Model;
 
 use App\PlanClass;
 use App\RemainingClass;
+use App\Repositories\ClientPlanRepository;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class ClientPlan extends Model
 {
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = ['scheduled_renew_msg'];
+
+    /**
      * Transforms dates to carbon
      * @var string[]
      */
     protected $dates = ['created_at', 'updated_at', 'expiration_date'];
+
+    public function cliente(){
+        return $this->belongsTo(Cliente::class, 'client_id', 'usuario_id');
+    }
 
     public function plan(){
         return $this->belongsTo(Plan::class)->withTrashed();
@@ -40,6 +53,16 @@ class ClientPlan extends Model
         return $this->hasMany(RemainingClass::class, 'client_plan_id', 'id')
             ->where('unlimited', '=', 0)
             ->where('remaining_classes', '=', null);
+    }
+
+    public function clientLastPlanWithRemainingClasses(Request $request){
+        $clientPlanRepository = new ClientPlanRepository();
+        $lastPlanWithRemainingClasses = $clientPlanRepository->findValidClientPlan(clientId: $request->query('clientId'), extendedTimeToRenew: true);
+
+        return response()->json([
+            'success' => true,
+            'lastPlanWithRemainingClasses' => $lastPlanWithRemainingClasses
+        ], 200);
     }
 
 }
