@@ -16,11 +16,14 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagosController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SesionClienteController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\WellBeignController;
 use App\Model\ClientPlan;
-use \Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/mis_solicitudes/crear', 'SolicitudServicioController@irCrear')->name('irCrearSolicitud');
@@ -81,6 +84,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     Route::get('/nextSessions/{branchId}',[EventController::class, 'nextSessions'])->name('nextSessions');
+    Route::post('/user/wellBeign/beignAnswe', [WellBeignController::class, 'beignAnswers'])->name('wellBeign');
+
 });
 Route::group(['middleware' => 'admin'], function () {
     Route::get('/admin/loadPlan', [ClientPlanController::class, 'showLoadClientPlan']);
@@ -114,4 +119,6 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('/TyC', function () {
         return view('termsAndConditionsPage');
     });
+
+    Route::get('/valoracion', [RatingController::class, 'index'])->name('healthTest');
 /*End Open routes*/
