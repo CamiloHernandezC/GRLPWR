@@ -8,7 +8,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class UsersController extends controller
+class UserController extends controller
 {
 
     public function index()
@@ -20,9 +20,9 @@ class UsersController extends controller
 
     public function search(Request $request)
     {
-        $telefono = $request->input('telefono');
-        $usuarios = User::where('telefono', 'LIKE', "%$telefono%")->get();
-        return response()->json($usuarios);
+        $phone = $request->input('phone');
+        $users = User::where('telefono', 'LIKE', "%$phone%")->get();
+        return response()->json($users);
     }
 
 

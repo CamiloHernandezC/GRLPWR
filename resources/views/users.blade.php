@@ -16,7 +16,7 @@
         <h2>Listado de Usuarios</h2>
         <form action="{{ route('users.search') }}" method="GET">
             @csrf
-            <input type="number" name="telefono" placeholder="Buscar por número de teléfono">
+            <input type="number" name="phone" placeholder="Buscar por número de teléfono">
         </form>
     </div>
 
@@ -33,7 +33,7 @@
 
             </tr>
             </thead>
-            <tbody name="tabla">
+            <tbody name="table">
             @foreach ($users as $user)
                 <tr onclick="window.location='{{route('visitarPerfil', ['user'=>  $user->slug])}}';">
                     <td>{{ $user->id }}</td>
@@ -51,23 +51,20 @@
 @push('scripts')
     <script>
         $(document).ready(function () {
-            $('input[name="telefono"]').on('input', function () {
-                var query = $(this).val();
-                console.log('Search term:', query);
-
+            $('input[name="phone"]').on('input', function () {
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     url: '/users/search',
                     method: 'GET',
-                    data: {telefono: query},
+                    data: {phone:  $(this).val()},
                     dataType: 'json',
                     success: function (data) {
                         // Limpiar la tabla
-                        $('tbody[name="tabla"]').empty();
+                        $('tbody[name="table"]').empty();
                         data.forEach(function (result) {
-                            $('tbody[name="tabla"]').append(
+                            $('tbody[name="table"]').append(
                                 '<tr onclick="window.location=\'{{env('APP_URL')}}/visitar/' + result.slug + '\';">' +
                                     '<td>' + result.id + '</td>' +
                                     '<td>' + result.nombre + '</td>' +
@@ -77,6 +74,9 @@
                             );
                         });
                         $('.pagination').hide();
+                    },
+                    error: function (data) {
+                        alert('Error filtering users')
                     }
                 });
             });

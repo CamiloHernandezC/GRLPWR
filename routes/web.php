@@ -18,7 +18,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SesionClienteController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use App\Model\ClientPlan;
 use \Illuminate\Support\Facades\Auth;
@@ -87,8 +87,8 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('/admin/loadPlan', [ClientPlanController::class, 'showLoadClientPlan']);
     Route::post('/admin/loadPlan', [ClientPlanController::class, 'saveClientPlan'])->name('saveClientPlan');
     Route::post('/admin/checkAttendee', [SesionClienteController::class, 'checkAttendee'])->name('checkAttendee');
-    Route::get('/users', [UsersController::class, 'index'])->name('users.index');
-    Route::get('/users/search', [UsersController::class, 'search'])->name('users.search');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 });
 
 
