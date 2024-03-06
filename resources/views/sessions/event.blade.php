@@ -6,23 +6,6 @@
 
 @section('content')
 
-    <div class="modal fade" id="alertaCancelaciontemprana" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Recordatorio de cancelación</h5>
-                </div>
-                <div class="modal-body">
-                    <p id="advertenciaPenalidad">Recuerda que debes cancelar con {{ HOURS_TO_CANCEL_TRAINING }} horas de antelación para que no se te descuente la clase,
-                    la fecha límite es: {{Carbon\Carbon::parse(substr($event->fecha_inicio, 0, 10) . $event->start_hour)->subHours(HOURS_TO_CANCEL_TRAINING)}}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Close" onclick="checkPlan()">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="text-center">
         @if(strcasecmp (\Illuminate\Support\Facades\Auth::user()->rol, 'cliente' ) == 0 && \Illuminate\Support\Facades\Auth::user()->cliente == null)
             <h2 class="w-75 m-auto">Para agendarte a los eventos debes completar tu perfil</h2>
@@ -44,14 +27,14 @@
                     <p class="text-center mb-1"><strong>{{Carbon\Carbon::parse($event->fecha_inicio)->translatedFormat('l d F', 'es')}} {{$event->start_hour}}</strong></p>
                     <p class="text-center mb-1">Lugar: {{$event->lugar}}</p>
                     <div class="w-75 m-auto d-flex justify-content-center">
-                        <img src="{{asset('images/'.$event->imagen)}}" height="600px"
+                        <img src="{{asset('images/'.$event->imagen)}}" style="max-width: 95vw; max-height: 600px"
                              alt="Eventos @lang('general.AppName')">
                     </div>
                     @if((strcasecmp (\Illuminate\Support\Facades\Auth::user()->rol, \App\Utils\Constantes::ROL_ADMIN ) == 0))
                         @include('admin.attendeesTable')
                     @endif
                 </div>
-                <div class="d-flex flex-wrap">
+                <div class="d-flex flex-wrap col-lg-8 m-auto">
                     <div id="sesionInfo" class="mt-3 w-100 text-center">
                         <ul class="nav nav-tabs justify-content-around" id="infoTab" role="tablist">
                             <li class="nav-item" role="presentation">
@@ -70,7 +53,10 @@
                             <div class="tab-pane fade" id="additional-info" role="tabpanel"
                                  aria-labelledby="additional-info-tab">{{$event->info_adicional}}</div>
                         </div>
-                        <button type="button" class="btn bg-fifth ms-3" data-toggle="modal" data-target="#alertaCancelaciontemprana" >Agendar</button>
+                        <div class="d-flex justify-content-around">
+                            <button type="button" class="btn bg-fifth ms-3" data-toggle="modal" data-target="#alertaCancelaciontemprana" >Agendar</button>
+                            <button type="button" class="btn bg-fifth ms-3" data-toggle="modal" data-target="#inviteModal" >Invitar</button>
+                        </div>
                     </div>
                 </div>
                 @if((strcasecmp (\Illuminate\Support\Facades\Auth::user()->rol, \App\Utils\Constantes::ROL_ADMIN ) != 0))
@@ -84,6 +70,8 @@
             @endif
         @endif
     </div>
+
+    @include('components.modalCancelPolicy')
 
     @if((strcasecmp (\Illuminate\Support\Facades\Auth::user()->rol, \App\Utils\Constantes::ROL_ADMIN ) != 0))
         @include('cliente.completeProfileClient')
