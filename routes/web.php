@@ -88,10 +88,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('/admin/loadPlan', [ClientPlanController::class, 'saveClientPlan'])->name('saveClientPlan');
     Route::post('/admin/checkAttendee', [SesionClienteController::class, 'checkAttendee'])->name('checkAttendee');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 });
-
-
 /*Open routes*/
     Auth::routes();
 

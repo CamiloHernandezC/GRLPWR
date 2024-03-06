@@ -1,16 +1,12 @@
 @extends('layouts.app')
-
 @section('title')
     Users
 @endsection
-
 @push('head-content')
     <style>
         td { cursor: pointer; }
     </style>
 @endpush
-
-
 @section('content')
     <div class="container">
         <h2>Listado de Usuarios</h2>
@@ -19,18 +15,15 @@
             <input type="number" name="phone" placeholder="Buscar por número de teléfono">
         </form>
     </div>
-
     <div class="container">
         <h2>Listado de Usuarios</h2>
         <table class="table" data-color="white">
-
             <thead>
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Telefono</th>
-
             </tr>
             </thead>
             <tbody name="table">
@@ -47,7 +40,6 @@
         {{ $users->links() }}
     </div>
 @endsection
-
 @push('scripts')
     <script>
         $(document).ready(function () {
