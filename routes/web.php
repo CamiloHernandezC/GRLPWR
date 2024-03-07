@@ -20,7 +20,7 @@ use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SesionClienteController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\WelcomeController;
-use App\Http\Controllers\WellBeignController;
+use App\Http\Controllers\WellBeingController;
 use App\Model\ClientPlan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -82,9 +82,10 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/clientLastPlanWithRemainingClasses', [ClientPlan::class, 'clientLastPlanWithRemainingClasses'])->name('clientLastPlanWithRemainingClasses');
 
-
     Route::get('/nextSessions/{branchId}',[EventController::class, 'nextSessions'])->name('nextSessions');
-    Route::post('/user/wellBeign/beignAnswe', [WellBeignController::class, 'beignAnswers'])->name('wellBeign');
+
+    Route::get('/{user}/wellBeingTest', [WellBeingController::class, 'index'])->name('healthTest');
+    Route::post('/{user}/wellBeingTest', [WellBeingController::class, 'processWellBeingTest'])->name('wellBeingTest');
 
 });
 Route::group(['middleware' => 'admin'], function () {
@@ -119,6 +120,4 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('/TyC', function () {
         return view('termsAndConditionsPage');
     });
-
-    Route::get('/valoracion', [RatingController::class, 'index'])->name('healthTest');
 /*End Open routes*/
