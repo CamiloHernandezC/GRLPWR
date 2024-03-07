@@ -19,6 +19,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SesionClienteController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\WellBeingController;
 use App\Model\ClientPlan;
@@ -90,8 +91,9 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('/admin/checkAttendee', [SesionClienteController::class, 'checkAttendee'])->name('checkAttendee');
     Route::get('/{user}/wellBeingTest', [WellBeingController::class, 'index'])->name('healthTest');
     Route::post('/{user}/wellBeingTest', [WellBeingController::class, 'processWellBeingTest'])->name('wellBeingTest');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 });
-
 /*Open routes*/
     Auth::routes();
 
