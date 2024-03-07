@@ -15,7 +15,7 @@
 
         <div class="col-10 col-lg-6 m-auto">
 
-            <h1 class="text-center">Valoracion Física</h1>
+            <h1 class="text-center">Valoración Física</h1>
             <x-input name="weight" description="Peso (Kg)" type="number" required></x-input>
             <x-input name="muscle" description="Músculo" type="number" required></x-input>
             <x-input name="visceral_fat" description="Grasa Visceral" type="number" required></x-input>

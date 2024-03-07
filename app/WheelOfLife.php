@@ -8,6 +8,4 @@ use Illuminate\Database\Eloquent\Model;
 class WheelOfLife extends Model
 {
     use HasFactory;
-
-    protected $table = 'wheel_of_lifes';
 }
