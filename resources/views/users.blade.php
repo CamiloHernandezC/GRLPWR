@@ -10,10 +10,8 @@
 @section('content')
     <div class="container">
         <h2>Listado de Usuarios</h2>
-        <form action="{{ route('users.search') }}" method="GET">
-            @csrf
-            <input type="number" name="phone" placeholder="Buscar por número de teléfono">
-        </form>
+
+        <input type="number" name="phone" placeholder="Buscar por número de teléfono">
     </div>
     <div class="container">
         <h2>Listado de Usuarios</h2>
