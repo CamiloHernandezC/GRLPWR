@@ -63,6 +63,7 @@ class WellBeingController extends controller {
             $trainingPreference->training_frequency = $request->training_frequency;
             $trainingPreference->intensity = $request->intensity;
             $trainingPreference->music = $request->music;
+            $trainingPreference->save();
 
             $wellBeingAssessment = new WellBeingAssessment();
             $wellBeingAssessment->user_id = $user->id;
