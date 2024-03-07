@@ -16,7 +16,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagosController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SesionClienteController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\UserController;
