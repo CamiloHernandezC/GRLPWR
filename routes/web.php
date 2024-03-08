@@ -82,6 +82,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/clientLastPlanWithRemainingClasses', [ClientPlan::class, 'clientLastPlanWithRemainingClasses'])->name('clientLastPlanWithRemainingClasses');
 
+
     Route::get('/nextSessions/{branchId}',[EventController::class, 'nextSessions'])->name('nextSessions');
 });
 Route::group(['middleware' => 'admin'], function () {
