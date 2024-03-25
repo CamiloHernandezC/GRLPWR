@@ -84,12 +84,6 @@
         gtag('config', '{{env('GTAG')}}');
     </script>
 
-    @auth
-        <!--notificaciones-->
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <meta name="userId" content="{{Auth::user()->id}}">
-    @endauth
-
     @stack('head-content')
 </head>
 <body>
@@ -100,7 +94,6 @@
                     <div class="alert bg-{{session('msg_level')}} color-white redondeado">
                         <p>{{session('msg')}}</p>
                     </div>
-
                 </div>
             </div>
         </div>
