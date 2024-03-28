@@ -17,6 +17,8 @@
     <link rel="stylesheet" type="text/css"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons"/>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 @endpush
 
 @section('content')
@@ -60,12 +62,16 @@
                 <p>Nivel Rebote: </p>
                 <p class="counter-count-decimal">{{$user->nivel}}</p>
 
-                @include('cliente/clientPlan')
+                @include('cliente.clientPlan')
+
+                @if(Auth::id() === $user->id || Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
+                    @include('assessments.physicalAssessment')
+                    @include('assessments.wheelOfLife')
+                @endif
 
                 <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} col-12 col-md-10 mx-auto mt-4 p-2">
                     @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
                         <p>Id: {{$user->id}}</p>
-                        <p>Última valoración: {{$user->physicalAssessment?->created_at}}</p>
                     @endif
                     <p>Telefono: {{$user->telefono}}</p>
                     <p>Eps: {{$user->eps}}</p>

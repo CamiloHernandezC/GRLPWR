@@ -7,6 +7,8 @@ use App\ClassType;
 use App\Model\Evento;
 use App\Repositories\ClientPlanRepository;
 use App\View\Composers\EventComposer;
+use App\View\Composers\PhysicalAssessmentComposer;
+use App\View\Composers\WheelOfLifeComposer;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades;
@@ -54,5 +56,8 @@ class ViewServiceProvider extends ServiceProvider
             $clientPlans = $clientPlanRepository->findValidClientPlans(clientId: $route->parameter('user')->id);
             $view->with('clientPlans', $clientPlans);
         });
+
+        Facades\View::composer('assessments.physicalAssessment', PhysicalAssessmentComposer::class);
+        Facades\View::composer('assessments.wheelOfLife', WheelOfLifeComposer::class);
     }
 }
