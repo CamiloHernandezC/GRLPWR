@@ -101,7 +101,7 @@
                 <div class="themed-block p-3 mb-3">
                     <h3 class="mb-5">Reviews ({{$user->reviews->count()}}):</h3>
                     @foreach($user->reviews as $review)
-                        <div class="floating-card bg-dark p-3 mb-3">
+                        <div class="floating-card theme-inverted p-3 mb-3">
                             <div class="float-left">
                                 <img class="rounded-circle" height="48px" width="48px" alt="user"
                                      src="{{asset('images/avatars/'.$review->reviewer->foto)}}">

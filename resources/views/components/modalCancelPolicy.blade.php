@@ -9,7 +9,7 @@
                     la fecha límite es: {{Carbon\Carbon::parse(substr($event->fecha_inicio, 0, 10) . $event->start_hour)->subHours(HOURS_TO_CANCEL_TRAINING)}}</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Close" onclick="checkPlan()">Cerrar</button>
+                <button type="button" class="btn themed-btn" data-dismiss="modal" aria-label="Close" onclick="checkPlan()">Cerrar</button>
             </div>
         </div>
     </div>

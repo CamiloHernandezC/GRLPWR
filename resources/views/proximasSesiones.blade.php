@@ -4,7 +4,7 @@
 
 <div>
     @foreach($events as $event)
-        <div class-type="{{ $event->class_type_id }}" day="{{$event->fecha_inicio}}" class="next-session solicitud-container text-center text-md-left themed-block mb-3">
+        <div class-type="{{ $event->class_type_id }}" day="{{$event->fecha_inicio}}" class="next-session solicitud-container text-center text-md-left themed-block mb-3 border-type-{{$event->class_type_id }}">
             <div class="d-md-flex">
                 <div>
                     <h3 class="d-block my-2">{{$event->nombre}} </h3>

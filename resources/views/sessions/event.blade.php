@@ -20,7 +20,7 @@
                 </button>
             @else
                 <div>
-                    <h1 class="text-center mt-3">
+                    <h1 class="text-center mt-3 ">
                         {{$event->nombre}}
                     </h1>
                     <p class="text-center mb-1"><strong>{{Carbon\Carbon::parse($event->fecha_inicio)->translatedFormat('l d F', 'es')}} {{$event->start_hour}}</strong></p>
@@ -40,11 +40,6 @@
                                 <a class="nav-link white-nav-link active" id="description-tab" data-toggle="tab"
                                    href="#description" role="tab" aria-controls="description" aria-selected="true">Descripción</a>
                             </li>
-                            <li class="nav-item" role="presentation">
-                                <a class="nav-link white-nav-link" id="additional-info-tab" data-toggle="tab"
-                                   href="#additional-info" role="tab" aria-controls="additional-info"
-                                   aria-selected="false">Info Adicional</a>
-                            </li>
                         </ul>
                         <div class="tab-content w-100 w-md-75 m-3" id="infoTabContent" style="text-align: justify;">
                             <div class="tab-pane fade show active" id="description" role="tabpanel"
@@ -53,17 +48,17 @@
                                  aria-labelledby="additional-info-tab">{{$event->info_adicional}}</div>
                         </div>
                         <div class="d-flex justify-content-around">
-                            <button type="button" class="btn bg-fifth ms-3" data-toggle="modal" data-target="#alertaCancelaciontemprana" >Agendar</button>
-                            <button type="button" class="btn bg-fifth ms-3" data-toggle="modal" data-target="#guestModal" >Invitar</button>
+                            <button type="button" class="btn themed-btn ms-3" data-toggle="modal" data-target="#alertaCancelaciontemprana" >Agendar</button>
+                            <button type="button" class="btn themed-btn ms-3" data-toggle="modal" data-target="#guestModal" >Invitar</button>
                         </div>
                     </div>
                 </div>
                 @if((strcasecmp (\Illuminate\Support\Facades\Auth::user()->rol, \App\Utils\Constantes::ROL_ADMIN ) != 0))
                     @include('scheduleModal')
                 @endif
-                <h1 class="text-center mt-5">
+                <h2 class="text-center mt-5 ">
                     Próximos Eventos
-                </h1>
+                </h2>
 
                 @include('proximasSesiones')
             @endif
