@@ -35,11 +35,11 @@
                          aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%
                     </div>
                 </div>
-                <button class="btn btn-success d-block ml-auto mr-auto" data-toggle="modal"
+                <button class="btn themed-btn d-block ml-auto mr-auto" data-toggle="modal"
                         data-target="#completarPerfilModal">Completar perfil
                 </button>
             @else
-                <button class="btn btn-success d-block ml-auto mr-auto" data-toggle="modal"
+                <button class="btn themed-btn d-block ml-auto mr-auto" data-toggle="modal"
                         data-target="#completarPerfilModal">Editar perfil
                 </button>
             @endif
@@ -62,7 +62,7 @@
 
                 @include('cliente/clientPlan')
 
-                <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} col-12 col-md-10 mx-auto mt-4 p-2">
+                <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
                     @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
                         <p>Id: {{$user->id}}</p>
                         <p>Última valoración: {{$user->physicalAssessment?->created_at}}</p>
@@ -80,7 +80,7 @@
                     @endif
                 </div>
 
-                <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} col-12 col-md-10 mx-auto mt-4 p-2">
+                <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
                     <h2 class="section-title">Antropometría:</h2>
                     @if($user->cliente?->peso())
                         <p><strong>Peso: </strong>{{number_format($user->cliente->peso()->peso, 2)}} Kg</p>
@@ -140,7 +140,7 @@
                 </div>
 
 
-                <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} col-12 col-md-10 mx-auto mt-4 p-2">
+                <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
                     <h2 class="section-title">Riesgo Cardiovascular:</h2>
                     @php($cardiovascularRisk = $user->cliente?->cardiovascularRisk())
                     <div class="d-flex mb-3">
@@ -167,7 +167,7 @@
 
                 @php($maxHeartRate = $user->cliente?->maxHeartRate()?->max_heart_rate)
                 @isset($maxHeartRate)
-                    <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} col-12 col-md-10 mx-auto mt-4 p-2">
+                    <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
                         <h2 class="section-title">Frecuencias Cardiacas de actividad:</h2>
                         <div>
                             <p class="d-inline-block">Frecuencia Máxima</p>
@@ -193,7 +193,7 @@
 
                 @php($fitnessComponent = $user->cliente?->fitnessComponent())
                 @isset($fitnessComponent)
-                    <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} col-12 col-md-10 mx-auto mt-3 p-4">
+                    <div class="themed-block col-12 col-md-10 mx-auto mt-3 p-4">
                         <h2 class="section-title">COMPONENTES FITNESS:</h2>
                         @isset($fitnessComponent->muscular_endurance)
                             <div>
@@ -222,7 +222,7 @@
 
                 @php($exercisePrescription = $user->cliente?->exercisePrescription())
                 @isset($exercisePrescription)
-                    <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} col-12 col-md-10 mx-auto mt-3 p-4">
+                    <div class="themed-block col-12 col-md-10 mx-auto mt-3 p-4">
                         <h2 class="section-title">RECOMENDACIONES DE PRESCRIPCION DE EJERCICIO:</h2>
                         <ul class="mr-3">
                         @foreach($exercisePrescription as $prescription)
@@ -234,7 +234,7 @@
 
                 @php($nutritionAndHealth = $user->cliente?->nutritionAndHealth())
                 @isset($nutritionAndHealth)
-                    <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} col-12 col-md-10 mx-auto mt-3 p-4">
+                    <div class="themed-block col-12 col-md-10 mx-auto mt-3 p-4">
                         <h2 class="section-title">RECOMENDACIONES DE NUTRICION Y SALUD:</h2>
                         <ul class="mr-3">
                             @foreach($nutritionAndHealth as $recommendation)

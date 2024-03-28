@@ -39,9 +39,9 @@
             </div>
         @endif
 
-        <div class="{{\Illuminate\Support\Facades\Blade::check('feature', 'dark_theme', false) ? "floating-card bg-semi-transparent" : "box-shadow"}} mb-5 pb-4">
+        <div class="themed-block mb-5 pb-4">
             <div class="wizard-container">
-                <div class="wizard-card" data-color="green" id="wizardProfile">
+                <div class="wizard-card" data-color="purple" id="wizardProfile">
                     <form id="saveClientPlanForm" method="post" action="{{route('saveClientPlan')}}" enctype="multipart/form-data">
                     @method('POST')
                     @csrf
@@ -167,9 +167,9 @@
                         </div>
                         <div class="wizard-footer">
                             <div class="float-right">
-                                <input type='button' class='btn btn-next btn-fill btn-success btn-wd' name='next' id="next"
+                                <input type='button' class='btn btn-next btn-fill themed-btn btn-wd' name='next' id="next"
                                        value='Siguiente'/>
-                                <input type='submit' class='btn btn-finish btn-fill btn-success btn-wd' name='finish'
+                                <input type='submit' class='btn btn-finish btn-fill themed-btn btn-wd' name='finish'
                                        value='Finalizar'/>
                             </div>
                             <div class="float-left">

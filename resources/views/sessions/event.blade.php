@@ -17,7 +17,7 @@
                     la fecha límite es: {{Carbon\Carbon::parse(substr($event->fecha_inicio, 0, 10) . $event->start_hour)->subHours(HOURS_TO_CANCEL_TRAINING)}}</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Close" onclick="checkPlan()">Cerrar</button>
+                    <button type="button" class="btn themed-btn" data-dismiss="modal" aria-label="Close" onclick="checkPlan()">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -26,14 +26,14 @@
     <div class="text-center">
         @if(strcasecmp (\Illuminate\Support\Facades\Auth::user()->rol, 'cliente' ) == 0 && \Illuminate\Support\Facades\Auth::user()->cliente == null)
             <h2 class="w-75 m-auto">Para agendarte a los eventos debes completar tu perfil</h2>
-            <button class="btn btn-success d-block mx-auto mt-3" data-toggle="modal"
+            <button class="btn themed-btn d-block mx-auto mt-3" data-toggle="modal"
                     data-target="#completarPerfilModal">Completar perfil
             </button>
         @else
             @if(strcasecmp($event->classType->type, \App\Utils\PlanTypesEnum::KANGOO->value) === 0 &&
                     (!\Illuminate\Support\Facades\Auth::user()->cliente->peso() || !\Illuminate\Support\Facades\Auth::user()->cliente->talla_zapato))
                 <h2 class="w-75 m-auto">Para los eventos de kangoo debes completar tu perfil con la información de tu peso y talla de zapato</h2>
-                <button class="btn btn-success d-block mx-auto mt-3" data-toggle="modal"
+                <button class="btn themed-btn d-block mx-auto mt-3" data-toggle="modal"
                         data-target="#completarPerfilModal">Completar perfil
                 </button>
             @else
