@@ -26,7 +26,7 @@
                     <p class="text-center mb-1"><strong>{{Carbon\Carbon::parse($event->fecha_inicio)->translatedFormat('l d F', 'es')}} {{$event->start_hour}}</strong></p>
                     <p class="text-center mb-1">Lugar: {{$event->lugar}}</p>
                     <div class="w-75 m-auto d-flex justify-content-center">
-                        <img src="{{asset('images/'.$event->imagen)}}" style="max-width: 95vw; max-height: 600px"
+                        <img class="exercise-image" src="{{asset('images/'.$event->imagen)}}"
                              alt="Eventos @lang('general.AppName')">
                     </div>
                     @if((strcasecmp (\Illuminate\Support\Facades\Auth::user()->rol, \App\Utils\Constantes::ROL_ADMIN ) == 0))

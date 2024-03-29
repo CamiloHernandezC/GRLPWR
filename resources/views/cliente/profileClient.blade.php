@@ -84,7 +84,7 @@
                 @include('cliente.clientPlan')
 
                 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
-                    <h2 class="section-title">Antropometría:</h2>
+                    <h3 class="section-title">Antropometría:</h3>
                     @if($user->cliente?->peso())
                         <p><strong>Peso: </strong>{{number_format($user->cliente->peso()->peso, 2)}} Kg</p>
                     @endif

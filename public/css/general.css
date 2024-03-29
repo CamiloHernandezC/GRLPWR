@@ -20,6 +20,10 @@
         width: 99vw;
         right: -73px;
     }
+    .exercise-image{
+        max-width: 300px;
+        aspect-ratio: 1;
+    }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
@@ -43,6 +47,10 @@
     .notification{
         width: 99vw;
         right: -73px;
+    }
+    .exercise-image{
+        max-width: 300px;
+        aspect-ratio: 1;
     }
 }
 
@@ -93,6 +101,10 @@
     .notification{
         width: 30vw;
         right: 0;
+    }
+    .exercise-image{
+        max-width: 600px;
+        border-radius: 20px;
     }
 }
 
@@ -742,34 +754,36 @@ body {
     background: linear-gradient(90deg, rgba(67,0,36,1) 0%, rgba(67,5,68,1) 72%, rgba(87,6,88,1) 100%);
     color: white;
 }
+.theme-color{
+    color: #420542;
+}
 .border-type-1{
-    border-bottom: 5px solid #0D9E97;
+    border-bottom: 2px solid #0D9E97;
 }
 .border-type-2{
-    border-bottom: 5px solid #420542;
+    border-bottom: 2px solid #420542;
 }
 .border-type-3{
-    border-bottom: 5px solid #ce6025;
+    border-bottom: 2px solid #ce6025;
 }
 .border-type-4{
-    border-bottom: 5px solid #ED9B7E;
+    border-bottom: 2px solid #ED9B7E;
 }
 .border-type-5{
-    border-bottom: 5px solid #C410C7FF;
+    border-bottom: 2px solid #C410C7FF;
 }
 .border-type-6{
-    border-bottom: 5px solid gold;
+    border-bottom: 2px solid gold;
 }
 .border-type-8{
-    border-bottom: 5px solid #118a21;
+    border-bottom: 2px solid #118a21;
 }
 .border-type-9{
-    border-bottom: 5px solid cornflowerblue;
+    border-bottom: 2px solid cornflowerblue;
 }
 .border-type-10{
-    border-bottom: 5px solid cornflowerblue;
+    border-bottom: 2px solid cornflowerblue;
 }
 .border-type-13{
-    border-bottom: 5px solid red;
+    border-bottom: 2px solid red;
 }
-

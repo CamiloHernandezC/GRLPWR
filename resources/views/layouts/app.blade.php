@@ -148,9 +148,11 @@
                             <a class="dropdown-item d-block d-md-none" href="{{route('blogs')}}">
                                 Blogs
                             </a>
-                            <a class="dropdown-item d-block d-md-none" href="{{route('users.index')}}">
-                                Users
-                            </a>
+                            @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
+                                <a class="dropdown-item d-block d-md-none" href="{{route('users.index')}}">
+                                    Users
+                                </a>
+                            @endif
                             <a class="dropdown-item" href="{{ route('logout') }}"
                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 {{ __('Logout') }}

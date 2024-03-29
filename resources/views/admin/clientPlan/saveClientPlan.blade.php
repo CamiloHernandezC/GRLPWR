@@ -30,7 +30,7 @@
                 <ul>
                     @foreach($errors->all() as $error)
                         <li>
-                        <span class="invalid-feedback" role="alert" style="color: white">
+                        <span class="invalid-feedback" role="alert">
                             <strong>{{ $error}}</strong>
                          </span>
                         </li>
@@ -50,7 +50,7 @@
 
                         <!--        You can switch " data-color="purple" "  with one of the next bright colors: "green", "orange", "red", "blue"       -->
                         <div class="wizard-header">
-                            <h3 class="wizard-title" style="color: white!important;">
+                            <h3 class="wizard-title">
                                 Cargar Plan
                             </h3>
                         </div>
@@ -84,14 +84,14 @@
                             </div>
                             <div class="tab-pane" id="pago">
                                 <div class="row mt-4">
-                                    <div class="m-auto w-100 color-white">
+                                    <div class="m-auto w-100">
                                         <div class="input-group col-10 col-md-5 m-auto">
                                             <span class="iconos">
                                                 <i class="fas fa-credit-card"></i>
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Método de pago <small>(requerido)</small></label>
-                                                <select class="form-control color-white" id="paymentMethodId" name="paymentMethodId">
+                                                <select class="form-control" id="paymentMethodId" name="paymentMethodId">
                                                     <option disabled selected value style="display:none"></option>
                                                     @foreach($paymentMethods as $paymentMethod)
                                                         <option class="color-black" value="{{$paymentMethod->id}}">{{$paymentMethod->name}}</option>
@@ -105,7 +105,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Valor pagado <small>(requerido)</small></label>
-                                                <input name="amount" type="number" step="1" class="form-control color-white">
+                                                <input name="amount" type="number" step="1" class="form-control">
                                             </div>
                                         </div>
                                         <div class='input-group col-10 col-md-5 m-auto' id="datepicker">
@@ -114,7 +114,7 @@
                                             </span>
                                             <div id="dateContainer" class="form-group label-floating">
                                                 <label class="control-label">Día de pago <small>(requerido)</small></label>
-                                                <input name="payDay" class="form-control input-group-addon color-white" type="text">
+                                                <input name="payDay" class="form-control input-group-addon" type="text">
                                             </div>
                                         </div>
                                         <div class="input-group col-10 col-md-5 m-auto">
@@ -123,7 +123,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Comentario <small>(opcional)</small></label>
-                                                <textarea name="data" class="form-control color-white" rows="3"></textarea>
+                                                <textarea name="data" class="form-control" rows="3"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -131,14 +131,14 @@
                             </div>
                             <div class="tab-pane" id="plan">
                                 <div class="row mt-4">
-                                    <div class="m-auto w-100 color-white">
+                                    <div class="m-auto w-100">
                                         <div class="input-group col-10 col-md-5 m-auto">
                                             <span class="iconos">
                                                 <i class="fas fa-credit-card"></i>
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Plan <small>(requerido)</small></label>
-                                                <select class="form-control color-white" id="planId" name="planId">
+                                                <select class="form-control" id="planId" name="planId">
                                                     <option disabled selected value style="display:none"></option>
                                                     @foreach($enabledPlans as $plan)
                                                         <option class="color-black" value="{{$plan->id}}">{{$plan->name}}</option>
