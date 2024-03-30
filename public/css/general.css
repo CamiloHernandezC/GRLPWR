@@ -787,3 +787,9 @@ body {
 .border-type-13{
     border-bottom: 2px solid red;
 }
+.carousel-control-next, .carousel-control-prev{
+    background: 0 0;
+    border: 0;
+    opacity: .5;
+    transition: opacity .15s ease;
+}

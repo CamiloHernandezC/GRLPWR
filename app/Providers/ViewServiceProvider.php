@@ -7,6 +7,7 @@ use App\ClassType;
 use App\Model\Evento;
 use App\Repositories\ClientPlanRepository;
 use App\View\Composers\EventComposer;
+use App\View\Composers\HighlightComposer;
 use App\View\Composers\PhysicalAssessmentComposer;
 use App\View\Composers\TrainingPreferencesComposer;
 use App\View\Composers\WheelOfLifeComposer;
@@ -61,5 +62,6 @@ class ViewServiceProvider extends ServiceProvider
         Facades\View::composer('assessments.physicalAssessment', PhysicalAssessmentComposer::class);
         Facades\View::composer('assessments.wheelOfLife', WheelOfLifeComposer::class);
         Facades\View::composer('cliente.trainingPreferences', TrainingPreferencesComposer::class);
+        Facades\View::composer('highlightSection', HighLightComposer::class);
     }
 }

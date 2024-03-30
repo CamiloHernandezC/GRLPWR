@@ -55,18 +55,14 @@
     @endif
 @endsection
 
-@section('card2')
+@push('cards')
     @if(!$visitante)
         @include('entrenamientosAgendados')
         @if(isset($reviewFor))
             @include('modalDarReviewEntrenamiento')
         @endif
+        @include('highlightSection')
         @include('cliente/clientPlan')
-    @endif
-@endsection
-
-@push('cards')
-    @if(!$visitante)
         <div class="p-3 mb-3">
             <div class="mb-3 d-flex justify-content-between">
                 <h3>Próximas sesiones:</h3>
