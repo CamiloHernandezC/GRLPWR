@@ -83,10 +83,7 @@
                 <p>{{$user->edad}}</p>
             </div>
             <div id="right-div" class="ml-md-auto m-3">
-                @yield('card1')
-                @yield('card2')
                 @stack('cards')
-
 
                 <div>
                     <h1 class="text-center">
