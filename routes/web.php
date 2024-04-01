@@ -18,9 +18,12 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SesionClienteController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\WellBeingController;
 use App\Model\ClientPlan;
-use \Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/mis_solicitudes/crear', 'SolicitudServicioController@irCrear')->name('irCrearSolicitud');
@@ -86,8 +89,11 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('/admin/loadPlan', [ClientPlanController::class, 'showLoadClientPlan']);
     Route::post('/admin/loadPlan', [ClientPlanController::class, 'saveClientPlan'])->name('saveClientPlan');
     Route::post('/admin/checkAttendee', [SesionClienteController::class, 'checkAttendee'])->name('checkAttendee');
+    Route::get('/user/{user}/wellBeingTest', [WellBeingController::class, 'index'])->name('healthTest');
+    Route::post('/user/{user}/wellBeingTest', [WellBeingController::class, 'processWellBeingTest'])->name('wellBeingTest');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
 });
-
 /*Open routes*/
     Auth::routes();
 
@@ -110,6 +116,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('/loadSessions',[EventController::class, 'ajaxNextSessions'])->name('loadSessions');
 
     Route::post('/scheduleCourtesy',[SesionClienteController::class, 'scheduleCourtesy'])->name('scheduleCourtesy');
+    Route::post('/scheduleGuest',[SesionClienteController::class, 'scheduleGuest'])->name('scheduleGuest');
 
     Route::get('/TyC', function () {
         return view('termsAndConditionsPage');
