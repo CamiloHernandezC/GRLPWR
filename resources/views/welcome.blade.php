@@ -54,8 +54,6 @@
 
             gtag('config', '{{env('GTAG')}}');
         </script>
-
-        <script src="{{ asset('js/moment.min.js') }}"></script>
     </head>
     <body data-spy="scroll" data-target=".navbar">
 
