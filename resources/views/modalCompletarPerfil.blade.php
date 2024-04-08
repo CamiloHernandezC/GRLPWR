@@ -95,7 +95,7 @@
                                                                 </span>
                                                 <div class="form-group label-floating">
                                                     <label class="control-label">Primer apellido <small>(requerido)</small></label>
-                                                    <input name="lastname" type="text" class="form-control" value="{{Auth::user()->apellido_1}}">
+                                                    <input name="lastname" id="lastname" type="text" class="form-control" value="{{Auth::user()->apellido_1}}">
                                                 </div>
                                             </div>
 
@@ -105,7 +105,7 @@
                                                                 </span>
                                                 <div class="form-group label-floating">
                                                     <label class="control-label">Segundo apellido <small>(opcional)</small></label>
-                                                    <input name="lastname2" type="text" class="form-control" value="{{Auth::user()->apellido_2}}">
+                                                    <input name="lastname2" id="lastname2" type="text" class="form-control" value="{{Auth::user()->apellido_2}}">
                                                 </div>
                                             </div>
 
@@ -115,7 +115,7 @@
                                                             </span>
                                                 <div id="dateContainer" class="form-group label-floating">
                                                     <label class="control-label">Fecha de nacimiento <small>(requerido)</small></label>
-                                                    <input name="dateborn" class="form-control input-group-addon" type="text" value="{{Auth::user()->fecha_nacimiento ? Auth::user()->fecha_nacimiento->format('d/m/Y') : ''}}">
+                                                    <input name="dateborn" id="bornDate" class="form-control input-group-addon" type="text" value="{{Auth::user()->fecha_nacimiento ? Auth::user()->fecha_nacimiento->format('d/m/Y') : ''}}">
                                                 </div>
                                             </div>
 
@@ -125,7 +125,7 @@
                                                                 </span>
                                                 <div class="form-group label-floating">
                                                     <label class="control-label">Número de Identidad <small>(requerido)</small></label>
-                                                    <input name="documentId" type="number" class="form-control" value="{{Auth::user()->document_id}}">
+                                                    <input name="documentId" id="numId" type="number" class="form-control" value="{{Auth::user()->document_id}}">
                                                 </div>
                                             </div>
                                             @yield('generoEntrenador')
@@ -142,7 +142,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">EPS <small>(requerido)</small></label>
-                                                <input name="eps" type="text" class="form-control" value="{{Auth::user()->eps}}">
+                                                <input name="eps" id="eps" type="text" class="form-control" value="{{Auth::user()->eps}}">
                                             </div>
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Estado Civil <small>(requerido)</small></label>
-                                                <select class="form-control" name="maritalStatus">
+                                                <select class="form-control" name="maritalStatus" id="maritalStatus">
                                                     <option disabled selected value style="display:none"></option>
                                                     <option value="Soltera" {{Auth::user()->marital_status === 'Soltera' ? "selected" : ""}}>Soltera</option>
                                                     <option value="Casada" {{Auth::user()->marital_status === 'Casada' ? "selected" : ""}}>Casada</option>
@@ -169,7 +169,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Ocupación <small>(requerido)</small></label>
-                                                <input name="occupation" type="text" class="form-control" value="{{Auth::user()->occupation}}">
+                                                <input name="occupation" id="occupation" type="text" class="form-control" value="{{Auth::user()->occupation}}">
                                             </div>
                                         </div>
                                     </div>
@@ -180,7 +180,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">¿Cómo nos conociste? <small>(requerido)</small></label>
-                                                <select class="form-control" name="channel">
+                                                <select class="form-control" name="channel" id="channel">
                                                     <option disabled selected value style="display:none"></option>
                                                     <option value="Facebook" {{Auth::user()->cliente != null && Auth::user()->cliente->channel === 'Facebook' ? "selected" : ""}}>Facebook</option>
                                                     <option value="Instagram" {{Auth::user()->cliente != null && Auth::user()->cliente->channel === 'Instagram' ? "selected" : ""}}>Instagram</option>
@@ -226,7 +226,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Instagram <small>(opcional)</small></label>
-                                                <input name="instagram" type="text" class="form-control" value="{{Auth::user()->instagram}}">
+                                                <input name="instagram" id="instagram" type="text" class="form-control" value="{{Auth::user()->instagram}}">
                                             </div>
                                         </div>
                                     </div>
@@ -237,7 +237,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Nombre Contacto de emergencia <small>(requerido)</small></label>
-                                                <input name="emergencyContact" type="text" class="form-control" value="{{Auth::user()->emergency_contact}}">
+                                                <input name="emergencyContact" id="emergencyContact" type="text" class="form-control" value="{{Auth::user()->emergency_contact}}">
                                             </div>
                                         </div>
                                     </div>
@@ -248,7 +248,7 @@
                                             </span>
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Número contacto de emergencia <small>(requerido)</small></label>
-                                                <input name="emergencyPhone" type="number" min="1000000000" max="9999999999" class="form-control" value="{{Auth::user()->emergency_phone}}">
+                                                <input name="emergencyPhone" id="emergencyPhone" type="number" min="1000000000" max="9999999999" class="form-control" value="{{Auth::user()->emergency_phone}}">
                                             </div>
                                         </div>
                                     </div>
@@ -261,8 +261,8 @@
                             </div>
                             <div class="wizard-footer">
                                 <div class="float-right">
-                                    <input type='button' class='btn btn-next btn-fill themed-btn btn-wd' name='next' value='Siguiente' />
-                                    <input type='submit' class='btn btn-finish btn-fill themed-btn btn-wd' name='finish' value='Finalizar'/>
+                                    <input type='button' class='btn btn-next btn-fill themed-btn btn-wd' name='next' id="next" value='Siguiente' />
+                                    <input type='submit' class='btn btn-finish btn-fill themed-btn btn-wd' name='finish' id="finish" value='Finalizar'/>
                                 </div>
 
                                 <div class="float-left">

@@ -1,9 +1,9 @@
 @section('tab3Title')
-    Información físca
+    Información física
 @endsection
 
 @section('tab3Content')
-    <div class="row m-auto">
+    <div class="row m-auto" id="PhysicalInformation">
         <div class="col-sm-12 col-md-6 m-auto">
             <div class="input-group">
                 <span class="input-group-addon iconos">
@@ -12,10 +12,10 @@
                 <div class="form-group label-floating">
                     <label class="control-label">Peso aproximado <small>(kilogramos)</small></label>
                     @if(Auth::user()->cliente != null &&  Auth::user()->cliente->peso())
-                        <input name="peso" type="number" step="1" class="form-control" required
+                        <input name="peso" id="weight" type="number" step="1" class="form-control" required
                                value="{{number_format(Auth::user()->cliente->peso()->peso, 2)}}">
                     @else
-                        <input name="peso" type="number" step="1" class="form-control" required>
+                        <input name="peso" id="weight" type="number" step="1" class="form-control" required>
                     @endif
                 </div>
             </div>
@@ -27,10 +27,10 @@
                 <div class="form-group label-floating">
                     <label class="control-label">Estatura inicial <small>(centimetros)</small></label>
                     @if(Auth::user()->cliente != null && Auth::user()->cliente->estatura())
-                        <input name="estatura" type="number" step="1" class="form-control" required
+                        <input name="estatura" id="height" type="number" step="1" class="form-control" required
                                value="{{number_format(Auth::user()->cliente->estatura()->estatura, 2)}}">
                     @else
-                        <input name="estatura" type="number" step="1" class="form-control" required>
+                        <input name="estatura" id="height" type="number" step="1" class="form-control" required>
                     @endif
                 </div>
             </div>
@@ -41,10 +41,10 @@
                 <div class="form-group label-floating">
                     <label class="control-label">Talla de zapatos <small>(34 a 45)</small></label>
                     @if(Auth::user()->cliente != null && Auth::user()->cliente->talla_zapato)
-                        <input name="tallaZapato" type="number" step="1" min="34" class="form-control" required
+                        <input name="tallaZapato" id="shoeSize" type="number" step="1" min="34" class="form-control" required
                                value="{{number_format(Auth::user()->cliente->talla_zapato, 2)}}">
                     @else
-                        <input name="tallaZapato" type="number" step="1" class="form-control" required>
+                        <input name="tallaZapato" id="shoeSize" type="number" step="1" class="form-control" required>
                     @endif
                 </div>
             </div>

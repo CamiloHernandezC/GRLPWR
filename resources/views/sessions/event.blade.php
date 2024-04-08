@@ -48,7 +48,7 @@
                                  aria-labelledby="additional-info-tab">{{$event->info_adicional}}</div>
                         </div>
                         <div class="d-flex justify-content-around">
-                            <button type="button" class="btn themed-btn ms-3" data-toggle="modal" data-target="#alertaCancelaciontemprana" >Agendar</button>
+                            <button type="button" class="btn themed-btn ms-3" id= "Schedule" data-toggle="modal" data-target="#alertaCancelaciontemprana" >Agendar</button>
                             <button type="button" class="btn themed-btn ms-3" data-toggle="modal" data-target="#guestModal" >Invitar</button>
                         </div>
                     </div>

@@ -81,7 +81,7 @@
         </div>
     </nav>
 
-    <div class="modal fade justify-content-center align-items-center" id="msgModal" tabindex="-1" role="dialog">
+    <div class="modal fade justify-content-center align-items-center" id="msgModal2" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content" style="background: none; border: none">
                 <div class="modal-body" style="padding: 0 0 3vh 0">

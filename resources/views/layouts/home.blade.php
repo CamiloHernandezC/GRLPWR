@@ -60,7 +60,7 @@
                                  aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%
                             </div>
                         </div>
-                        <button class="btn themed-btn d-block ml-auto mr-auto" data-toggle="modal"
+                        <button class="btn themed-btn d-block ml-auto mr-auto" id="completarPerfil" data-toggle="modal"
                                 data-target="#completarPerfilModal">Completar perfil
                         </button>
                     @else
