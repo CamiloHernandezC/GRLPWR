@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\Model\Entrenador::class, function (Faker $faker) {
+$factory->define(App\Entrenador::class, function (Faker $faker) {
     $usuarioID = \DB::table('usuarios')
         ->leftJoin('entrenadores', 'usuarios.id', '<>', 'entrenadores.usuario_id')
         ->where('usuarios.rol', 'entrenador')

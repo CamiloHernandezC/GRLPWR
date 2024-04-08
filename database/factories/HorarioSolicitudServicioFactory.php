@@ -2,7 +2,7 @@
 
 use Faker\Generator as Faker;
 
-$factory->define(App\Model\HorarioSolicitudServicio::class, function (Faker $faker) {
+$factory->define(App\HorarioSolicitudServicio::class, function (Faker $faker) {
     return [
         'solicitud_servicio_id' => random_int(\DB::table('solicitudes_servicio')->min('id'), \DB::table('solicitudes_servicio')->max('id')),
         'fecha' => $faker -> date(),

@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\PaymentMethod>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Model>
  */
-class PaymentMethodFactory extends Factory
+class PostFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,8 +17,7 @@ class PaymentMethodFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->text(140),
-            'enabled' => 1,
+            //
         ];
     }
 }
