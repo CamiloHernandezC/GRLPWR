@@ -1,7 +1,7 @@
 <?php
 
+use App\SolicitudServicio;
 use Illuminate\Database\Seeder;
-use App\Model\SolicitudServicio;
 
 class SolicitudServicioSeeder extends Seeder
 {

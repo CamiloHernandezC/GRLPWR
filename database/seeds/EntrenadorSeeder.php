@@ -11,6 +11,6 @@ class EntrenadorSeeder extends Seeder
      */
     public function run()
     {
-        factory(\App\Model\Entrenador::class)->create();
+        factory(App\Entrenador::class)->create();
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
+use App\Tags;
 use Illuminate\Database\Seeder;
-use App\Model\Tags;
 
 class TagSeeder extends Seeder
 {

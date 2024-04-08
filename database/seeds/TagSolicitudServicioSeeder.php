@@ -11,6 +11,6 @@ class TagSolicitudServicioSeeder extends Seeder
      */
     public function run()
     {
-        factory(\App\Model\TagsSolicitudServicio::class)->times(2)->create();
+        factory(App\TagsSolicitudServicio::class)->times(2)->create();
     }
 }

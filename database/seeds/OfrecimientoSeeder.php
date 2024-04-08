@@ -11,6 +11,6 @@ class OfrecimientoSeeder extends Seeder
      */
     public function run()
     {
-        factory(\App\Model\Ofrecimientos::class)->times(2)->create();
+        factory(App\Ofrecimientos::class)->times(2)->create();
     }
 }

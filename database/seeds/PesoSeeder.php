@@ -1,7 +1,7 @@
 <?php
 
+use App\Peso;
 use Illuminate\Database\Seeder;
-use App\Model\Peso;
 
 class PesoSeeder extends Seeder
 {

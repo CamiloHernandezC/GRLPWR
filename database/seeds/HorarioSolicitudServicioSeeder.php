@@ -11,6 +11,6 @@ class HorarioSolicitudServicioSeeder extends Seeder
      */
     public function run()
     {
-        factory(\App\Model\HorarioSolicitudServicio::class)->create();
+        factory(App\HorarioSolicitudServicio::class)->create();
     }
 }
