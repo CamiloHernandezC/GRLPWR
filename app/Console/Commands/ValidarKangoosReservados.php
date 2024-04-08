@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Model\SesionCliente;
+use App\SesionCliente;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;

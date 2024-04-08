@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use App\EditedEvent;
 use App\EventHour;
+use App\Evento;
 use App\Exceptions\NoAvailableEquipmentException;
 use App\Exceptions\ShoeSizeNotSupportedException;
 use App\Exceptions\WeightNotSupportedException;
 use App\Http\Controllers\Auth\SeguridadController;
 use App\Http\Services\KangooService;
-use App\Model\Evento;
 use App\Repositories\ClientPlanRepository;
 use App\Utils\Constantes;
 use App\Utils\DaysEnum;

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Cliente;
 use App\EditedEvent;
+use App\Evento;
 use App\Exceptions\NoAvailableEquipmentException;
 use App\Exceptions\NoVacancyException;
 use App\Exceptions\ShoeSizeNotSupportedException;
@@ -10,14 +12,12 @@ use App\Exceptions\WeightNotSupportedException;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Services\KangooService;
 use App\Mail\CourtesyScheduled;
-use App\Model\Cliente;
-use App\Model\Evento;
-use App\Model\Peso;
-use App\Model\Review;
-use App\Model\ReviewSession;
-use App\Model\SesionCliente;
+use App\Peso;
 use App\RemainingClass;
 use App\Repositories\ClientPlanRepository;
+use App\Review;
+use App\ReviewSession;
+use App\SesionCliente;
 use App\User;
 use App\Utils\PlanTypesEnum;
 use Carbon\Carbon;
@@ -329,7 +329,7 @@ class SesionClienteController extends Controller
                     Session::save();
                     return back();
                 }
-                if($session->fecha_inicio->subHours(HOURS_TO_CANCEL_TRAINING) < now()){
+                if($session->fecha_inicio->subHours(config('app.hours_to_cancel_training')) < now()){
                     $session->delete();
                     Session::put('msg_level', 'warning');
                     Session::put('msg', __('general.message_enable_late_cancellation'));

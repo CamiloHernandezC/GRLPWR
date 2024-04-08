@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\Cliente;
-use App\Model\ClientPlan;
-use App\Model\Plan;
-use App\Model\TransaccionesPagos;
+use App\Cliente;
+use App\ClientPlan;
 use App\PaymentMethod;
+use App\Plan;
 use App\RemainingClass;
+use App\TransaccionesPagos;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

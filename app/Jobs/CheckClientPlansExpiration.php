@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
+use App\ClientPlan;
 use App\DTO\ExpirationInfo;
-use App\Model\ClientPlan;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 

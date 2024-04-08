@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\Plan;
+use App\Plan;
 use Illuminate\Contracts\View\View;
 use Validator;
 

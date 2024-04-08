@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Cliente;
+use App\Entrenador;
+use App\Estatura;
 use App\Http\Controllers\Auth\SeguridadController;
-use App\Model\Cliente;
-use App\Model\Entrenador;
-use App\Model\Estatura;
-use App\Model\Peso;
-use App\Model\ReviewUser;
+use App\Peso;
+use App\ReviewUser;
 use App\User;
 use App\Utils\AuthEnum;
 use App\Utils\Constantes;

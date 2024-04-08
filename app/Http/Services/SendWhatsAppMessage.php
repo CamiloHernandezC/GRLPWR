@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\Model\ClientPlan;
+use App\ClientPlan;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 

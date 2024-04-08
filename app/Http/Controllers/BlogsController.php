@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\Blog;
-use App\Model\Comentario;
+use App\Blog;
+use App\Comentario;
 use App\User;
 use App\Utils\Constantes;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Validator;
 

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\SesionCliente;
-use App\Model\TransaccionesPagos;
-use App\Model\TransaccionesPendientes;
+use App\SesionCliente;
+use App\TransaccionesPagos;
+use App\TransaccionesPendientes;
 use App\Utils\PayTypesEnum;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;

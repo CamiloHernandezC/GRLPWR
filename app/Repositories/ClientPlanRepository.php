@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Model\ClientPlan;
+use App\ClientPlan;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 

@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Model\Ofrecimientos;
-use App\Model\SolicitudServicio;
-use App\Model\Tags;
+use App\Http\Controllers\Auth\SeguridadController;
+use App\SolicitudServicio;
+use App\Tags;
 use App\User;
 use App\Utils\Constantes;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Auth\SeguridadController;
-use Illuminate\Support\Facades\DB;
 
 class BusquedaEntrenadorController extends Controller
 {

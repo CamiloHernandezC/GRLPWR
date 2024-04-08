@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Model\SolicitudServicio;
-use App\Model\TransaccionesPagos;
-use App\Model\TransaccionesPendientes;
 use App\Notifications\OfertaAceptada;
+use App\SolicitudServicio;
+use App\TransaccionesPagos;
+use App\TransaccionesPendientes;
 use App\User;
 use GuzzleHttp\Client;
 use Illuminate\Console\Command;

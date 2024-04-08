@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Model\SesionCliente;
+use App\SesionCliente;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
