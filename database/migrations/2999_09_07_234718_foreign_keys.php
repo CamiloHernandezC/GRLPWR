@@ -13,6 +13,7 @@ class ForeignKeys extends Migration
      */
     public function up()
     {
+        /*
         Schema::table('clientes', function (Blueprint $table) {
             $table->foreign('usuario_id')->references('id')->on('usuarios');
         });
@@ -33,8 +34,8 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('ofrecimientos', function (Blueprint $table) {
-            $table->foreign('solicitud_servicio_id')->references('id')->on('solicitudes_servicio');
-            $table->foreign('usuario_id')->references('id')->on('usuarios');//se coloca directamente en usuarios, para que un entrenador pueda crear solicitudes sin necesidad de completar su perfil
+            $table->foreign('solicitud_servicio_id', 'ofrecimientos_solicitud_servicio_id_foreign')->references('id')->on('solicitudes_servicio');
+            $table->foreign('usuario_id', 'ofrecimientos_usuario_id_foreign')->references('id')->on('usuarios');
         });
 
         Schema::table('pesos', function (Blueprint $table) {
@@ -168,6 +169,7 @@ class ForeignKeys extends Migration
         Schema::table('nutrition_and_health', function (Blueprint $table) {
             $table->foreign('client_id')->references('usuario_id')->on('clientes');
         });
+        */
     }
 
     /**
@@ -177,6 +179,7 @@ class ForeignKeys extends Migration
      */
     public function down()
     {
+        /*
         Schema::table('clientes', function (Blueprint $table) {
             $table->dropForeign(['usuario_id']);
             $table->dropColumn('usuario_id');
@@ -381,5 +384,6 @@ class ForeignKeys extends Migration
             $table->dropForeign(['client_id']);
             $table->dropColumn('client_id');
         });
+        */
     }
 }
