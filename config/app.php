@@ -137,6 +137,9 @@ return [
     |
     */
 
+    'HOURS_TO_CANCEL_TRAINING' => '',
+    'faker_locale' => 'fr_FR',
+
     'providers' => array(
 
         /*
@@ -232,7 +235,6 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-
         'Constantes' => App\Utils\Constantes::class,
 
     ],
