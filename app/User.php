@@ -116,4 +116,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(PhysicalAssessment::class, 'user_id', 'id')->orderBy('created_at', $orden);
     }
+
+    public function comments($order = 'desc'){
+        $cacheKey = 'comments_' . $this->id . '_' . $order;
+
+            return $this->hasMany(UserComment::class, 'user_id', 'id')
+                ->where('reply_id', null)
+                ->orderBy('created_at', $order);
+    }
 }
