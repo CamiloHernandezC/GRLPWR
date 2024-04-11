@@ -58,6 +58,7 @@ class UserController extends controller
                         ->orWhere('physical_assessments.created_at', '<', Carbon::today()->subMonths(MONTHS_FOR_NEW_HEALTH_ASSESSMENT)->format('Y-m-d'));
                 });
         }
+
         $query->join('client_plans', 'usuarios.id', '=', 'client_plans.client_id');
         switch ($expirationType){
             case "all":
