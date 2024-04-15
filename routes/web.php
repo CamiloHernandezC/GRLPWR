@@ -93,6 +93,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('/user/{user}/wellBeingTest', [WellBeingController::class, 'processWellBeingTest'])->name('wellBeingTest');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+
 });
 /*Open routes*/
     Auth::routes();

@@ -64,6 +64,7 @@
                 <p class="counter-count-decimal">{{$user->nivel}}</p>
             --}}
 
+
                 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
                     @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
                         <p>Id: {{$user->id}}</p>
@@ -81,6 +82,7 @@
                         <p>Patologías: {{$user->cliente->pathology}}</p>
                     @endif
                 </div>
+                @include('components.lastClasses')
                 @include('cliente.clientPlan')
 
                 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">

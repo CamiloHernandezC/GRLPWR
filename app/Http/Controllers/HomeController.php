@@ -3,24 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Auth\SeguridadController;
-use App\Model\Cliente;
-use App\Model\ClientPlan;
-use App\Model\Entrenador;
-use App\Model\Estatura;
 use App\Model\Ofrecimientos;
-use App\Model\Peso;
-use App\Model\Review;
-use App\Model\ReviewUser;
 use App\Model\SesionCliente;
-use App\Repositories\ClientPlanRepository;
 use App\User;
 use App\Utils\Constantes;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Model\SolicitudServicio;
 use Illuminate\Support\Facades\DB;
 use Validator;
+
+
 
 class HomeController extends Controller
 {
@@ -97,18 +90,10 @@ class HomeController extends Controller
     }
 
     public function visitar(User $user){
-        if($user==Auth::user()){//si el mismo va a visitar su perfil se redirecciona para que vea su perfil normal
-            return redirect()->route('home', ['user' => $user]);
-        }
-        $solicitudes = null;
-        $visitante = true;
-        if(strcasecmp ($user->rol, Constantes::ROL_ENTRENADOR ) == 0) {
-            return view('perfilEntrenador', compact('user', 'solicitudes', 'visitante'));
-        }
-        if(strcasecmp ($user->rol, Constantes::ROL_CLIENTE ) == 0) {
-            return view('cliente.profileClient', compact('user', 'solicitudes', 'visitante'));
-        }
-    }
+
+        return view('cliente.profileClient', compact('user'));
+
+            }
 
     public function completarRegistroRedesSociales(){
         $user = Auth::user();
