@@ -161,30 +161,19 @@ class SesionClienteController extends Controller
     }
 
     /**
-     * @param int $eventId
-     * @param $startDate
-     * @param $endDate
-     * @param $startHour
-     * @param $endHour
-     * @return EditedEvent | Evento
+     * @param $event
+     * @param $startDateTime
+     * @param $endDateTime
      * @throws NoVacancyException
      */
-    private function validateVacancy($eventId, $startDate, $endDate, $startHour, $endHour): Evento|EditedEvent
+    private function validateVacancy($event, $startDateTime, $endDateTime)
     {
-        $editedEvent = EditedEvent::where('evento_id', $eventId)
-            ->where('fecha_inicio', '=', $startDate)
-            ->where('start_hour', '=', $startHour)
-            ->first();
-        $event = $editedEvent ?: Evento::find($eventId);
-        $startDateTime = Carbon::parse($startDate)->format('Y-m-d') . ' ' . $startHour;
-        $endDateTime = Carbon::parse($endDate)->format('Y-m-d') . ' ' . $endHour;
         $scheduled_clients = SesionCliente::where('evento_id', $event->id)
             ->where('fecha_inicio', '=', $startDateTime)
             ->where('fecha_fin', '=', $endDateTime)->count();
         if($event->cupos <= $scheduled_clients){
             throw new NoVacancyException();
         }
-        return $event;
     }
 
     /**
@@ -196,9 +185,16 @@ class SesionClienteController extends Controller
      */
     private function schedule($id, $startDate, $startHour, $endDate, $endHour, $client, $isRenting, $isCourtesy, $validateVacancy, bool $isGuest = false): JsonResponse|\Illuminate\Http\RedirectResponse
     {
-        $event = $this->validateVacancy($id, $startDate, $endDate, $startHour, $endHour);
+        $editedEvent = EditedEvent::where('evento_id', $id)
+            ->where('fecha_inicio', '=', $startDate)
+            ->where('start_hour', '=', $startHour)
+            ->first();
+        $event = $editedEvent ?: Evento::find($id);
         $startDateTime = Carbon::parse($startDate)->format('Y-m-d') . ' ' . $startHour;
         $endDateTime = Carbon::parse($endDate)->format('Y-m-d') . ' ' . $endHour;
+        if($validateVacancy){
+            $this->validateVacancy($event, $startDateTime, $endDateTime);
+        }
         if(filter_var($isRenting, FILTER_VALIDATE_BOOLEAN)){
             $kangooId = $this->assignEquipment($event, $client->talla_zapato, $client->peso()->peso, $startDateTime, $endDateTime);
         }
@@ -274,17 +270,19 @@ class SesionClienteController extends Controller
 
             if ($clientPlan) {
                 $sesionCliente->save();
-                if($clientPlan->remaining_shared_classes != null){
-                    $clientPlan->remaining_shared_classes--;
-                    $clientPlan->save();
-                }
-                /*FIT-57: Uncomment this if you want specific classes*/
-                else{
-                    $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
-                    if($remainingClass) {
-                        if($remainingClass->unlimited == 0){
-                            $remainingClass->remaining_classes--;
-                            $remainingClass->save();
+                if($event->discounts_session){
+                    if($clientPlan->remaining_shared_classes != null){
+                        $clientPlan->remaining_shared_classes--;
+                        $clientPlan->save();
+                    }
+                    /*FIT-57: Uncomment this if you want specific classes*/
+                    else{
+                        $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
+                        if($remainingClass) {
+                            if($remainingClass->unlimited == 0){
+                                $remainingClass->remaining_classes--;
+                                $remainingClass->save();
+                            }
                         }
                     }
                 }
@@ -329,7 +327,7 @@ class SesionClienteController extends Controller
                     Session::save();
                     return back();
                 }
-                if($session->fecha_inicio->subHours(HOURS_TO_CANCEL_TRAINING) < now()){
+                if($session->fecha_inicio->subHours(HOURS_TO_CANCEL_TRAINING) < now() && $session->event->discounts_session){
                     $session->delete();
                     Session::put('msg_level', 'warning');
                     Session::put('msg', __('general.message_enable_late_cancellation'));
@@ -342,7 +340,9 @@ class SesionClienteController extends Controller
                 Session::save();
                 $session->event->fecha_inicio = $session->fecha_inicio;
                 $session->event->fecha_fin = $session->fecha_fin;
-                $this->returnClassAfterCancellation($session->event);
+                if($session->event->discounts_session){
+                    $this->returnClassAfterCancellation($session->event);
+                }
                 return back();
             } catch (Exception $exception) {
                 Log::error("ERROR SesionClienteController - cancelTraining: " . $exception->getMessage());
@@ -372,12 +372,12 @@ class SesionClienteController extends Controller
         $clientPlanRepository = new ClientPlanRepository();
         $clientPlan = $clientPlanRepository->findValidClientPlan(event: $event, withRemainingClasses: false);
         if ($clientPlan) {
-            if($clientPlan->remaining_shared_classes != null){
+            if($clientPlan->remaining_shared_classes != null) {
                 $clientPlan->remaining_shared_classes++;
                 $clientPlan->save();
             }
             /*FIT-57: Uncomment this if you want specific classes*/
-            else{
+            else {
                 $remainingClass = RemainingClass::find($clientPlan->remaining_classes_id);
                 if($remainingClass && $remainingClass->unlimited == 0) {
                     $remainingClass->remaining_classes++;
