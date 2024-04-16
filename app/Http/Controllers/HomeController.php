@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Auth\SeguridadController;
 use App\Model\Ofrecimientos;
 use App\Model\SesionCliente;
+use app\Model\SolicitudServicio;
 use App\User;
 use App\Utils\Constantes;
 use Carbon\Carbon;
