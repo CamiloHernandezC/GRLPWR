@@ -4,17 +4,20 @@ namespace App\Providers;
 
 use App\Branch;
 use App\ClassType;
+use App\Model\ClientPlan;
 use App\Model\Evento;
 use App\Repositories\ClientPlanRepository;
 use App\View\Composers\EventComposer;
 use App\View\Composers\HighlightComposer;
+use App\View\Composers\HistoricActiveClientsComposer;
 use App\View\Composers\PhysicalAssessmentComposer;
 use App\View\Composers\ProfileClientComposer;
 use App\View\Composers\TrainingPreferencesComposer;
 use App\View\Composers\WheelOfLifeComposer;
+use Carbon\Carbon;
+use Illuminate\Support\Facades;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades;
 use Illuminate\View\View;
 
 class ViewServiceProvider extends ServiceProvider
@@ -53,11 +56,20 @@ class ViewServiceProvider extends ServiceProvider
             $view->with('classTypes', $classTypes);
         });
 
+        $route = Route::current(); // Illuminate\Routing\Route
         Facades\View::composer('cliente.clientPlan', function (View $view) {
             $route = Route::current(); // Illuminate\Routing\Route
             $clientPlanRepository = new ClientPlanRepository();
             $clientPlans = $clientPlanRepository->findValidClientPlans(clientId: $route->parameter('user')->id);
-            $view->with('clientPlans', $clientPlans);
+            $expiredPlans = ClientPlan::where('client_id', '=', $route->parameter('user')->id)
+                ->where('client_plans.expiration_date', '<', Carbon::now())
+                ->join('plans', 'client_plans.plan_id', '=', 'plans.id')
+                ->select('client_plans.*', 'plans.name')
+                ->get();
+            $view->with(
+                ['clientPlans' => $clientPlans,
+                'expiredPlans' => $expiredPlans]
+            );
         });
 
         Facades\View::composer('assessments.physicalAssessment', PhysicalAssessmentComposer::class);
@@ -65,5 +77,6 @@ class ViewServiceProvider extends ServiceProvider
         Facades\View::composer('cliente.trainingPreferences', TrainingPreferencesComposer::class);
         Facades\View::composer('highlightSection', HighLightComposer::class);
         Facades\View::composer('components.lastClasses', ProfileClientComposer::class);
+        Facades\View::composer('components.historicActiveClients', HistoricActiveClientsComposer::class);
     }
 }
