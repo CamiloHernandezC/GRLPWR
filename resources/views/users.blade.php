@@ -28,9 +28,8 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Telefono</th>
-                <th>padrino</th>
+                <th>Padrino</th>
                 <th>Acciones</th>
-
             </tr>
             </thead>
             <tbody name="table">
