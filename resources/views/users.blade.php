@@ -28,7 +28,9 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Telefono</th>
+                <th>padrino</th>
                 <th>Acciones</th>
+
             </tr>
             </thead>
             <tbody name="table">
@@ -37,6 +39,7 @@
                     <td><input type="text" id="name" name="name" placeholder="Nombre"></td>
                     <td><input type="text" id="email" name="email" placeholder="Correo"></td>
                     <td><input type="number" id="phone" name="phone" placeholder="Celular"></td>
+                    <td><input type="number" id="assigned" name="assigned" placeholder="assigned"></td>
                     <td>F. Expiración</td>
                     <td>
                         <div class="form-check m-auto">
@@ -53,6 +56,7 @@
                     <td><a class="client-icon theme-color" href="{{route('visitarPerfil', ['user'=>  $user->slug])}}"><div style="max-height:3rem; overflow:hidden">{{ $user->nombre . ' ' .  $user->apellido_1 . ' ' .  $user->apellido_2}}</div></a></td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->telefono }}</td>
+                    <td>{{ $user->assigned }}</td>
                     <td>{{ $user->expiration_date }}</td>
                     <td><a class="client-icon theme-color" href="{{route('healthTest', ['user'=>  $user->slug])}}">Valoración</a></td>
                 </tr>
@@ -72,6 +76,7 @@
                 var emailValue = $('#email').val();
                 var phoneValue = $('#phone').val();
                 var needAssessmentValue = $('#needAssessment').prop('checked');
+                var assignedValue = $('#assigned').val();
                 var expirationTypeValue = $('input[name="expirationType"]:checked').val();
 
                 $.ajax({
@@ -86,6 +91,7 @@
                         email: emailValue,
                         phone: phoneValue,
                         needAssessment : needAssessmentValue,
+                        assigned: assignedValue,
                         expirationType : expirationTypeValue,
                     },
                     dataType: 'json',
@@ -99,6 +105,7 @@
                                 '<td><a class="client-icon theme-color" href="{{env('APP_URL')}}/visitar/' + result.slug + '"><div style="max-height:3rem; overflow:hidden">' + result.nombre + ' ' +  result.apellido_1 + ' ' +  result.apellido_2 + '</div></a></td>' +
                                 '<td>' + result.email + '</td>' +
                                 '<td>' + result.telefono + '</td>' +
+                                '<td>' + result.assigned + '</td>' +
                                 '<td>' + result.expiration_date + '</td>'+
                                 '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">Valoración</a></td>' +
                                 '</tr>'
@@ -112,7 +119,7 @@
                 });
             }
 
-            $('#id, #name, #email, #phone').on('input', function() {
+            $('#id, #name, #email, #phone, #assigned').on('input', function() {
                 filter();
             });
 
