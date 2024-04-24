@@ -58,38 +58,23 @@ class UserController extends controller
                         ->orWhere('physical_assessments.created_at', '<', Carbon::today()->subMonths(MONTHS_FOR_NEW_HEALTH_ASSESSMENT)->format('Y-m-d'));
                 });
         }
-
-        $latestPlansSubquery = DB::table('client_plans')
-        ->select('client_id', DB::raw('MAX(expiration_date) as latest_expiration_date'))
-        ->groupBy('client_id');
         $currentDate = Carbon::today();
         switch ($expirationType){
             case "all":
-                $query->join('client_plans', function ($join) use ($latestPlansSubquery) {
-                    $join->on('usuarios.id', '=', 'client_plans.client_id')
-                        ->whereIn('client_plans.expiration_date', $latestPlansSubquery);
-                });
+                $query->join('client_plans', 'usuarios.id', '=', 'client_plans.client_id');
                 break;
             case "active":
-                $query->join('client_plans', 'usuarios.id', '=', 'client_plans.client_id')
-                        ->where(function ($query) use ($latestPlansSubquery, $currentDate) {
-                            $query->whereIn('client_plans.expiration_date', $latestPlansSubquery)
-                                ->where('client_plans.created_at', '<=', $currentDate->copy()->endOfDay())
-                                ->where('client_plans.expiration_date', '>=', $currentDate->copy()->startOfDay());
-                        });
-                /*
                 $query->join('client_plans', 'usuarios.id', '=', 'client_plans.client_id')
                     ->where(function ($query) use ($currentDate) {
                     $query->where('client_plans.created_at', '<=', $currentDate->copy()->endOfDay())
                         ->where('client_plans.expiration_date', '>=', $currentDate->copy()->startOfDay());
-                });*/
+                });
                 break;
             case "inactive":
                 $query->join('client_plans', 'usuarios.id', '=', 'client_plans.client_id')
-                    ->where(function ($query) use ($currentDate, $latestPlansSubquery) {
-                        $query->whereIn('client_plans.expiration_date', $latestPlansSubquery)
-                            ->where('client_plans.expiration_date', '<', $currentDate->copy()->startOfDay())
-                            ->orWhereNull('client_plans.client_id');
+                    ->where(function ($query) use ($currentDate) {
+                        $query->whereNull('client_plans.client_id')
+                            ->orWhere('client_plans.expiration_date', '<', $currentDate->copy()->startOfDay());
                     })
                     ->whereNotIn('usuarios.id', function ($query) use ($currentDate) {
                         $query->select('cpa.client_id')
@@ -98,7 +83,9 @@ class UserController extends controller
                     });
                 break;
         }
-        $users = $query->select('usuarios.*', 'client_plans.expiration_date')
+        $users = $query->distinct('usuarios.id')
+            ->select('usuarios.*', 'client_plans.expiration_date')
+            ->orderBy('client_plans.expiration_date', 'desc')
             ->get();
         return response()->json($users);
     }
