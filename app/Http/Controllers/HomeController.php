@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Validator;
 
-
 class HomeController extends Controller
 {
     /**
@@ -89,7 +88,6 @@ class HomeController extends Controller
     }
 
     public function visitar(User $user){
-
         if($user==Auth::user()){//si el mismo va a visitar su perfil se redirecciona para que vea su perfil normal
             return redirect()->route('home', ['user' => $user]);
         }
@@ -101,8 +99,7 @@ class HomeController extends Controller
         if(strcasecmp ($user->rol, Constantes::ROL_CLIENTE ) == 0) {
             return view('cliente.profileClient', compact('user', 'solicitudes', 'visitante'));
         }
-
-            }
+    }
 
     public function completarRegistroRedesSociales(){
         $user = Auth::user();
