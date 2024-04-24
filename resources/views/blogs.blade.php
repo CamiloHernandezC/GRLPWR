@@ -5,6 +5,7 @@
 @endsection
 
 @section('head-content')
+
     <!-- Se debe poner esta de nuevo para que funcion el tooltip (SE QUITÓ PORQUE NO VEO NADA CON TOOLTIP Y ESTO CAUSA QUE LOS DROPDOWN NO APAREZCAN AL PRIMER CLICK)
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>-->
 
@@ -20,6 +21,7 @@
 @endsection
 
 @section('content')
+
     <div class="container-fluid w-100">
         <h1 class="text-center">Blogs relevantes</h1>
         <div class="row justify-content-around w-100 m-0">
@@ -40,4 +42,5 @@
             @endforeach
         </div>
     </div>
+
 @endsection
