@@ -50,6 +50,8 @@ return [
             'prefix' => '',
             'strict' => true,
             'engine' => null,
+            'cache' => false,
+            'charset' => 'utf8',
         ],
 
         'pgsql' => [

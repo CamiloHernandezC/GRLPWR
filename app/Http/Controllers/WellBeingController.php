@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\FoodAssesment;
+use App\HealthTest;
 use App\Model\Peso;
 use App\PhysicalAssessment;
-use App\HealthTest;
 use App\TrainingPreference;
 use App\User;
 use App\WellBeingAssessment;
@@ -93,7 +93,6 @@ class WellBeingController extends controller {
             $wheelOfLife->reason_work = $request->reason_work;
             $wheelOfLife->money = $request->money;
             $wheelOfLife->reason_money = $request->reason_money;
-            $wheelOfLife->user_id = auth()->user()->id;
             $wheelOfLife->save();
         });
 

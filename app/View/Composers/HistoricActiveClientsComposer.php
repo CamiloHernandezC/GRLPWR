@@ -3,8 +3,6 @@
 namespace App\View\Composers;
 
 use App\HistoricalActiveClient;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
 
 class HistoricActiveClientsComposer
@@ -14,7 +12,7 @@ class HistoricActiveClientsComposer
      */
     public function compose(View $view): void
     {
-        $activeClients =  HistoricalActiveClient::all();
+        $activeClients =  HistoricalActiveClient::orderBy('date');
 
         //where('date', '>=', )
 
