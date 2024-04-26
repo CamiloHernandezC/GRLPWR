@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 
 
-use App\Model\ClientPlan;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -34,24 +34,8 @@ class UserController extends controller
         $needAssessment = $request->input('needAssessment');
         $expirationType = $request->input('expirationType');
 
-        $query = ClientPlan::query();
+        $query = User::query();
 
-        $currentDate = Carbon::today();
-        switch ($expirationType){
-            case "all":
-                break;
-            case "active":
-                $query->where('expiration_date', '>=', $currentDate->copy()->startOfDay());
-                break;
-            case "inactive":
-                $query->where(function ($query) use ($currentDate) {
-                    $query->where('expiration_date', '<', $currentDate->copy()->startOfDay())
-                    ->orWhereNull('client_plans.client_id');
-                });
-                break;
-        }
-
-        $query->join('usuarios', 'usuarios.id', '=', 'client_plans.client_id');
         if ($id) {
             $query->where('usuarios.id', $id);
         }
@@ -75,11 +59,27 @@ class UserController extends controller
                         ->orWhere('physical_assessments.created_at', '<', Carbon::today()->subMonths(MONTHS_FOR_NEW_HEALTH_ASSESSMENT)->format('Y-m-d'));
                 });
         }
-
-
+        $currentDate = Carbon::today();
+        switch ($expirationType){
+            case "all":
+                $query->leftJoin('client_plans', 'usuarios.id', '=', 'client_plans.client_id');
+                break;
+            case "active":
+                $query->join('client_plans', function ($join) use ($currentDate) {
+                    $join->on('usuarios.id', '=', 'client_plans.client_id')
+                        ->where('client_plans.expiration_date', '>=', $currentDate->copy()->startOfDay());
+                });
+                break;
+            case "inactive":
+                $query->join('client_plans', function ($join) use ($currentDate) {
+                    $join->on('usuarios.id', '=', 'client_plans.client_id')
+                        ->where('client_plans.expiration_date', '<', $currentDate->copy()->startOfDay());
+                });
+                break;
+        }
         $users = $query->selectRaw('usuarios.*, MAX(expiration_date) as expiration_date')
             ->orderBy('expiration_date', 'DESC')
-            ->groupBy('client_id')
+            ->groupBy('usuarios.id')
             ->get();
         return response()->json($users);
     }

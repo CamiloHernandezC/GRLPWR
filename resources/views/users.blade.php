@@ -93,23 +93,25 @@
                         // Limpiar la tabla
                         $('tbody[name="table"] .user-row').remove();
                         data.forEach(function(result) {
-                            var today = new Date();
-                            today.setHours(0,0,0,0);
-                            const expirationDate = new Date(result.expiration_date);
                             $('tbody[name="table"]').append(
                                 '<tr class="user-row" id=row_'+ result.id +'>' +
                                 '<td>' + result.id + '</td>' +
                                 '<td><a class="client-icon theme-color" href="{{env('APP_URL')}}/visitar/' + result.slug + '"><div style="max-height:3rem; overflow:hidden">' + result.nombre + ' ' +  result.apellido_1 + ' ' +  result.apellido_2 + '</div></a></td>' +
                                 '<td>' + result.email + '</td>' +
                                 '<td>' + result.telefono + '</td>' +
-                                '<td>' + result.expiration_date.slice(0, 10)+ '</td>'+
+                                '<td>' + result.expiration_date?.slice(0, 10)+ '</td>'+
                                 '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">Valoración</a></td>' +
                                 '</tr>'
                             );
-                            if(expirationDate < today){
-                                $('#row_'+result.id).addClass('bg-danger');
-                            }else{
-                                $('#row_'+result.id).addClass('bg-success');
+                            if(result.expiration_date){
+                                var today = new Date();
+                                today.setHours(0,0,0,0);
+                                const expirationDate = new Date(result.expiration_date);
+                                if(expirationDate < today){
+                                    $('#row_'+result.id).addClass('bg-danger');
+                                }else{
+                                    $('#row_'+result.id).addClass('bg-success');
+                                }
                             }
                         });
                         $('.pagination').hide();
