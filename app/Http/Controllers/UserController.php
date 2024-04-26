@@ -26,7 +26,6 @@ class UserController extends controller
 
     public function search(Request $request)
     {
-
         $id = $request->input('id');
         $name = $request->input('name');
         $email = $request->input('email');
