@@ -14,8 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
-class WellBeingController extends controller {
-
+class WellBeingController extends controller
+{
     /**
      * Display the form to make a health test.
      */
@@ -46,11 +46,12 @@ class WellBeingController extends controller {
             $peso->save();
         });
     }
-    public function processWellBeingTest(Request $request, User $user): \Illuminate\Http\RedirectResponse
+
+    public function saveFoodTest(Request $request): \Illuminate\Http\RedirectResponse
     {
-        DB::transaction(function () use ($request, $user) {
+        DB::transaction(function () use ($request){
             $foodFormAssesment = new FoodAssesment();
-            $foodFormAssesment->user_id = $user->id;
+            $foodFormAssesment->user_id = $request->user_id;
             $foodFormAssesment->feeding_relationship = $request->feeding_relationship;
             $foodFormAssesment->breakfast = $request->breakfast;
             $foodFormAssesment->mid_morning = $request->mid_morning;
@@ -62,25 +63,45 @@ class WellBeingController extends controller {
             $foodFormAssesment->happy_food = $request->happy_food;
             $foodFormAssesment->sad_food = $request->sad_food;
             $foodFormAssesment->save();
+        });
+    }
 
-            $trainingPreference =new TrainingPreference();
-            $trainingPreference->user_id = $user->id;
+    public function saveTrainingTest(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        DB::transaction(function () use ($request) {
+            $trainingPreference = new TrainingPreference();
+            $trainingPreference->user_id = $request->user_id;
             $trainingPreference->training_frequency = $request->training_frequency;
             $trainingPreference->intensity = $request->intensity;
             $trainingPreference->music = $request->music;
             $trainingPreference->save();
+        });
+    }
 
+    public function saveWellBeingTest(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        DB::transaction(function () use ($request) {
             $wellBeingAssessment = new WellBeingAssessment();
-            $wellBeingAssessment->user_id = $user->id;
+            $wellBeingAssessment->user_id = $request->user_id;
             $wellBeingAssessment->body_relation = $request->body_relation;
             $wellBeingAssessment->body_discomfort = $request->body_discomfort;
             $wellBeingAssessment->stress = $request->reason_stress;
             $wellBeingAssessment->stress_practice = $request->reason_stress_practice;
             $wellBeingAssessment->spiritual_belief = $request->reason_spiritual_belief;
             $wellBeingAssessment->save();
+        });
 
+        Session::put('msg_level', 'success');
+        Session::put('msg', __('general.sucess_wellbeign_assesment'));
+        Session::save();
+        return redirect()->back();
+    }
+
+    public function saveWheelOfLifeTest(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        DB::transaction(function () use ($request) {
             $wheelOfLife = new WheelOfLife();
-            $wheelOfLife->user_id = $user->id;
+            $wheelOfLife->user_id = $request->user_id;
             $wheelOfLife->health = $request->health;
             $wheelOfLife->reason_health = $request->reason_health;
             $wheelOfLife->personal_growth = $request->personal_growth;
@@ -107,3 +128,4 @@ class WellBeingController extends controller {
         return redirect()->back();
     }
 }
+

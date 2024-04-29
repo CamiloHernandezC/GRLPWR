@@ -12,6 +12,11 @@
 
         <div class="col-10 col-lg-6 m-auto">
             @include('cliente.physicalTest')
+            @include('cliente.foodTest')
+            @include('cliente.trainingTest')
+            @include('cliente.wellBeingTest')
+            @include('cliente.wheelOfLifeTest')
+
         </div>
 
 @endsection

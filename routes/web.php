@@ -96,6 +96,10 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('/user/{user}/wellBeingTest', [WellBeingController::class, 'index'])->name('healthTest');
     Route::post('/user/{user}/wellBeingTest', [WellBeingController::class, 'processWellBeingTest'])->name('wellBeingTest');
     Route::post('/physicalTest', [WellBeingController::class, 'savePhysicalTest'])->name('savePhysicalTest');
+    Route::post('/foodTest', [WellBeingController::class, 'saveFoodTest'])->name('saveFoodTest');
+    Route::post('/trainingTest', [WellBeingController::class, 'saveTrainingTest'])->name('saveTrainingTest');
+    Route::post('/wellbeingTest', [WellBeingController::class, 'saveWellBeingTest'])->name('saveWellBeingTest');
+    Route::post('/wheelOfLifeTest', [WellBeingController::class, 'saveWheelOfLifeTest'])->name('saveWheelOfLifeTest');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
     Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
