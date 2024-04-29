@@ -50,7 +50,7 @@ class UserController extends controller
             $query->where('usuarios.email', 'LIKE', "%$email%");
         }
         if ($assigned) {
-            $query->where('usuarios.assigned', 'LIKE', "%$assigned%");
+            $query->where('usuarios.assigned_id', 'LIKE', "%$assigned%");
         }
         if ($phone) {
             $query->where('usuarios.telefono', 'LIKE', "%$phone%");
