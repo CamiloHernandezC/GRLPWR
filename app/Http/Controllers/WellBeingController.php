@@ -24,11 +24,11 @@ class WellBeingController extends controller {
         return view('cliente.healthTest', compact('user'));
     }
 
-    public function processWellBeingTest(Request $request, User $user): \Illuminate\Http\RedirectResponse
+    public function savePhysicalTest(Request $request): \Illuminate\Http\RedirectResponse
     {
-        DB::transaction(function () use ($request, $user) {
+        DB::transaction(function () use ($request) {
             $physicalAssessment = new PhysicalAssessment();
-            $physicalAssessment->user_id = $user->id;
+            $physicalAssessment->user_id = $request->user_id;
             $physicalAssessment->muscle = $request->muscle;
             $physicalAssessment->visceral_fat = $request->visceral_fat;
             $physicalAssessment->body_fat = $request->body_fat;
@@ -40,11 +40,15 @@ class WellBeingController extends controller {
             $physicalAssessment->save();
 
             $peso = new Peso();
-            $peso->usuario_id = $user->id;
+            $peso->usuario_id = $request->user_id;
             $peso->peso = $request->weight;
             $peso->unidad_medida = 0;
             $peso->save();
-
+        });
+    }
+    public function processWellBeingTest(Request $request, User $user): \Illuminate\Http\RedirectResponse
+    {
+        DB::transaction(function () use ($request, $user) {
             $foodFormAssesment = new FoodAssesment();
             $foodFormAssesment->user_id = $user->id;
             $foodFormAssesment->feeding_relationship = $request->feeding_relationship;
