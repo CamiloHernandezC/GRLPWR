@@ -36,7 +36,7 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: "{{ route('savePhysicalTest') }}",
+                url: "{{ route('saveFoodTest') }}",
                 method: "POST",
                 data: {
                     user_id : {{$user->id}},

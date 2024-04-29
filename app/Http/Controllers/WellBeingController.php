@@ -24,108 +24,97 @@ class WellBeingController extends controller
         return view('cliente.healthTest', compact('user'));
     }
 
-    public function savePhysicalTest(Request $request): \Illuminate\Http\RedirectResponse
+    public function saveTest(Request $request): \Illuminate\Http\RedirectResponse
     {
-        DB::transaction(function () use ($request) {
-            $physicalAssessment = new PhysicalAssessment();
-            $physicalAssessment->user_id = $request->user_id;
-            $physicalAssessment->muscle = $request->muscle;
-            $physicalAssessment->visceral_fat = $request->visceral_fat;
-            $physicalAssessment->body_fat = $request->body_fat;
-            $physicalAssessment->water_level = $request->water_level;
-            $physicalAssessment->proteins = $request->proteins;
-            $physicalAssessment->basal_metabolism = $request->basal_metabolism;
-            $physicalAssessment->bone_mass = $request->bone_mass;
-            $physicalAssessment->body_score = $request->body_score;
-            $physicalAssessment->save();
+        $response = [];
 
-            $peso = new Peso();
-            $peso->usuario_id = $request->user_id;
-            $peso->peso = $request->weight;
-            $peso->unidad_medida = 0;
-            $peso->save();
+        DB::transaction(function () use ($request, &$response) {
+            switch ($request->input('section')) {
+                case 'physical_assessment':
+                    $physicalAssessment = new PhysicalAssessment();
+                    $physicalAssessment->user_id = $request->user_id;
+                    $physicalAssessment->muscle = $request->muscle;
+                    $physicalAssessment->visceral_fat = $request->visceral_fat;
+                    $physicalAssessment->body_fat = $request->body_fat;
+                    $physicalAssessment->water_level = $request->water_level;
+                    $physicalAssessment->proteins = $request->proteins;
+                    $physicalAssessment->basal_metabolism = $request->basal_metabolism;
+                    $physicalAssessment->bone_mass = $request->bone_mass;
+                    $physicalAssessment->body_score = $request->body_score;
+                    $physicalAssessment->save();
+
+
+                    $peso = new Peso();
+                    $peso->usuario_id = $request->user_id;
+                    $peso->peso = $request->weight;
+                    $peso->unidad_medida = 0;
+                    $peso->save();
+                    $response['physical_assessment'] = ['success' => true];
+                    break;
+                case 'food_test':
+                    $foodFormAssesment = new FoodAssesment();
+                    $foodFormAssesment->user_id = $request->user_id;
+                    $foodFormAssesment->feeding_relationship = $request->feeding_relationship;
+                    $foodFormAssesment->breakfast = $request->breakfast;
+                    $foodFormAssesment->mid_morning = $request->mid_morning;
+                    $foodFormAssesment->lunch = $request->lunch;
+                    $foodFormAssesment->snacks = $request->snacks;
+                    $foodFormAssesment->dinner = $request->dinner;
+                    $foodFormAssesment->supplements = $request->supplements;
+                    $foodFormAssesment->medicines = $request->medicines;
+                    $foodFormAssesment->happy_food = $request->happy_food;
+                    $foodFormAssesment->sad_food = $request->sad_food;
+                    $foodFormAssesment->save();
+                    $response['food_test'] = ['success' => true];
+                    break;
+                case 'training_test':
+                    $trainingPreference = new TrainingPreference();
+                    $trainingPreference->user_id = $request->user_id;
+                    $trainingPreference->training_frequency = $request->training_frequency;
+                    $trainingPreference->intensity = $request->intensity;
+                    $trainingPreference->music = $request->music;
+                    $trainingPreference->save();
+                    $trainingPreference->save();
+                    $response['training_test'] = ['success' => true];
+                    break;
+                case 'wellbeing_test':
+                    $wellBeingAssessment = new WellBeingAssessment();
+                    $wellBeingAssessment->user_id = $request->user_id;
+                    $wellBeingAssessment->body_relation = $request->body_relation;
+                    $wellBeingAssessment->body_discomfort = $request->body_discomfort;
+                    $wellBeingAssessment->stress = $request->reason_stress;
+                    $wellBeingAssessment->stress_practice = $request->reason_stress_practice;
+                    $wellBeingAssessment->spiritual_belief = $request->reason_spiritual_belief;
+                    $wellBeingAssessment->save();
+                    $response['wellbeing_test'] = ['success' => true];
+                    break;
+                case 'wheeloflife_test':
+                    $wheelOfLife = new WheelOfLife();
+                    $wheelOfLife->user_id = $request->user_id;
+                    $wheelOfLife->health = $request->health;
+                    $wheelOfLife->reason_health = $request->reason_health;
+                    $wheelOfLife->personal_growth = $request->personal_growth;
+                    $wheelOfLife->reason_personal_growth = $request->reason_personal_growth;
+                    $wheelOfLife->home = $request->home;
+                    $wheelOfLife->reason_home = $request->reason_home;
+                    $wheelOfLife->family_and_friends = $request->family_and_friends;
+                    $wheelOfLife->reason_family_and_friends = $request->reason_family_and_friends;
+                    $wheelOfLife->love = $request->love;
+                    $wheelOfLife->reason_love = $request->reason_love;
+                    $wheelOfLife->leisure = $request->leisure;
+                    $wheelOfLife->reason_leisure = $request->reason_leisure;
+                    $wheelOfLife->work = $request->work;
+                    $wheelOfLife->reason_work = $request->reason_work;
+                    $wheelOfLife->money = $request->money;
+                    $wheelOfLife->reason_money = $request->reason_money;
+                    $wheelOfLife->user_id = auth()->user()->id;
+                    $wheelOfLife->save();
+                    $response['wellbeing_test'] = ['success' => true];
+                    break;
+            }
         });
-    }
-
-    public function saveFoodTest(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        DB::transaction(function () use ($request){
-            $foodFormAssesment = new FoodAssesment();
-            $foodFormAssesment->user_id = $request->user_id;
-            $foodFormAssesment->feeding_relationship = $request->feeding_relationship;
-            $foodFormAssesment->breakfast = $request->breakfast;
-            $foodFormAssesment->mid_morning = $request->mid_morning;
-            $foodFormAssesment->lunch = $request->lunch;
-            $foodFormAssesment->snacks = $request->snacks;
-            $foodFormAssesment->dinner = $request->dinner;
-            $foodFormAssesment->supplements = $request->supplements;
-            $foodFormAssesment->medicines = $request->medicines;
-            $foodFormAssesment->happy_food = $request->happy_food;
-            $foodFormAssesment->sad_food = $request->sad_food;
-            $foodFormAssesment->save();
-        });
-    }
-
-    public function saveTrainingTest(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        DB::transaction(function () use ($request) {
-            $trainingPreference = new TrainingPreference();
-            $trainingPreference->user_id = $request->user_id;
-            $trainingPreference->training_frequency = $request->training_frequency;
-            $trainingPreference->intensity = $request->intensity;
-            $trainingPreference->music = $request->music;
-            $trainingPreference->save();
-        });
-    }
-
-    public function saveWellBeingTest(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        DB::transaction(function () use ($request) {
-            $wellBeingAssessment = new WellBeingAssessment();
-            $wellBeingAssessment->user_id = $request->user_id;
-            $wellBeingAssessment->body_relation = $request->body_relation;
-            $wellBeingAssessment->body_discomfort = $request->body_discomfort;
-            $wellBeingAssessment->stress = $request->reason_stress;
-            $wellBeingAssessment->stress_practice = $request->reason_stress_practice;
-            $wellBeingAssessment->spiritual_belief = $request->reason_spiritual_belief;
-            $wellBeingAssessment->save();
-        });
-
-        Session::put('msg_level', 'success');
-        Session::put('msg', __('general.sucess_wellbeign_assesment'));
-        Session::save();
-        return redirect()->back();
-    }
-
-    public function saveWheelOfLifeTest(Request $request): \Illuminate\Http\RedirectResponse
-    {
-        DB::transaction(function () use ($request) {
-            $wheelOfLife = new WheelOfLife();
-            $wheelOfLife->user_id = $request->user_id;
-            $wheelOfLife->health = $request->health;
-            $wheelOfLife->reason_health = $request->reason_health;
-            $wheelOfLife->personal_growth = $request->personal_growth;
-            $wheelOfLife->reason_personal_growth = $request->reason_personal_growth;
-            $wheelOfLife->home = $request->home;
-            $wheelOfLife->reason_home = $request->reason_home;
-            $wheelOfLife->family_and_friends = $request->family_and_friends;
-            $wheelOfLife->reason_family_and_friends = $request->reason_family_and_friends;
-            $wheelOfLife->love = $request->love;
-            $wheelOfLife->reason_love = $request->reason_love;
-            $wheelOfLife->leisure = $request->leisure;
-            $wheelOfLife->reason_leisure = $request->reason_leisure;
-            $wheelOfLife->work = $request->work;
-            $wheelOfLife->reason_work = $request->reason_work;
-            $wheelOfLife->money = $request->money;
-            $wheelOfLife->reason_money = $request->reason_money;
-            $wheelOfLife->user_id = auth()->user()->id;
-            $wheelOfLife->save();
-        });
-
-        Session::put('msg_level', 'success');
-        Session::put('msg', __('general.sucess_wellbeign_assesment'));
-        Session::save();
-        return redirect()->back();
+        return response()->json($response);
     }
 }
+
 
