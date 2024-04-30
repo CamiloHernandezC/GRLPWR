@@ -27,6 +27,7 @@
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Email</th>
+                <th>Padrino</th>
                 <th>Telefono</th>
                 <th>Acciones</th>
             </tr>
@@ -36,6 +37,7 @@
                     <td><input type="number" id="id" name="id" placeholder="Id" ></td>
                     <td><input type="text" id="name" name="name" placeholder="Nombre"></td>
                     <td><input type="text" id="email" name="email" placeholder="Correo"></td>
+                    <td></td>
                     <td><input type="number" id="phone" name="phone" placeholder="Celular"></td>
                     <td>F. Expiración</td>
                     <td>
@@ -52,6 +54,14 @@
                     <td>{{ $user->id }}</td>
                     <td><a class="client-icon theme-color" href="{{route('visitarPerfil', ['user'=>  $user->slug])}}"><div style="max-height:3rem; overflow:hidden">{{ $user->nombre . ' ' .  $user->apellido_1 . ' ' .  $user->apellido_2}}</div></a></td>
                     <td>{{ $user->email }}</td>
+                    <td>
+                        <select onchange="onChangeAssignment({{ $user->id }},this.value)">
+                            <option style="color: black" value="" disabled selected>Seleccione...</option>
+                            @foreach ($adminUsers as $adminUser)
+                                <option value="{{ $adminUser->id }}" {{$user->assigned == $adminUser->id ? 'selected' : ''}}>{{ $adminUser->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td>{{ $user->telefono }}</td>
                     <td>{{ $user->expiration_date }}</td>
                     <td><a class="client-icon theme-color" href="{{route('healthTest', ['user'=>  $user->slug])}}">Valoración</a></td>
@@ -64,6 +74,20 @@
 @endsection
 @push('scripts')
     <script>
+        function onChangeAssignment(userId, padrinoId) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('assigned.update') }}",
+                method: "POST",
+                data: {
+                    userId: userId,
+                    assigned: padrinoId
+                },
+            });
+        }
+
         $(document).ready(function() {
 
             function filter(){

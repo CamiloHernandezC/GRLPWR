@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 
 
 use App\User;
+use App\Utils\Constantes;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,15 +16,20 @@ class UserController extends controller
 
     public function index()
     {
+        $users = DB::table('usuarios')
+            ->join('client_plans', 'usuarios.id', '=', 'client_plans.client_id')
+            ->orderBy('client_plans.expiration_date', 'desc')
+            ->orderBy('usuarios.id', 'desc')
+            ->select('usuarios.*', 'client_plans.expiration_date')
+            ->paginate(15);
+        $adminUsers = User::where('rol', Constantes::ROL_ADMIN)->get();
+
         return view('users', [
-            'users' => DB::table('usuarios')
-                ->join('client_plans', 'usuarios.id', '=', 'client_plans.client_id')
-                ->orderBy('client_plans.expiration_date', 'desc')
-                ->orderBy('usuarios.id', 'desc')
-                ->select('usuarios.*', 'client_plans.expiration_date')
-                ->paginate(15)
+            'users' => $users,
+            'adminUsers' => $adminUsers
         ]);
     }
+
 
     public function search(Request $request)
     {
@@ -88,5 +95,14 @@ class UserController extends controller
             ->orderBy('client_plans.expiration_date', 'desc')
             ->get();
         return response()->json($users);
+    }
+
+    public function updateAssigned(Request $request): JsonResponse
+    {
+        $userId = $request->input('userId');
+        $assigned = $request->input('assigned');
+        User::where('id', $userId)->update(['assigned' => $assigned]);
+
+        return response()->json(['success' => true]);
     }
 }
