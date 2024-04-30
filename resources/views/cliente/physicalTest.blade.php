@@ -1,21 +1,23 @@
-@csrf
-<div id="physical-section" style="display: none;">
+<div id="physical-section" class="themed-block p-3" style="display: none;">
     <h1 class="text-center">Valoración Física</h1>
-    <x-input name="weight" description="Peso (Kg)" type="number" required step=".01"></x-input>
-    <x-input name="muscle" description="Músculo" type="number" required step=".01"></x-input>
-    <x-input name="visceral_fat" description="Grasa Visceral" type="number" required step=".01"></x-input>
-    <x-input name="body_fat" description="Grasa Corporal" type="number" required step=".01"></x-input>
-    <x-input name="water_level" description="Nivel agua:" type="number" required step=".01"></x-input>
-    <x-input name="proteins" description="Proteínas:" type="number" required step=".01"></x-input>
-    <x-input name="basal_metabolism" description="Metabolismo Basal:" type="number" required step=".01"></x-input>
-    <x-input name="bone_mass" description="Masa Ósea:" type="number" required step=".01"></x-input>
-    <x-input name="body_score" description="Puntuación Corporal:" type="number" required step=".01"></x-input>
-    <div class="d-flex justify-content-between">
-        <button class="btn btn-primary mt-3 mx-auto d-block" onclick="savePhysicalTest()">Guardar Sección</button>
-        <button class="btn btn-primary mt-3 mx-auto" onclick="hidePhysicalSection()">Quitar Sección fisica</button>
-    </div>
+    <form id="physicalForm">
+        @csrf
+        <x-input name="weight" description="Peso (Kg)" type="number" required step=".01"></x-input>
+        <x-input name="muscle" description="Músculo" type="number" required step=".01"></x-input>
+        <x-input name="visceral_fat" description="Grasa Visceral" type="number" required step=".01"></x-input>
+        <x-input name="body_fat" description="Grasa Corporal" type="number" required step=".01"></x-input>
+        <x-input name="water_level" description="Nivel agua:" type="number" required step=".01"></x-input>
+        <x-input name="proteins" description="Proteínas:" type="number" required step=".01"></x-input>
+        <x-input name="basal_metabolism" description="Metabolismo Basal:" type="number" required step=".01"></x-input>
+        <x-input name="bone_mass" description="Masa Ósea:" type="number" required step=".01"></x-input>
+        <x-input name="body_score" description="Puntuación Corporal:" type="number" required step=".01"></x-input>
+        <div class="d-flex justify-content-between">
+            <p class="btn btn-danger mt-3 mx-auto" onclick="hidePhysicalSection()">Quitar Sección física</p>
+            <button class="btn themed-btn mt-3 mx-auto d-block" type="submit">Guardar Sección</button>
+        </div>
+    </form>
 </div>
-<button class="btn btn-primary mt-3 mx-auto" style="display:block;" id="showPhysicalSection" onclick="showPhysicalSection()">Mostrar Sección fisica</button>
+<p class="mt-3 mx-auto text-center cursor-pointer" id="showPhysicalSection" onclick="showPhysicalSection()">+ Sección fisica</p>
 
 
 @push('scripts')
@@ -29,6 +31,10 @@
             const section = document.getElementById('physical-section');
             document.getElementById('showPhysicalSection').style.display = 'block';
             section.style.display = 'none';
+        }
+
+        function handleAjaxResponse(data) {
+            appendAjaxAlert(data.msg, data.level);
         }
 
         function savePhysicalTest(){
@@ -50,12 +56,16 @@
                     body_score: document.getElementById('body_score').value,
                     weight : document.getElementById('weight').value,
                 },
-
-                /*if you want to debug you need to uncomment this line and comment reload
-                error: function(data) {
-                    console.log(data);
-                }*/
+                success: handleAjaxResponse,
+                error: handleAjaxResponse
             });
         }
+
+        $(document).ready(function() {
+            $('#physicalForm').submit(function (event) {
+                event.preventDefault();
+                savePhysicalTest();
+            });
+        });
     </script>
 @endpush

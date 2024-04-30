@@ -1,20 +1,22 @@
-@csrf
-<div id="WheelOfLife-section" style="display: none;">
-    <h1 class="text-center">¿Cómo te sientes en tu vida?</h1>
-    <x-range name="health" description="Salud: ¿Estás contenta con tu fortaleza física y mental?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
-    <x-range name="personal_growth" description="Desarrollo Personal: ¿Te sientes realizada con lo que quieres hacer?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
-    <x-range name="home" description="Hogar: ¿Estás satisfecha en el sitio donde vives?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
-    <x-range name="family_and_friends" description="Familia y amigos: ¿Estás satisfecha con tu círculo social?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
-    <x-range name="love" description="Amor: ¿En qué medida hay armonía en tu vida sentimental?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
-    <x-range name="leisure" description="Ocio: ¿Cuánto te llena el tiempo libre que tienes?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
-    <x-range name="work" description="Trabajo: ¿Qué grado de satisfacción profesional tienes? " min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
-    <x-range name="money" description="Dinero: ¿Estás contenta con el dinero que manejas?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
-    <div class="d-flex justify-content-between">
-        <button class="btn btn-primary mt-3 mx-auto d-block" onclick="saveWheelOfLifeTest()">Guardar Sección</button>
-        <button class="btn btn-primary mt-3 mx-auto" onclick="hideWheelOfLifeSection()">Quitar Sección Como te sientes?</button>
-    </div>
+<div id="WheelOfLife-section" class="themed-block p-3"  style="display: none;">
+    <form id="wheelOfLifeForm">
+        @csrf
+        <h1 class="text-center">¿Cómo te sientes en tu vida?</h1>
+        <x-range name="health" description="Salud: ¿Estás contenta con tu fortaleza física y mental?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
+        <x-range name="personal_growth" description="Desarrollo Personal: ¿Te sientes realizada con lo que quieres hacer?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
+        <x-range name="home" description="Hogar: ¿Estás satisfecha en el sitio donde vives?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
+        <x-range name="family_and_friends" description="Familia y amigos: ¿Estás satisfecha con tu círculo social?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
+        <x-range name="love" description="Amor: ¿En qué medida hay armonía en tu vida sentimental?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
+        <x-range name="leisure" description="Ocio: ¿Cuánto te llena el tiempo libre que tienes?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
+        <x-range name="work" description="Trabajo: ¿Qué grado de satisfacción profesional tienes? " min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
+        <x-range name="money" description="Dinero: ¿Estás contenta con el dinero que manejas?" min="1" max="10" showReason="1" reason="¿Por qué?" required></x-range>
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-danger mt-3 mx-auto" onclick="hideWheelOfLifeSection()">Quitar Sección Como te sientes?</button>
+            <button class="btn themed-btn mt-3 mx-auto d-block" type="submit">Guardar Sección</button>
+        </div>
+    </form>
 </div>
-<button class="btn btn-primary mt-3 mx-auto" style="display:block;" id="showWheelOfLifeSection" onclick="showWheelOfLifeSection()">Mostrar Sección Como te sientes?</button>
+<p class="mt-3 mx-auto text-center cursor-pointer" id="showWheelOfLifeSection" onclick="showWheelOfLifeSection()">+ Rueda de la vida</p>
 
 
 @push('scripts')
@@ -57,11 +59,16 @@
                     reason_money : document.getElementById('reason_money').value,
                 },
 
-                /*if you want to debug you need to uncomment this line and comment reload
-                error: function(data) {
-                    console.log(data);
-                }*/
+                success: handleAjaxResponse,
+                error: handleAjaxResponse
             });
         }
+
+        $(document).ready(function() {
+            $('#wheelOfLifeForm').submit(function (event) {
+                event.preventDefault();
+                saveWheelOfLifeTest();
+            });
+        });
     </script>
 @endpush
