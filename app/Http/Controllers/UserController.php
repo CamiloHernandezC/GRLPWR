@@ -30,7 +30,6 @@ class UserController extends controller
         ]);
     }
 
-
     public function search(Request $request)
     {
         $id = $request->input('id');
@@ -109,7 +108,7 @@ class UserController extends controller
     {
         $userId = $request->input('userId');
         $assigned = $request->input('assigned');
-        User::where('id', $userId)->update(['assigned' => $assigned]);
+        User::where('id', $userId)->update(['assigned_id' => $assigned]);
 
         return response()->json(['success' => true]);
     }

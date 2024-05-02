@@ -27,7 +27,6 @@
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>Email</th>
-                <th>Padrino</th>
                 <th>Telefono</th>
                 <th>Padrino</th>
                 <th>Acciones</th>
@@ -38,7 +37,6 @@
                     <td><input type="number" id="id" name="id" placeholder="Id" ></td>
                     <td><input type="text" id="name" name="name" placeholder="Nombre"></td>
                     <td><input type="text" id="email" name="email" placeholder="Correo"></td>
-                    <td></td>
                     <td><input type="number" id="phone" name="phone" placeholder="Celular"></td>
                     <td><input type="number" id="assigned" name="assigned" placeholder="assigned"></td>
                     <td>F. Expiración</td>
@@ -56,16 +54,15 @@
                     <td>{{ $user->id }}</td>
                     <td><a class="client-icon theme-color" href="{{route('visitarPerfil', ['user'=>  $user->slug])}}"><div style="max-height:3rem; overflow:hidden">{{ $user->nombre . ' ' .  $user->apellido_1 . ' ' .  $user->apellido_2}}</div></a></td>
                     <td>{{ $user->email }}</td>
+                    <td>{{ $user->telefono }}</td>
                     <td>
                         <select onchange="onChangeAssignment({{ $user->id }},this.value)">
                             <option style="color: black" value="" disabled selected>Seleccione...</option>
                             @foreach ($adminUsers as $adminUser)
-                                <option value="{{ $adminUser->id }}" {{$user->assigned == $adminUser->id ? 'selected' : ''}}>{{ $adminUser->nombre }}</option>
+                                <option value="{{ $adminUser->id }}" {{$user->assigned_id == $adminUser->id ? 'selected' : ''}}>{{ $adminUser->nombre }}</option>
                             @endforeach
                         </select>
                     </td>
-                    <td>{{ $user->telefono }}</td>
-                    <td>{{ $user->assigned_id }}</td>
                     <td>{{ str_limit($user->expiration_date,10, '') }}</td>
                     <td><a class="client-icon theme-color" href="{{route('healthTest', ['user'=>  $user->slug])}}">Valoración</a></td>
                 </tr>
