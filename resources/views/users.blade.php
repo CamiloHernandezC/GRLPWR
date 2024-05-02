@@ -90,6 +90,10 @@
 
         $(document).ready(function() {
 
+            let options = @foreach ($adminUsers as $adminUser)
+                '<option value="{{$adminUser->id}}" >{{ $adminUser->nombre }}</option>' @if(!$loop->last)+@endif
+            @endforeach
+
             function filter(){
                 var idValue = $('#id').val();
                 var nameValue = $('#name').val();
@@ -125,11 +129,20 @@
                                 '<td><a class="client-icon theme-color" href="{{env('APP_URL')}}/visitar/' + result.slug + '"><div style="max-height:3rem; overflow:hidden">' + result.nombre + ' ' +  result.apellido_1 + ' ' +  result.apellido_2 + '</div></a></td>' +
                                 '<td>' + result.email + '</td>' +
                                 '<td>' + result.telefono + '</td>' +
-                                '<td>' + result.assigned_id + '</td>' +
+                                '<td>' +
+                                    '<select id="select_'+ result.id +'" onchange="onChangeAssignment(' + result.id + ', this.value)">' +
+                                        '<option style="color: black" value="" disabled selected>Seleccione...</option>' +
+                                            options +
+                                    '</select>' +
+                                '</td>' +
                                 '<td>' + result.expiration_date?.slice(0, 10)+ '</td>'+
                                 '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">Valoración</a></td>' +
                                 '</tr>'
                             );
+
+                            if(result.assigned_id){
+                                $('#select_'+result.id).val(result.assigned_id);
+                            }
                             if(result.expiration_date){
                                 var today = new Date();
                                 today.setHours(0,0,0,0);
