@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Achievements\CreateThreeAchievements;
 use App\EditedEvent;
 use App\Exceptions\NoAvailableEquipmentException;
 use App\Exceptions\NoVacancyException;
@@ -30,6 +31,11 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
+use App\Comment;
+use App\Achievements\AssistedToClassAchievement;
+
+
+
 
 class SesionClienteController extends Controller
 {
@@ -51,11 +57,13 @@ class SesionClienteController extends Controller
             $sesionCliente->fecha_fin = $endDate;
         }
         $sesionCliente->save();
+        $sesionCliente->unlock(new AssistedToClassAchievement());
     }
 
     public function scheduleEvent(Request $request){
         try {
             $client = Cliente::find($request->clientId);
+
             return $this->schedule($request->eventId, $request->startDate, $request->startHour, $request->endDate, $request->endHour, $client, $request->rentEquipment, $request->isCourtesy ?? false, $request->validateVacancy ?? true);
         }catch (Exception $exception){
             Session::put('msg_level', 'danger');
@@ -388,7 +396,7 @@ class SesionClienteController extends Controller
         }
     }
 
-    public function checkAttendee(Request $request): JsonResponse
+    public function checkAttendee(Request $request)
     {
         $clientSession = SesionCliente::find($request->clientSessionId);
         $clientSession->attended = $request->checked === "true";

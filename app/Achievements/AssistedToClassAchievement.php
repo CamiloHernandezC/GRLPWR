@@ -15,10 +15,12 @@ use Assada\Achievements\Achievement;
  */
 class AssistedToClassAchievement extends Achievement
 {
+
     public $name = "Assisted to class";
     public $slug = "assisted-to-class";
     public $description = "You have trained for 3 days this week";
     public $points = 3;
+
     /*
      * Triggers whenever an Achiever unlocks this achievement
     */
@@ -29,8 +31,4 @@ class AssistedToClassAchievement extends Achievement
 
         //TODO Revisar logica para cuando el administrador le da por equivocacion asistio y lo cancela
     }
-
-    //TODO si no logra desbloquear esto una semana entonces debe resetear el progreso de weeks y de months
-
-
 }
