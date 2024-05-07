@@ -7,6 +7,7 @@ use App\ClassType;
 use App\Model\ClientPlan;
 use App\Model\Evento;
 use App\Repositories\ClientPlanRepository;
+use App\View\Composers\AchievementsComposer;
 use App\View\Composers\EventComposer;
 use App\View\Composers\HighlightComposer;
 use App\View\Composers\HistoricActiveClientsComposer;
@@ -76,5 +77,6 @@ class ViewServiceProvider extends ServiceProvider
         Facades\View::composer('cliente.trainingPreferences', TrainingPreferencesComposer::class);
         Facades\View::composer('highlightSection', HighLightComposer::class);
         Facades\View::composer('components.historicActiveClients', HistoricActiveClientsComposer::class);
+        Facades\View::composer('achievements.achievementsResume', AchievementsComposer::class);
     }
 }
