@@ -193,12 +193,18 @@ class SesionClienteController extends Controller
      */
     private function schedule($id, $startDate, $startHour, $endDate, $endHour, $client, $isRenting, $isCourtesy, $validateVacancy, bool $isGuest = false): JsonResponse|\Illuminate\Http\RedirectResponse
     {
+        $formattedStartDate = Carbon::parse($startDate)->format('Y-m-d');
         $editedEvent = EditedEvent::where('evento_id', $id)
-            ->where('fecha_inicio', '=', $startDate)
+            ->where('fecha_inicio', '=', $formattedStartDate)
             ->where('start_hour', '=', $startHour)
             ->first();
-        $event = $editedEvent ?: Evento::find($id);
-        $startDateTime = Carbon::parse($startDate)->format('Y-m-d') . ' ' . $startHour;
+        if($editedEvent){
+            $event = $editedEvent;
+            $event->id = $editedEvent->evento_id;
+        }else{
+            $event =  Evento::find($id);
+        }
+        $startDateTime = $formattedStartDate . ' ' . $startHour;
         $endDateTime = Carbon::parse($endDate)->format('Y-m-d') . ' ' . $endHour;
         if($validateVacancy){
             $this->validateVacancy($event, $startDateTime, $endDateTime);
@@ -273,7 +279,9 @@ class SesionClienteController extends Controller
 
             $clientPlanRepository = new ClientPlanRepository();
             $event->fecha_inicio = $startDateTime;
+            $event->start_hour = substr($startDateTime, 11);
             $event->fecha_fin = $endDateTime;
+            $event->end_hour = substr($endDateTime, 11);
             $clientPlan = $clientPlanRepository->findValidClientPlan($event,  $isGuest ? Auth::id() : $client->usuario_id);
 
             if ($clientPlan) {
@@ -311,6 +319,7 @@ class SesionClienteController extends Controller
                 return response()->json(['status' =>  'reserved', 'sesionClienteId' => $sesionCliente->id], 200);
             }
             DB::commit();
+            Session::forget('msg');//FIT-107: Clear message from morning plan
             return response()->json(['status' =>  'goToPay'], 200);
         }catch (Exception $exception) {
             DB::rollBack();

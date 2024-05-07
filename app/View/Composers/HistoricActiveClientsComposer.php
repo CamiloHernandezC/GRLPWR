@@ -12,7 +12,7 @@ class HistoricActiveClientsComposer
      */
     public function compose(View $view): void
     {
-        $activeClients =  HistoricalActiveClient::all();
+        $activeClients =  HistoricalActiveClient::orderBy('date');
 
         //where('date', '>=', )
 
