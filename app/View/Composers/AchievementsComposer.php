@@ -2,6 +2,7 @@
 
 namespace App\View\Composers;
 
+use App\Achievements\RecordWeeksTrained;
 use App\Achievements\WeeksTrained;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\View;
@@ -15,8 +16,12 @@ class AchievementsComposer
     {
         $route = Route::current();
         $user = $route->parameter('user');
-        $details = $user->achievementStatus(new WeeksTrained());
+        $weeksStreak = $user->achievementStatus(new WeeksTrained());
+        $recordWeeksStreak = $user->achievementStatus(new RecordWeeksTrained());
 
-        $view->with('streak', $details);
+        $view->with([
+            'weeksStreak' => $weeksStreak,
+            'recordWeeksStreak' => $recordWeeksStreak,
+        ]);
     }
 }
