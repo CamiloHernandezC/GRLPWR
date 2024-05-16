@@ -1,0 +1,110 @@
+[
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:8000\/notification\/get - Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+        "source": "network",
+        "timestamp": 1712674449257
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:8000\/js\/app.js 927:14 Uncaught Error: Request failed with status code 500",
+        "source": "javascript",
+        "timestamp": 1712674449269
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:8000\/broadcasting\/auth - Failed to load resource: the server responded with a status of 403 (Forbidden)",
+        "source": "network",
+        "timestamp": 1712674449563
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/code.jquery.com\/ui\/1.12.1\/jquery-ui.js 13:11 Uncaught ReferenceError: jQuery is not defined",
+        "source": "javascript",
+        "timestamp": 1712674450576
+    },
+    {
+        "level": "WARNING",
+        "message": "http:\/\/127.0.0.1:8000\/user\/1\/home 372 The specified value \"079 610 17 95\" cannot be parsed, or is out of range.",
+        "source": "rendering",
+        "timestamp": 1712674450737
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:8000\/js\/jquery.bootstrap.js 251:37 Uncaught TypeError: Cannot read properties of undefined (reading 'currentIndex')",
+        "source": "javascript",
+        "timestamp": 1712674450827
+    },
+    {
+        "level": "WARNING",
+        "message": "https:\/\/maps.googleapis.com\/maps\/api\/js?key=AIzaSyDjn6uQjll2HhwGi8L5_QTs4bAxAjqh5E0&libraries=geometry&callBack=initMap 227:240 \"Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https:\/\/goo.gle\/js-api-loading\"",
+        "source": "console-api",
+        "timestamp": 1712674450883
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:8000\/images\/brand\/imago_32x32.png - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712674451539
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/code.jquery.com\/ui\/1.12.1\/jquery-ui.js 13:11 Uncaught ReferenceError: jQuery is not defined",
+        "source": "javascript",
+        "timestamp": 1712674451861
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:8000\/images\/Ab%20sunt%20quidem%20id. - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712674452189
+    },
+    {
+        "level": "WARNING",
+        "message": "http:\/\/127.0.0.1:8000\/eventos\/1\/11-04-2024\/08:58:40\/0 572 The specified value \"079 610 17 95\" cannot be parsed, or is out of range.",
+        "source": "rendering",
+        "timestamp": 1712674452222
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/code.jquery.com\/ui\/1.12.1\/jquery-ui.js 13:11 Uncaught ReferenceError: jQuery is not defined",
+        "source": "javascript",
+        "timestamp": 1712674455361
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:8000\/images\/Ab%20sunt%20quidem%20id. - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712674455713
+    },
+    {
+        "level": "WARNING",
+        "message": "http:\/\/127.0.0.1:8000\/eventos\/1\/11-04-2024\/08:58:40\/0 572 The specified value \"079 610 17 95\" cannot be parsed, or is out of range.",
+        "source": "rendering",
+        "timestamp": 1712674455775
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/code.jquery.com\/ui\/1.12.1\/jquery-ui.js 13:11 Uncaught ReferenceError: jQuery is not defined",
+        "source": "javascript",
+        "timestamp": 1712674459420
+    },
+    {
+        "level": "WARNING",
+        "message": "http:\/\/127.0.0.1:8000\/user\/1\/home 372 The specified value \"079 610 17 95\" cannot be parsed, or is out of range.",
+        "source": "rendering",
+        "timestamp": 1712674459463
+    },
+    {
+        "level": "WARNING",
+        "message": "https:\/\/maps.googleapis.com\/maps\/api\/js?key=AIzaSyDjn6uQjll2HhwGi8L5_QTs4bAxAjqh5E0&libraries=geometry&callBack=initMap 227:240 \"Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https:\/\/goo.gle\/js-api-loading\"",
+        "source": "console-api",
+        "timestamp": 1712674459505
+    },
+    {
+        "level": "WARNING",
+        "message": "http:\/\/127.0.0.1:8000\/js\/app.js 4320 WebSocket connection to 'wss:\/\/ws-mt1.pusher.com\/app\/b47762f87836b9d19877?protocol=7&client=js&version=4.3.1&flash=false' failed: WebSocket is closed before the connection is established.",
+        "source": "network",
+        "timestamp": 1712674461834
+    }
+]
