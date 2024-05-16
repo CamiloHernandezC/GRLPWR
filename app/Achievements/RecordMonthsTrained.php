@@ -16,11 +16,9 @@ class RecordMonthsTrained extends Achievement
      * The achievement name
      */
     public $name = 'RecordMonthsTrained';
-
     /*
      * A small description for the achievement
      */
     public $description = '';
-
     public $points = 999999999; //this achivement is never unlocked
 }

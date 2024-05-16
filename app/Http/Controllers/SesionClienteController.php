@@ -34,9 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Comment;
 use App\Achievements\AssistedToClassAchievement;
 
-
-
-
 class SesionClienteController extends Controller
 {
     public function __construct(KangooService $kangooService)
@@ -57,13 +54,11 @@ class SesionClienteController extends Controller
             $sesionCliente->fecha_fin = $endDate;
         }
         $sesionCliente->save();
-
     }
 
     public function scheduleEvent(Request $request){
         try {
             $client = Cliente::find($request->clientId);
-
             return $this->schedule($request->eventId, $request->startDate, $request->startHour, $request->endDate, $request->endHour, $client, $request->rentEquipment, $request->isCourtesy ?? false, $request->validateVacancy ?? true);
         }catch (Exception $exception){
             Session::put('msg_level', 'danger');
@@ -74,11 +69,9 @@ class SesionClienteController extends Controller
     }
 
     public function scheduleCourtesy(Request $request){
-
         $user = User::where('email', $request->email)
                     ->orWhere('telefono', $request->cellphone)
                     ->first();
-
         if($user){
             if(SesionCliente::where('cliente_id', $user->id)->first()){
                 Session::put('msg_level', 'danger');
@@ -91,7 +84,6 @@ class SesionClienteController extends Controller
             $request->merge(['password' => config('app.default_password')]);
             $user = $registerController->create($request->all());
         }
-
         $client = Cliente::updateOrCreate(
             ['usuario_id' => $user->id],
             [
@@ -104,14 +96,12 @@ class SesionClienteController extends Controller
             ]
         );
         $client->usuario_id = $user->id;
-
         if($request->weight){
             Peso::updateOrCreate(
                 ['usuario_id' => $user->id],
                 ['peso' => $request->weight, 'unidad_medida' => 0]
             );
         }
-
         try {
             $eventArray = json_decode($request->event, true);
             return $this->schedule($eventArray['id'], $eventArray['startDate'], $eventArray['startHour'], $eventArray['endDate'], $eventArray['endHour'], $client, $request->get('rentEquipment'), true, true);
@@ -123,7 +113,6 @@ class SesionClienteController extends Controller
     public function scheduleGuest(Request $request){
 
         $user = User::where('telefono', $request->cellphone)->first();
-
         if($user) {
             $client = Cliente::where('usuario_id', $user->id)->first();
         }
@@ -167,7 +156,6 @@ class SesionClienteController extends Controller
             return redirect()->back();
         }
     }
-
     /**
      * @param $event
      * @param $startDateTime
@@ -183,7 +171,6 @@ class SesionClienteController extends Controller
             throw new NoVacancyException();
         }
     }
-
     /**
      * @throws ShoeSizeNotSupportedException
      * @throws NoVacancyException
@@ -209,7 +196,6 @@ class SesionClienteController extends Controller
         $isCourtesy = filter_var($isCourtesy, FILTER_VALIDATE_BOOLEAN);
         return $this->registerSession($client, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId ?? null, $isGuest);
     }
-
     /**
      * @throws ShoeSizeNotSupportedException
      * @throws NoAvailableEquipmentException
@@ -220,8 +206,6 @@ class SesionClienteController extends Controller
             return $this->kangooService->assignKangoo($shoeSize, $weight, $startDateTime, $endDateTime);
         }
     }
-
-
     /**
      *Renta
         si:
@@ -243,7 +227,6 @@ class SesionClienteController extends Controller
     public function registerSession($client, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId=null, bool $isGuest=false)
     {
         DB::beginTransaction();
-
         try{
             $sesionCliente = new SesionCliente;
             $sesionCliente->cliente_id = $client->usuario_id;
@@ -257,25 +240,20 @@ class SesionClienteController extends Controller
             if($isGuest){
                 $sesionCliente->host = Auth::id();
             }
-
             if($isCourtesy){
                 $sesionCliente->save();
-
                 Mail::to($client->usuario->email)
                     ->queue(new CourtesyScheduled($sesionCliente));
-
                 Session::put('msg_level', 'success');
                 Session::put('msg', __('general.success_courtesy'));
                 Session::save();
                 DB::commit();
                 return redirect()->back();
             }
-
             $clientPlanRepository = new ClientPlanRepository();
             $event->fecha_inicio = $startDateTime;
             $event->fecha_fin = $endDateTime;
             $clientPlan = $clientPlanRepository->findValidClientPlan($event,  $isGuest ? Auth::id() : $client->usuario_id);
-
             if ($clientPlan) {
                 $sesionCliente->save();
                 if($event->discounts_session){
@@ -295,7 +273,6 @@ class SesionClienteController extends Controller
                     }
                 }
                 /*FIT-57: end block code*/
-
                 Session::put('msg_level', 'success');
                 Session::put('msg', __('general.success_purchase'));
                 Session::save();
