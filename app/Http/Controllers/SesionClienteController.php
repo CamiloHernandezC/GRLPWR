@@ -57,7 +57,7 @@ class SesionClienteController extends Controller
             $sesionCliente->fecha_fin = $endDate;
         }
         $sesionCliente->save();
-        $sesionCliente->unlock(new AssistedToClassAchievement());
+
     }
 
     public function scheduleEvent(Request $request){
