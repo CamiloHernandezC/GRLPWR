@@ -150,6 +150,7 @@ class PagosController extends Controller
         $transaction->data = $request->data ?? "";
         $transaction->user_id = $request->clientId;
         $transaction->created_at = $payDay;
+        $transaction->is_cxp = $request->has('cxp') ? true : false;
         $transaction->save();
 
         Session::put('msg_level', 'success');
