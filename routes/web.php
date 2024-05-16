@@ -24,7 +24,9 @@ use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\WellBeingController;
+use App\Model\Cliente;
 use App\Model\ClientPlan;
+use App\PaymentMethod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -90,13 +92,25 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'admin'], function () {
+    Route::get('/admin/savePettyCash', function () {
+        $clients = Cliente::all();
+        $paymentMethods = PaymentMethod::where('enabled', true)->get();
+        return view('admin.savePettyCash', compact('clients', 'paymentMethods'));
+    })->name('pettyCash.index');
+    Route::post('/admin/savePettyCash', [PagosController::class, 'savePettyCash'])->name('pettyCash.save');
     Route::get('/admin/loadPlan', [ClientPlanController::class, 'showLoadClientPlan']);
     Route::post('/admin/loadPlan', [ClientPlanController::class, 'saveClientPlan'])->name('saveClientPlan');
     Route::post('/admin/checkAttendee', [SesionClienteController::class, 'checkAttendee'])->name('checkAttendee');
     Route::get('/user/{user}/wellBeingTest', [WellBeingController::class, 'index'])->name('healthTest');
     Route::post('/user/{user}/wellBeingTest', [WellBeingController::class, 'processWellBeingTest'])->name('wellBeingTest');
+    Route::post('/physicalTest', [WellBeingController::class, 'savePhysicalTest'])->name('savePhysicalTest');
+    Route::post('/foodTest', [WellBeingController::class, 'saveFoodTest'])->name('saveFoodTest');
+    Route::post('/trainingTest', [WellBeingController::class, 'saveTrainingTest'])->name('saveTrainingTest');
+    Route::post('/wellbeingTest', [WellBeingController::class, 'saveWellBeingTest'])->name('saveWellBeingTest');
+    Route::post('/wheelOfLifeTest', [WellBeingController::class, 'saveWheelOfLifeTest'])->name('saveWheelOfLifeTest');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+    Route::post('/users/assigned', [UserController::class, 'updateAssigned'])->name('assigned.update');
     Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
     Route::post('{user}/comment/', [UserCommentController::class, 'comment'])->name('commentUser');
     Route::post('{comment}/reply/', [UserCommentController::class, 'reply'])->name('replyUserComment');
