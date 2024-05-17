@@ -2,16 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Auth\SeguridadController;
-use App\Model\Ofrecimientos;
-use App\Model\SesionCliente;
-use App\Model\SolicitudServicio;
 use App\Model\TransaccionesPagos;
-use App\User;
-use App\Utils\Constantes;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Validator;
 
 class AccountingFlowController extends Controller
@@ -21,12 +13,20 @@ class AccountingFlowController extends Controller
      *
      * @return void
      */
-    public function AccountingFlow()
+    public function AccountingFlow(request $request)
     {
-        $positiveValues = TransaccionesPagos::where('amount', '>', 0)->get();
-        $negativeValues = TransaccionesPagos::where('amount', '<', 0)
-            ->orWhere('is_cxp', 1)
-            ->get();
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $positiveValues = collect();
+        $negativeValues = collect();
+        if ($startDate && $endDate) {
+            $positiveValues = TransaccionesPagos::where('amount', '>', 0)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
+            $negativeValues = TransaccionesPagos::where('amount', '<', 0)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
+        }
         $positiveSum = $positiveValues->sum('amount');
         $negativeSum = $negativeValues->sum('amount');
         return view('cliente.AccountingFlow', compact('positiveValues', 'negativeValues', 'positiveSum', 'negativeSum'));

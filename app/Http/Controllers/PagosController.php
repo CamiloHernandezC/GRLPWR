@@ -146,11 +146,16 @@ class PagosController extends Controller
         $transaction->ref_payco = "1";
         $transaction->codigo_respuesta = "1";
         $transaction->respuesta = "Aprobado";
-        $transaction->amount = $request->amount;
         $transaction->data = $request->data ?? "";
         $transaction->user_id = $request->clientId;
         $transaction->created_at = $payDay;
-        $transaction->is_cxp = $request->has('cxp') ? true : false;
+        if ($request->has('cxp') || $request->cxp == 1) {
+            $transaction->amount = -$request->amount;
+            $transaction->cxp = $request->has('cxp');
+        } else {
+            $transaction->amount = $request->amount;
+            $transaction->cxp = $request->has('cxp');
+        }
         $transaction->save();
 
         Session::put('msg_level', 'success');
