@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="container">
-        <h1 class="text-center">Sumas de Transacciones</h1>
+        <h1 class="text-center">Flujo de caja</h1>
         <form action="{{ route('AccountingFlow') }}" method="GET" class="text-center">
             @csrf
             <label for="start_date">Fecha de inicio:</label>
@@ -23,7 +23,7 @@
         </form>
 
         <div class="text-center">
-            <h2>Valores Positivos</h2>
+            <h2>Ingresos</h2>
             <table class="table">
                 <thead>
                 <tr>
@@ -51,7 +51,7 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="3">Suma de valores positivos</td>
+                    <td colspan="3">Suma de ingresos</td>
                     <td class="currency">$ {{ number_format($positiveSum, 0, ',', '.') }}</td>
                 </tr>
                 </tbody>
@@ -59,7 +59,7 @@
         </div>
 
         <div class="text-center">
-            <h2>Valores Negativos</h2>
+            <h2>Egresos</h2>
             <table class="table">
                 <thead>
                 <tr>
@@ -87,7 +87,7 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="3">Suma de valores negativos</td>
+                    <td colspan="3">Suma de Egresos</td>
                     <td class="currency">$ {{ number_format($negativeSum, 0, ',', '.') }}</td>
                 </tr>
                 </tbody>
