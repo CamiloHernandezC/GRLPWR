@@ -27,27 +27,19 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Nombre</th>
                     <th>Amount</th>
                     <th>Fecha</th>
-                    <th>CXP</th>
+                    <th>Metodo de pago</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach ($positiveValues as $positive)
                     <tr>
-                        <td>{{ $positive->id }}</td>
+                        <td>{{ $positive->user->fullName }}</td>
                         <td class="currency">$ {{ number_format($positive->amount, 0, ',', '.') }}</td>
                         <td>{{ $positive->created_at->format('Y-m-d') }}</td>
-                        <td>
-                            @if($positive->cxp === 1)
-                                Si
-                            @elseif($positive->cxp === 0)
-                                No
-                            @else
-                                N/A
-                            @endif
-                        </td>
+                        <td>{{ $positive->payment->name }}</td>
                     </tr>
                 @endforeach
                 <tr>
@@ -63,18 +55,20 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Nombre</th>
                     <th>Amount</th>
                     <th>Fecha</th>
+                    <th>Metodo de pago</th>
                     <th>CXP</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach ($negativeValues as $negative)
                     <tr>
-                        <td>{{ $negative->id }}</td>
+                        <td>{{ $negative->user->fullName}}</td>
                         <td class="currency">$ {{ number_format($negative->amount, 0, ',', '.') }}</td>
                         <td>{{ $negative->created_at->format('Y-m-d') }}</td>
+                        <td>{{ $negative->payment->name }}</td>
                         <td>
                             @if($negative->cxp === 1)
                                 Si

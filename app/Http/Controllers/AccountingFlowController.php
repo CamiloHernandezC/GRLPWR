@@ -20,10 +20,12 @@ class AccountingFlowController extends Controller
         $positiveValues = collect();
         $negativeValues = collect();
         if ($startDate && $endDate) {
-            $positiveValues = TransaccionesPagos::where('amount', '>', 0)
+            $positiveValues = TransaccionesPagos::with(['user', 'payment'])
+                ->where('amount', '>', 0)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
-            $negativeValues = TransaccionesPagos::where('amount', '<', 0)
+            $negativeValues = TransaccionesPagos::with(['user', 'payment'])
+                ->where('amount', '<', 0)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
         }
