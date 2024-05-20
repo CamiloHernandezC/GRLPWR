@@ -23,5 +23,4 @@ class RecordWeeksTrained extends Achievement
     public $description = '';
 
     public $points = 999999999; //this achivement is never unlocked
-
 }

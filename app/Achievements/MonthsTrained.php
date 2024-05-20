@@ -28,7 +28,6 @@ class MonthsTrained extends Achievement
     public function whenProgress($progress)
     {
         $user = User::find($progress->achiever_id);
-
         $points = AchievementProgress::where('achievement_id', env('RECORD_MONTHS_TRAINED_ACHIEVEMENT_ID'))
             ->where('achiever_id', $user->id)
             ->value('points');
