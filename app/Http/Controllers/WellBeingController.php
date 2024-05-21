@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Achievements\AssistedToClassAchievement;
+use App\Achievements\WheelOfLifeAchievement;
 use App\FoodAssesment;
 use App\HealthTest;
 use App\Model\Peso;
@@ -95,6 +97,21 @@ class WellBeingController extends controller {
             $wheelOfLife->reason_money = $request->reason_money;
             $wheelOfLife->user_id = auth()->user()->id;
             $wheelOfLife->save();
+            $fields = [
+                'health' => $wheelOfLife->health,
+                'personal_growth' => $wheelOfLife->personal_growth,
+                'home' => $wheelOfLife->home,
+                'family_and_friends' => $wheelOfLife->family_and_friends,
+                'love' => $wheelOfLife->love,
+                'leisure' => $wheelOfLife->leisure,
+                'work' => $wheelOfLife->work,
+                'money' => $wheelOfLife->money,
+            ];
+            foreach ($fields as $field => $value) {
+                if ($value >= 9) {
+                    $user->addProgress(new WheelOfLifeAchievement(), 1);
+                }
+            }
         });
 
         Session::put('msg_level', 'success');
