@@ -67,9 +67,9 @@
                         <td>{{ $negative->created_at->format('Y-m-d') }}</td>
                         <td>{{ $negative->payment->name }}</td>
                         <td>
-                            @if($negative->cxp === 1)
+                            @if($negative->cxp)
                                 Si
-                            @elseif($negative->cxp === 0)
+                            @else
                                 No
                             @endif
                         </td>

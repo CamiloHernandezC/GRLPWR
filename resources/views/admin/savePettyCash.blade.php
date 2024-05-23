@@ -117,8 +117,8 @@
                                                 <label class="control-label">Item <small>(requerido)</small></label>
                                                 <textarea name="data" class="form-control" rows="3"></textarea>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="cxp" name="cxp" value="1">
-                                                    <label class="form-check-label" for="cxp">Es CXP</label>
+                                                    <input class="form-check-input" type="checkbox" id="cxp" name="cxp">
+                                                    <label class="form-check-label" for="cxp">Es Cuenta por Pagar</label>
                                                 </div>
                                             </div>
                                         </div>
