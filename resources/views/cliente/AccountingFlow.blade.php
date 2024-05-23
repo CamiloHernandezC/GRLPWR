@@ -4,9 +4,6 @@
     Flujo contable
 @endsection
 
-@section('head-content')
-    <link rel="stylesheet" href="{{ asset('css/solicitudServicio.css') }}">
-@endsection
 
 @section('content')
     <div class="container">
@@ -74,8 +71,6 @@
                                 Si
                             @elseif($negative->cxp === 0)
                                 No
-                            @else
-                                N/A
                             @endif
                         </td>
                     </tr>
