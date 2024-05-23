@@ -21,20 +21,20 @@ jobs:
       - name: Get latest code
 
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Sync files
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp.fitflyr.com
+          server: ftp.girlpower.com.co
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /girlpower/GRLPWR/
 
       - name: Sync public files
-        uses: SamKirkland/FTP-Deploy-Action@4.1.0
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp.fitflyr.com
+          server: ftp.girlpower.com.co
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /girlpower/public_html/

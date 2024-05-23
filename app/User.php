@@ -40,6 +40,7 @@ class User extends Authenticatable
         'instagram',
 	    'emergency_contact',
 	    'emergency_phone',
+        'assigned_id',
 	    'occupation'
     ];
 

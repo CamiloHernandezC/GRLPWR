@@ -81,7 +81,10 @@
                         <p>Patologías: {{$user->cliente->pathology}}</p>
                     @endif
                 </div>
+
+                @include('achievements.achievementsResume')
                 @include('cliente.clientPlan')
+                @include('components.lastClasses')
 
                 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
                     <h3 class="section-title">Antropometría:</h3>
@@ -144,11 +147,9 @@
                     @endif
                 </div>
 
-                @if(Auth::id() === $user->id || Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
-                    @include('assessments.physicalAssessment')
-                    @include('assessments.wheelOfLife')
-                    @include('cliente.trainingPreferences')
-                @endif
+                @include('assessmentResults.physicalAssessment')
+                @include('assessmentResults.wheelOfLife')
+                @include('assessmentResults.trainingPreferences')
 
                 @php($cardiovascularRisk = $user->cliente?->cardiovascularRisk())
                 @isset($cardiovascularRisk)
