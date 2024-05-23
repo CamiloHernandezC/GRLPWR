@@ -10,6 +10,7 @@ use App\TrainingPreference;
 use App\User;
 use App\WellBeingAssessment;
 use App\WheelOfLife;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -24,11 +25,11 @@ class WellBeingController extends controller
         return view('cliente.healthTest', compact('user'));
     }
 
-    public function processWellBeingTest(Request $request, User $user): \Illuminate\Http\RedirectResponse
+    public function savePhysicalTest(Request $request): JsonResponse
     {
-        DB::transaction(function () use ($request, $user) {
+        DB::transaction(function () use ($request) {
             $physicalAssessment = new PhysicalAssessment();
-            $physicalAssessment->user_id = $user->id;
+            $physicalAssessment->user_id = $request->user_id;
             $physicalAssessment->muscle = $request->muscle;
             $physicalAssessment->visceral_fat = $request->visceral_fat;
             $physicalAssessment->body_fat = $request->body_fat;
@@ -40,13 +41,13 @@ class WellBeingController extends controller
             $physicalAssessment->save();
 
             $peso = new Peso();
-            $peso->usuario_id = $user->id;
+            $peso->usuario_id = $request->user_id;
             $peso->peso = $request->weight;
             $peso->unidad_medida = 0;
             $peso->save();
 
             $foodFormAssesment = new FoodAssesment();
-            $foodFormAssesment->user_id = $user->id;
+            $foodFormAssesment->user_id = $request->user_id;
             $foodFormAssesment->feeding_relationship = $request->feeding_relationship;
             $foodFormAssesment->breakfast = $request->breakfast;
             $foodFormAssesment->mid_morning = $request->mid_morning;
@@ -60,14 +61,14 @@ class WellBeingController extends controller
             $foodFormAssesment->save();
 
             $trainingPreference =new TrainingPreference();
-            $trainingPreference->user_id = $user->id;
+            $trainingPreference->user_id = $request->user_id;
             $trainingPreference->training_frequency = $request->training_frequency;
             $trainingPreference->intensity = $request->intensity;
             $trainingPreference->music = $request->music;
             $trainingPreference->save();
 
             $wellBeingAssessment = new WellBeingAssessment();
-            $wellBeingAssessment->user_id = $user->id;
+            $wellBeingAssessment->user_id = $request->user_id;
             $wellBeingAssessment->body_relation = $request->body_relation;
             $wellBeingAssessment->body_discomfort = $request->body_discomfort;
             $wellBeingAssessment->stress = $request->reason_stress;
@@ -76,7 +77,7 @@ class WellBeingController extends controller
             $wellBeingAssessment->save();
 
             $wheelOfLife = new WheelOfLife();
-            $wheelOfLife->user_id = $user->id;
+            $wheelOfLife->user_id = $request->user_id;
             $wheelOfLife->health = $request->health;
             $wheelOfLife->reason_health = $request->reason_health;
             $wheelOfLife->personal_growth = $request->personal_growth;

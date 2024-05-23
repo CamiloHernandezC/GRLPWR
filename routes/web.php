@@ -102,7 +102,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('/admin/loadPlan', [ClientPlanController::class, 'saveClientPlan'])->name('saveClientPlan');
     Route::post('/admin/checkAttendee', [SesionClienteController::class, 'checkAttendee'])->name('checkAttendee');
     Route::get('/user/{user}/wellBeingTest', [WellBeingController::class, 'index'])->name('healthTest');
-    Route::post('/user/{user}/wellBeingTest', [WellBeingController::class, 'processWellBeingTest'])->name('wellBeingTest');
+    Route::post('/user/{user}/wellBeingTest', [WellBeingController::class, 'savePhysicalTest'])->name('wellBeingTest');
     Route::post('/physicalTest', [WellBeingController::class, 'savePhysicalTest'])->name('savePhysicalTest');
     Route::post('/foodTest', [WellBeingController::class, 'saveFoodTest'])->name('saveFoodTest');
     Route::post('/trainingTest', [WellBeingController::class, 'saveTrainingTest'])->name('saveTrainingTest');
