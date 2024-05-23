@@ -29,6 +29,8 @@ use App\Model\ClientPlan;
 use App\PaymentMethod;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AchievementController;
+
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/mis_solicitudes/crear', 'SolicitudServicioController@irCrear')->name('irCrearSolicitud');
@@ -115,6 +117,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('{user}/comment/', [UserCommentController::class, 'comment'])->name('commentUser');
     Route::post('{comment}/reply/', [UserCommentController::class, 'reply'])->name('replyUserComment');
     Route::get('/admin/saveActiveClients/{date}', [ActiveClientsController::class, 'saveActiveClientByDate']);
+    Route::get('/achievements', [AchievementController::class, 'showAchievements']);
 });
 
 /*Open routes*/
