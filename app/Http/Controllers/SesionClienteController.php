@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Achievements\CreateThreeAchievements;
 use App\EditedEvent;
+use App\Achievements\CreateThreeAchievements;
 use App\Exceptions\NoAvailableEquipmentException;
 use App\Exceptions\NoVacancyException;
 use App\Exceptions\ShoeSizeNotSupportedException;
@@ -174,7 +174,6 @@ class SesionClienteController extends Controller
             throw new NoVacancyException();
         }
     }
-
     /**
      * @throws ShoeSizeNotSupportedException
      * @throws NoVacancyException
@@ -196,6 +195,8 @@ class SesionClienteController extends Controller
             $event =  Evento::find($id);
         }
         $startDateTime = $formattedStartDate . ' ' . $startHour;
+        $event = $editedEvent ?: Evento::find($id);
+        $startDateTime = Carbon::parse($startDate)->format('Y-m-d') . ' ' . $startHour;
         $endDateTime = Carbon::parse($endDate)->format('Y-m-d') . ' ' . $endHour;
         if($validateVacancy){
             $this->validateVacancy($event, $startDateTime, $endDateTime);

@@ -45,6 +45,7 @@ class WellBeingController extends controller
             $peso->peso = $request->weight;
             $peso->unidad_medida = 0;
             $peso->save();
+
         });
 
         return response()->json([
@@ -76,7 +77,6 @@ class WellBeingController extends controller
             'level' => 'success',
         ], 200);
     }
-
     public function saveTrainingTest(Request $request): JsonResponse
     {
         $trainingPreference = new TrainingPreference();
@@ -85,14 +85,12 @@ class WellBeingController extends controller
         $trainingPreference->intensity = $request->intensity;
         $trainingPreference->music = $request->music;
         $trainingPreference->save();
-
         return response()->json([
             'success' => true,
             'msg' => __('general.sucess_training_assesment'),
             'level' => 'success',
         ], 200);
     }
-
     public function saveWellBeingTest(Request $request): JsonResponse
     {
         $wellBeingAssessment = new WellBeingAssessment();
@@ -103,14 +101,12 @@ class WellBeingController extends controller
         $wellBeingAssessment->stress_practice = $request->stress_practice;
         $wellBeingAssessment->spiritual_belief = $request->spiritual_belief;
         $wellBeingAssessment->save();
-
         return response()->json([
             'success' => true,
             'msg' => __('general.sucess_wellbeign_assesment'),
             'level' => 'success',
         ], 200);
     }
-
     public function saveWheelOfLifeTest(Request $request): JsonResponse
     {
         $wheelOfLife = new WheelOfLife();
