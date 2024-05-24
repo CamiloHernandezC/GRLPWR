@@ -10,7 +10,7 @@ class AchievementController extends Controller
 {
     public function showAchievements()
     {
-        $achievements = AchievementProgress::where('achievement_id', 7)->with('achiever')->get();
+        $achievements = AchievementProgress::where('achievement_id', 7)->with('achiever')->orderBy('points', 'desc')->get();
         return view('cliente.weekachievements', compact('achievements'));
     }
 }

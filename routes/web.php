@@ -117,7 +117,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::post('{user}/comment/', [UserCommentController::class, 'comment'])->name('commentUser');
     Route::post('{comment}/reply/', [UserCommentController::class, 'reply'])->name('replyUserComment');
     Route::get('/admin/saveActiveClients/{date}', [ActiveClientsController::class, 'saveActiveClientByDate']);
-    Route::get('/achievements', [AchievementController::class, 'showAchievements']);
+    Route::get('/achievementsWeeksRank', [AchievementController::class, 'showAchievements'])->name('achievementsWeeksRank');
 });
 
 /*Open routes*/
