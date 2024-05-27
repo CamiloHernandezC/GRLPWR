@@ -16,4 +16,5 @@ class MoneyAchievement extends Achievement
     public $name = "Money pin";
     public $slug = "Wheel-of-life-pin";
     public $description = "Felicidades, tienes tu pin por ser feliz!";
+    public $points = 1;
 }

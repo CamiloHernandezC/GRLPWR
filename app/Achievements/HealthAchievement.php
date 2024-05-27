@@ -5,7 +5,6 @@ namespace App\Achievements;
 
 use Assada\Achievements\Achievement;
 
-
 class HealthAchievement extends Achievement
 {
     /**

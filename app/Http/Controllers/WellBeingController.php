@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Achievements\FamilyAndFriendsAchievement;
 use App\Achievements\HealthAchievement;
 use App\Achievements\HomeAchievement;
+use App\Achievements\LeisureAchievement;
 use App\Achievements\LoveAchievement;
 use App\Achievements\MoneyAchievement;
-use App\Achievements\personalGrowthAchievement;
+use App\Achievements\PersonalGrowthAchievement;
 use App\Achievements\WorkAchievement;
 use App\FoodAssesment;
 use App\HealthTest;
@@ -21,6 +22,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+
 
 class WellBeingController extends controller
 {
@@ -120,66 +122,52 @@ class WellBeingController extends controller
 
     public function saveWheelOfLifeTest(Request $request): JsonResponse
     {
-
         $wheelOfLife = new WheelOfLife();
         $wheelOfLife->user_id = $request->user_id;
         $wheelOfLife->health = $request->health;
-        if ($request->health >= 9) {
-            $wheelOfLife->addProgress(new HealthAchievement(), 1);
-            $wheelOfLife->user_id = $request->user_id;
-            $wheelOfLife->save();
-        }
         $wheelOfLife->reason_health = $request->reason_health;
         $wheelOfLife->personal_growth = $request->personal_growth;
-        if ($request->personal_growth >= 9) {
-            $personalGrowthAchievement = new PersonalGrowthAchievement();
-            $personalGrowthAchievement->user_id = $request->user_id;
-            $personalGrowthAchievement->save();
-        }
         $wheelOfLife->reason_personal_growth = $request->reason_personal_growth;
         $wheelOfLife->home = $request->home;
-        if ($request->home >= 9) {
-            $homeAchievement = new HomeAchievement();
-            $homeAchievement->user_id = $request->user_id;
-            $homeAchievement->save();
-        }
         $wheelOfLife->reason_home = $request->reason_home;
         $wheelOfLife->family_and_friends = $request->family_and_friends;
-        if ($request->family_and_friends >= 9) {
-            $familyAndFriendsAchievement = new FamilyAndFriendsAchievement();
-            $familyAndFriendsAchievement->user_id = $request->user_id;
-            $familyAndFriendsAchievement->save();
-        }
         $wheelOfLife->reason_family_and_friends = $request->reason_family_and_friends;
         $wheelOfLife->love = $request->love;
-        if ($request->love >= 9) {
-            $loveAchievement = new LoveAchievement();
-            $loveAchievement->user_id = $request->user_id;
-            $loveAchievement->save();
-        }
         $wheelOfLife->reason_love = $request->reason_love;
         $wheelOfLife->leisure = $request->leisure;
-        if ($request->leisure >= 9) {
-            $leisureAchievement = new LeisureAchievement();
-            $leisureAchievement->user_id = $request->user_id;
-            $leisureAchievement->save();
-        }
         $wheelOfLife->reason_leisure = $request->reason_leisure;
         $wheelOfLife->work = $request->work;
-        if ($request->work >= 9) {
-            $workAchievement = new WorkAchievement();
-            $workAchievement->user_id = $request->user_id;
-            $workAchievement->save();
-        }
         $wheelOfLife->reason_work = $request->reason_work;
         $wheelOfLife->money = $request->money;
-        if ($request->money >= 9) {
-            $moneyAchievement = new MoneyAchievement();
-            $moneyAchievement->user_id = $request->user_id;
-            $moneyAchievement->save();
-        }
         $wheelOfLife->reason_money = $request->reason_money;
         $wheelOfLife->save();
+
+        $user = User::find($request->user_id);
+
+        if ($request->health >= 9) {
+            $user->addProgress(new HealthAchievement(), 1);
+        }
+        if ($request->personal_growth >= 9) {
+            $user->addProgress(new PersonalGrowthAchievement(), 1);
+        }
+        if ($request->home >= 9) {
+            $user->addProgress(new HomeAchievement(), 1);
+        }
+        if ($request->family_and_friends >= 9) {
+            $user->addProgress(new FamilyAndFriendsAchievement(), 1);
+        }
+        if ($request->love >= 9) {
+            $user->addProgress(new LoveAchievement(), 1);
+        }
+        if ($request->leisure >= 9) {
+            $user->addProgress(new LeisureAchievement(), 1);
+        }
+        if ($request->work >= 9) {
+            $user->addProgress(new WorkAchievement(), 1);
+        }
+        if ($request->money >= 9) {
+            $user->addProgress(new MoneyAchievement(), 1);
+        }
 
         return response()->json([
             'success' => true,
