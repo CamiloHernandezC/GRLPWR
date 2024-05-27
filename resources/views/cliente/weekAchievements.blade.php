@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/ranking.css') }}">
     <h1>Ranking semanas completadas</h1>
     <div class="table-container">
-        <table>
+        <table class="week-achievements-table">
             <thead>
             <tr>
                 <th>Girly</th>

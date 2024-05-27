@@ -161,6 +161,8 @@
                                 </a>
                                 <a class="dropdown-item d-block d-md-none" href="{{route('pettyCash.index')}}">
                                     Caja Menor
+                                <a class="dropdown-item d-block d-md-none" href="{{route('achievementsWeeksRank')}}">
+                                    Ranking
                                 </a>
                             @endif
                             <a class="dropdown-item" href="{{ route('logout') }}"
