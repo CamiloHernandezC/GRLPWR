@@ -141,6 +141,11 @@
                         <a class="d-none d-md-inline-block" href="{{route('pettyCash.index')}}">
                             Caja Menor
                         </a>
+                        <a class="d-none d-md-inline-block" href="{{route('achievementsWeeksRank')}}">
+                            Ranking
+                        <a class="d-none d-md-inline-block" href="{{route('AccountingFlow')}}">
+                            Flujo contable
+                        </a>
                     @endif
                     {{--<notification class="cursor-pointer" v-bind:unread_notifications="unread_notifications" v-bind:notifications="notifications"></notification>--}}
 
@@ -158,6 +163,8 @@
                                 </a>
                                 <a class="dropdown-item d-block d-md-none" href="{{route('pettyCash.index')}}">
                                     Caja Menor
+                                <a class="dropdown-item d-block d-md-none" href="{{route('achievementsWeeksRank')}}">
+                                    Ranking
                                 </a>
                             @endif
                             <a class="dropdown-item" href="{{ route('logout') }}"
