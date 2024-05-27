@@ -6,16 +6,16 @@ use App\Model\Blog;
 use App\Model\Cliente;
 use App\Model\Entrenador;
 use App\Model\Review;
-use Assada\Achievements\Achiever;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Assada\Achievements\Achiever;
+
 
 class User extends Authenticatable
 {
-    use Notifiable;
-    use Achiever;
+    use Notifiable, achiever;
 
     protected $table = 'usuarios';
 

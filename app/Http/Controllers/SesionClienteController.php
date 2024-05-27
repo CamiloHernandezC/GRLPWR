@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Achievements\CreateThreeAchievements;
 use App\EditedEvent;
 use App\Exceptions\NoAvailableEquipmentException;
 use App\Exceptions\NoVacancyException;
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpFoundation\Response;
+use App\Comment;
+use App\Achievements\AssistedToClassAchievement;
 
 class SesionClienteController extends Controller
 {
@@ -66,7 +69,6 @@ class SesionClienteController extends Controller
     }
 
     public function scheduleCourtesy(Request $request){
-
         $user = User::where('email', $request->email)
                     ->orWhere('telefono', $request->cellphone)
                     ->first();
@@ -96,14 +98,12 @@ class SesionClienteController extends Controller
             ]
         );
         $client->usuario_id = $user->id;
-
         if($request->weight){
             Peso::updateOrCreate(
                 ['usuario_id' => $user->id],
                 ['peso' => $request->weight, 'unidad_medida' => 0]
             );
         }
-
         try {
             $eventArray = json_decode($request->event, true);
             return $this->schedule($eventArray['id'], $eventArray['startDate'], $eventArray['startHour'], $eventArray['endDate'], $eventArray['endHour'], $client, $request->get('rentEquipment'), true, true);
@@ -115,7 +115,6 @@ class SesionClienteController extends Controller
     public function scheduleGuest(Request $request){
 
         $user = User::where('telefono', $request->cellphone)->first();
-
         if($user) {
             $client = Cliente::where('usuario_id', $user->id)->first();
         }
@@ -213,12 +212,11 @@ class SesionClienteController extends Controller
      * @throws NoAvailableEquipmentException
      * @throws WeightNotSupportedException
      */
-    public function assignEquipment(Evento $event, $shoeSize, $weight, $startDateTime, $endDateTime){
+    public function assignEquipment($event, $shoeSize, $weight, $startDateTime, $endDateTime){
         if(strcasecmp($event->classType->type, PlanTypesEnum::KANGOO->value) == 0 || strcasecmp($event->classType->type, PlanTypesEnum::KANGOO_KIDS->value) == 0){
             return $this->kangooService->assignKangoo($shoeSize, $weight, $startDateTime, $endDateTime);
         }
     }
-
 
     /**
      *Renta
@@ -241,7 +239,6 @@ class SesionClienteController extends Controller
     public function registerSession($client, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId=null, bool $isGuest=false)
     {
         DB::beginTransaction();
-
         try{
             $sesionCliente = new SesionCliente;
             $sesionCliente->cliente_id = $client->usuario_id;
@@ -258,7 +255,6 @@ class SesionClienteController extends Controller
 
             if($isCourtesy){
                 $sesionCliente->save();
-
                 Mail::to($client->usuario->email)
                     ->queue(new CourtesyScheduled($sesionCliente));
 
@@ -402,7 +398,12 @@ class SesionClienteController extends Controller
         $clientSession = SesionCliente::find($request->clientSessionId);
         $clientSession->attended = $request->checked === "true";
         $clientSession->save();
-
+        $user = User::find($clientSession->cliente_id);
+        if($request->checked === "true"){
+            $user->addProgress(new AssistedToClassAchievement(), 1);
+        }else{
+            $user->removeProgress(new AssistedToClassAchievement(), 1);
+        }
         return response()->json([
             'success' => true
         ], 200);
