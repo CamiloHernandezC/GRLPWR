@@ -151,6 +151,7 @@ class PagosController extends Controller
         $transaction->created_at = $payDay;
         $transaction->cxp = $request->has('cxp') ? 1 : 0;
         $transaction->amount = $request->cxp ? -1*abs($request->amount) : $request->amount;
+        $transaction->caja_menor = 1;
         $transaction->save();
 
         Session::put('msg_level', 'success');
