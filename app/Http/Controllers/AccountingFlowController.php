@@ -3,70 +3,80 @@
 namespace App\Http\Controllers;
 
 use App\Model\TransaccionesPagos;
+use App\Utils\FeaturesEnum;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Support\Facades\DB;
 
 class AccountingFlowController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function AccountingFlow(request $request)
+    public function AccountingFlow(Request $request)
     {
+        $request->validate([
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ]);
+
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-        $positiveValues = collect();
-        $negativeValues = collect();
+
+        $positiveValuesMayorCash = collect();
+        $positiveMayorCashSum = 0;
+        $negativeValuesMayorCash = collect();
+        $negativeMayorCashSum = 0;
         $positiveValuesPettyCash = collect();
+        $positivePettyCashSum = 0;
         $negativeValuesPettyCash = collect();
-        if ($startDate && $endDate) {
+        $negativePettyCashSum = 0;
+
+        $user = Auth::user();
+
+        if ($user->hasFeature(FeaturesEnum::SEE_PETTY_CASH)) {
+            //Loads with user and payment to see the name of the user that made the transaction and the payment method used for the transaction
             $positiveValuesPettyCash = TransaccionesPagos::with(['user', 'payment'])
                 ->where('amount', '>', 0)
                 ->where('pettyCash', '=', 1)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
-            $positiveValues = TransaccionesPagos::with(['user', 'payment'])
+
+            $positivePettyCashSum = $positiveValuesPettyCash->sum('amount');
+
+            $negativeValuesPettyCash = TransaccionesPagos::with(['user', 'payment'])
+                ->where('amount', '<', 0)
+                ->where('pettyCash', '=', 0)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->get();
+
+            $negativePettyCashSum = $negativeValuesPettyCash->sum('amount');
+        }
+
+        if ($user->hasFeature(FeaturesEnum::SEE_MAYOR_CASH)) {
+            //Loads with user and payment to see the name of the user that made the transaction and the payment method used for the transaction
+            $positiveValuesMayorCash = TransaccionesPagos::with(['user', 'payment'])
                 ->where('amount', '>', 0)
                 ->where('pettyCash', '=', 0)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
-            $negativeValuesPettyCash = TransaccionesPagos::with(['user', 'payment'])
+
+            $positiveMayorCashSum = $positiveValuesMayorCash->sum('amount');
+
+            $negativeValuesMayorCash = TransaccionesPagos::with(['user', 'payment'])
                 ->where('amount', '<', 0)
-                ->where('pettyCash', '=', 1)
+                ->where('pettyCash', '=', 0)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
-            $negativeValues = TransaccionesPagos::with(['user', 'payment'])
-                ->where('amount', '<', 0)
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->get();
+
+            $negativeMayorCashSum = $negativeValuesMayorCash->sum('amount');
         }
-        $PositivePettyCashSum = $positiveValuesPettyCash->sum('amount');
-        $NegativePettyCashSum = $negativeValuesPettyCash->sum('amount');
-        $positiveSum = $positiveValues->sum('amount');
-        $negativeSum = $negativeValues->sum('amount');
-
-        $userRole = Auth::user()->rol_id;
-
-        if ($userRole == 1) {
-            $positiveValues;
-            $positiveSum;
-
-            $negativeValues;
-            $negativeSum;
-
-
-        } elseif ($userRole == 2) {
-            $positiveValuesPettyCash;
-            $PositivePettyCashSum;
-
-            $negativeValuesPettyCash;
-            $NegativePettyCashSum;
-
-        }
-        return view('cliente.AccountingFlow', compact('positiveValues', 'negativeValues', 'positiveSum', 'negativeSum', 'positiveValuesPettyCash', 'negativeValuesPettyCash', 'PositivePettyCashSum' , 'NegativePettyCashSum', 'userRole' ));
+        return view('cliente.AccountingFlow',
+            compact(
+                'positiveValuesPettyCash',
+                'positivePettyCashSum',
+                'negativeValuesPettyCash',
+                'negativePettyCashSum',
+                'positiveValuesMayorCash',
+                'positiveMayorCashSum',
+                'negativeValuesMayorCash',
+                'negativeMayorCashSum'));
     }
 }
