@@ -21,6 +21,7 @@ use App\RemainingClass;
 use App\Repositories\ClientPlanRepository;
 use App\User;
 use App\Utils\PlanTypesEnum;
+use Assada\Achievements\Model\AchievementProgress;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -240,9 +241,12 @@ class SesionClienteController extends Controller
     {
         DB::beginTransaction();
         try{
+            $evento = Evento::find($event->id);
+            $classTypeId = $evento->class_type_id;
             $sesionCliente = new SesionCliente;
             $sesionCliente->cliente_id = $client->usuario_id;
             $sesionCliente->evento_id = $event->id;
+            $sesionCliente->class_type_id = $classTypeId;
             if($kangooId){
                 $sesionCliente->kangoo_id = $kangooId;
             }
@@ -253,6 +257,27 @@ class SesionClienteController extends Controller
                 $sesionCliente->host = Auth::id();
             }
 
+            $achievement = AchievementProgress::where('achiever_id', $client->usuario_id)
+                ->where('achievement_id', $this->getAchievementIdByClassType($classTypeId))
+                ->first();
+
+            if (!$achievement) {
+                $achievement = AchievementProgress::create([
+                    'user_id' => $client->usuario_id,
+                    'class_type_id' => $classTypeId,
+                    'achievement_id' => $this->getAchievementIdByClassType($classTypeId),
+                    'points' => 0 // Inicialmente 0 puntos
+                ]);
+            }
+
+            // Contar los class_type_id únicos en sesiones_cliente para el usuario
+            $uniqueClassTypes = SesionCliente::where('cliente_id', $client->usuario_id)
+                ->distinct()
+                ->count('class_type_id');
+
+            // Actualizar los puntos del logro
+            $achievement->points = $uniqueClassTypes;
+            $achievement->save();
             if($isCourtesy){
                 $sesionCliente->save();
                 Mail::to($client->usuario->email)
