@@ -6,6 +6,7 @@ use App\Model\Blog;
 use App\Model\Cliente;
 use App\Model\Entrenador;
 use App\Model\Review;
+use Assada\Achievements\Model\AchievementProgress;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -124,5 +125,10 @@ class User extends Authenticatable
         return $this->hasMany(UserComment::class, 'user_id', 'id')
             ->where('reply_id', null)
             ->orderBy('created_at', $order);
+    }
+
+    public function achievements()
+    {
+        return $this->hasMany(AchievementProgress::class,'achiever_id' );
     }
 }
