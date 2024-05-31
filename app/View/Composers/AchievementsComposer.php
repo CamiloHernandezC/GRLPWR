@@ -18,34 +18,41 @@ use Illuminate\View\View;
 class AchievementsComposer
 {
     /**
-    * Bind data to the view.
-    */
+     * Bind data to the view.
+     */
     public function compose(View $view): void
     {
         $route = Route::current();
         $user = $route->parameter('user');
-        $weeksStreak = $user->achievementStatus(new WeeksTrained());
-        $recordWeeksStreak = $user->achievementStatus(new RecordWeeksTrained());
-        $healthAchievement = $user->achievementStatus (new HealthAchievement());
-        $loveAchievement = $user->achievementStatus (new LoveAchievement());
-        $familyAndFriendsAchievement = $user->achievementStatus (new FamilyAndFriendsAchievement());
-        $homeAchievement = $user->achievementStatus (new HomeAchievement());
-        $leisureAchievement = $user->achievementStatus (new LeisureAchievement());
-        $moneyAchievement = $user->achievementStatus (new MoneyAchievement());
-        $workAchievement = $user->achievementStatus (new WorkAchievement());
-        $personalGrowthAchievement = $user->achievementStatus (new PersonalGrowthAchievement());
 
+        $achievementsObjects = [
+            'weeksStreak' => new WeeksTrained(),
+            'recordWeeksStreak' => new RecordWeeksTrained(),
+            'healthAchievement' => new HealthAchievement(),
+            'loveAchievement' => new LoveAchievement(),
+            'familyAndFriendsAchievement' => new FamilyAndFriendsAchievement(),
+            'homeAchievement' => new HomeAchievement(),
+            'leisureAchievement' => new LeisureAchievement(),
+            'moneyAchievement' => new MoneyAchievement(),
+            'workAchievement' => new WorkAchievement(),
+            'personalGrowthAchievement' => new PersonalGrowthAchievement(),
+        ];
+        $achievementStatuses = [];
+        foreach ($achievementsObjects as $achievement) {
+            $achievementType = get_class($achievement);
+            $achievementStatuses[$achievementType] = $user->achievementStatus($achievement);
+        }
         $view->with([
-            'weeksStreak' => $weeksStreak,
-            'recordWeeksStreak' => $recordWeeksStreak,
-            'healthAchievement' => $healthAchievement,
-            'loveAchievement' => $loveAchievement,
-            'familyAndFriendsAchievement' => $familyAndFriendsAchievement,
-            'homeAchievement' => $homeAchievement,
-            'leisureAchievement' => $leisureAchievement,
-            'moneyAchievement' => $moneyAchievement,
-            'workAchievement' => $workAchievement,
-            'personalGrowthAchievement' => $personalGrowthAchievement
+            'weeksStreak' => $achievementStatuses[WeeksTrained::class] ?? null,
+            'recordWeeksStreak' => $achievementStatuses[RecordWeeksTrained::class] ?? null,
+            'healthAchievement' => $achievementStatuses[HealthAchievement::class] ?? null,
+            'loveAchievement' => $achievementStatuses[LoveAchievement::class] ?? null,
+            'familyAndFriendsAchievement' => $achievementStatuses[FamilyAndFriendsAchievement::class] ?? null,
+            'homeAchievement' => $achievementStatuses[HomeAchievement::class] ?? null,
+            'leisureAchievement' => $achievementStatuses[LeisureAchievement::class] ?? null,
+            'moneyAchievement' => $achievementStatuses[MoneyAchievement::class] ?? null,
+            'workAchievement' => $achievementStatuses[WorkAchievement::class] ?? null,
+            'personalGrowthAchievement' => $achievementStatuses[PersonalGrowthAchievement::class] ?? null,
         ]);
     }
 }
