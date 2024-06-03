@@ -35,7 +35,7 @@ class AccountingFlowController extends Controller
             //Loads with user and payment to see the name of the user that made the transaction and the payment method used for the transaction
             $positiveValuesPettyCash = TransaccionesPagos::with(['user', 'payment'])
                 ->where('amount', '>', 0)
-                ->where('pettyCash', '=', 1)
+                ->where('is_petty_cash', '=', 1)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
 
@@ -43,7 +43,7 @@ class AccountingFlowController extends Controller
 
             $negativeValuesPettyCash = TransaccionesPagos::with(['user', 'payment'])
                 ->where('amount', '<', 0)
-                ->where('pettyCash', '=', 0)
+                ->where('is_petty_cash', '=', 0)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
 
@@ -54,7 +54,7 @@ class AccountingFlowController extends Controller
             //Loads with user and payment to see the name of the user that made the transaction and the payment method used for the transaction
             $positiveValuesMayorCash = TransaccionesPagos::with(['user', 'payment'])
                 ->where('amount', '>', 0)
-                ->where('pettyCash', '=', 0)
+                ->where('is_petty_cash', '=', 0)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
 
@@ -62,7 +62,7 @@ class AccountingFlowController extends Controller
 
             $negativeValuesMayorCash = TransaccionesPagos::with(['user', 'payment'])
                 ->where('amount', '<', 0)
-                ->where('pettyCash', '=', 0)
+                ->where('is_petty_cash', '=', 0)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->get();
 

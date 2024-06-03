@@ -7,6 +7,7 @@ use App\Model\Cliente;
 use App\Model\Entrenador;
 use App\Model\Review;
 use App\Utils\FeaturesEnum;
+use App\Utils\RolsEnum;
 use Assada\Achievements\Achiever;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -138,12 +139,26 @@ class User extends Authenticatable
             ->orderBy('created_at', $order);
     }
 
+    public function hasRol(RolsEnum $rol): bool
+    {
+        $hasRol = DB::table('user_roles')
+            ->where('user_roles.user_id', $this->id)
+            ->where('user_roles.role_id', $rol->value)
+            ->get();
+        return $hasRol->isNotEmpty();
+    }
+
+
     public function hasFeature(FeaturesEnum $feature): bool
     {
+        $featureId = Feature::where('title', '=', $feature->value)->first()?->id;
+        if(!$featureId){
+            return false;
+        }
         $hasFeature = DB::table('role_features')
-            ->join('roles_user', 'role_features.role_id', '=', 'roles_user.rol_id')
-            ->where('roles_user.user_id', $this->id)
-            ->where('role_features.feature_id', $feature->value)
+            ->join('user_roles', 'role_features.role_id', '=', 'user_roles.role_id')
+            ->where('user_roles.user_id', $this->id)
+            ->where('role_features.feature_id', $featureId)
             ->get();
         if ($hasFeature->isNotEmpty()) {
             return true;
@@ -151,7 +166,7 @@ class User extends Authenticatable
 
         $specialPermission = DB::table('user_features')
             ->where('user_id', $this->id)
-            ->where('feature_id', $feature->value)
+            ->where('feature_id', $featureId)
             ->get();
         return $specialPermission->isNotEmpty();
     }
