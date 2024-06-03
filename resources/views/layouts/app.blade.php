@@ -139,7 +139,7 @@
                             Users
                         </a>
                     @endif
-                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_PETTY_CASH))
+                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SAVE_PETTY_CASH))
                         <a class="d-none d-md-inline-block" href="{{route('pettyCash.index')}}">
                             Caja Menor
                         </a>
