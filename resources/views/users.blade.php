@@ -89,6 +89,9 @@
         }
 
         $(document).ready(function() {
+
+            let disabled = "{{ Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? '' : 'disabled' }}";
+
             @if($clientFollowers)
                 let options = @foreach ($clientFollowers as $clientFollower)
                     '<option value="{{$clientFollower->id}}" >{{ $clientFollower->nombre }}</option>' @if(!$loop->last)+@endif
@@ -131,7 +134,7 @@
                                 '<td>' + result.email + '</td>' +
                                 '<td>' + result.telefono + '</td>' +
                                 '<td>' +
-                                    '<select id="select_'+ result.id +'" onchange="onChangeAssignment(' + result.id + ', this.value)"'+ {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}+'>' +
+                                    '<select id="select_'+ result.id +'" onchange="onChangeAssignment(' + result.id + ', this.value)"'+ disabled + '>' +
                                         '<option style="color: black" value="" disabled selected>Seleccione...</option>' +
                                             options +
                                     '</select>' +
