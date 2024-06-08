@@ -7,9 +7,13 @@ use App\ClassType;
 use App\Model\ClientPlan;
 use App\Model\Evento;
 use App\Repositories\ClientPlanRepository;
+use App\Utils\RolsEnum;
+use App\View\Composers\AchievementsComposer;
+use App\Utils\Constantes;
 use App\View\Composers\EventComposer;
 use App\View\Composers\HighlightComposer;
 use App\View\Composers\HistoricActiveClientsComposer;
+use App\View\Composers\LatestClassesComposer;
 use App\View\Composers\PhysicalAssessmentComposer;
 use App\View\Composers\TrainingPreferencesComposer;
 use App\View\Composers\WheelOfLifeComposer;
@@ -55,7 +59,6 @@ class ViewServiceProvider extends ServiceProvider
             $view->with('classTypes', $classTypes);
         });
 
-        $route = Route::current(); // Illuminate\Routing\Route
         Facades\View::composer('cliente.clientPlan', function (View $view) {
             $route = Route::current(); // Illuminate\Routing\Route
             $clientPlanRepository = new ClientPlanRepository();
@@ -64,6 +67,10 @@ class ViewServiceProvider extends ServiceProvider
                 ->where('client_plans.expiration_date', '<', Carbon::now())
                 ->join('plans', 'client_plans.plan_id', '=', 'plans.id')
                 ->select('client_plans.*', 'plans.name')
+                ->orderBy('client_plans.expiration_date', 'desc')
+                ->when(!Facades\Auth::user()->hasRole(RolsEnum::ADMIN), function ($query) {
+                    return $query->limit(1);
+                })
                 ->get();
             $view->with(
                 ['clientPlans' => $clientPlans,
@@ -71,10 +78,12 @@ class ViewServiceProvider extends ServiceProvider
             );
         });
 
-        Facades\View::composer('assessments.physicalAssessment', PhysicalAssessmentComposer::class);
-        Facades\View::composer('assessments.wheelOfLife', WheelOfLifeComposer::class);
-        Facades\View::composer('cliente.trainingPreferences', TrainingPreferencesComposer::class);
+        Facades\View::composer('assessmentResults.physicalAssessment', PhysicalAssessmentComposer::class);
+        Facades\View::composer('assessmentResults.wheelOfLife', WheelOfLifeComposer::class);
+        Facades\View::composer('assessmentResults.trainingPreferences', TrainingPreferencesComposer::class);
         Facades\View::composer('highlightSection', HighLightComposer::class);
+        Facades\View::composer('components.lastClasses', LatestClassesComposer::class);
         Facades\View::composer('components.historicActiveClients', HistoricActiveClientsComposer::class);
+        Facades\View::composer('achievements.achievementsResume', AchievementsComposer::class);
     }
 }

@@ -56,7 +56,7 @@
             <h4>{{$user->FullName}}</h4>
             <p>@yield('tipoUsuario')</p>
 
-            @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN || Auth::user()->id == $user->id)
+            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_GENERAL_INFO) || Auth::user()->id == $user->id)
                 <p>{{$user->edad}}</p>
 
             {{--
@@ -65,10 +65,8 @@
             --}}
 
                 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
-                    @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
-                        <p>Id: {{$user->id}}</p>
-                        <p>Última valoración: {{$user->physicalAssessment?->created_at}}</p>
-                    @endif
+                    <p>Id: {{$user->id}}</p>
+                    <p>Última valoración: {{$user->physicalAssessment?->created_at}}</p>
                     <p>Telefono: {{$user->telefono}}</p>
                     <p>Eps: {{$user->eps}}</p>
                     <p>Estado Civil: {{$user->marital_status}}</p>
@@ -81,8 +79,21 @@
                         <p>Patologías: {{$user->cliente->pathology}}</p>
                     @endif
                 </div>
-                @include('cliente.clientPlan')
+            @endif
 
+            @include('achievements.achievementsResume')
+
+
+            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_GENERAL_INFO) || Auth::user()->id == $user->id)
+                @include('cliente.clientPlan')
+                @include('components.lastClasses')
+
+                @include('assessmentResults.physicalAssessment')
+                @include('assessmentResults.wheelOfLife')
+                @include('assessmentResults.trainingPreferences')
+            @endif
+
+            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_MEDICAL_INFO) || Auth::user()->id == $user->id)
                 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
                     <h3 class="section-title">Antropometría:</h3>
                     @if($user->cliente?->peso())
@@ -143,12 +154,6 @@
                         </div>
                     @endif
                 </div>
-
-                @if(Auth::id() === $user->id || Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
-                    @include('assessments.physicalAssessment')
-                    @include('assessments.wheelOfLife')
-                    @include('cliente.trainingPreferences')
-                @endif
 
                 @php($cardiovascularRisk = $user->cliente?->cardiovascularRisk())
                 @isset($cardiovascularRisk)
@@ -256,7 +261,7 @@
                     </div>
                 @endisset
             @endif
-            @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
+            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_CLIENT_FOLLOW_UP))
                 <div class="themed-block col-12 col-md-10 mx-auto mt-3 p-4">
                     @include('admin.followUp')
                 </div>

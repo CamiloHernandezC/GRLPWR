@@ -93,6 +93,8 @@
     @stack('head-content')
 </head>
 <body>
+    <div id="ajax-alerts" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
     <div class="modal fade justify-content-center align-items-center" id="msgModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content" style="background: none; border: none">
@@ -132,9 +134,24 @@
                 </a>
 
                 @auth
-                    @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
+                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS))
                         <a class="d-none d-md-inline-block" href="{{route('users.index')}}">
                             Users
+                        </a>
+                    @endif
+                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SAVE_PETTY_CASH))
+                        <a class="d-none d-md-inline-block" href="{{route('pettyCash.index')}}">
+                            Caja Menor
+                        </a>
+                    @endif
+                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_ACHIEVEMENTS_WEEKS_RANK))
+                        <a class="d-none d-md-inline-block" href="{{route('achievementsWeeksRank')}}">
+                            Ranking
+                        </a>
+                    @endif
+                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_PETTY_CASH) || Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_MAYOR_CASH))
+                        <a class="d-none d-md-inline-block" href="{{route('AccountingFlow')}}">
+                            Flujo contable
                         </a>
                     @endif
                     {{--<notification class="cursor-pointer" v-bind:unread_notifications="unread_notifications" v-bind:notifications="notifications"></notification>--}}
@@ -147,9 +164,19 @@
                             <a class="dropdown-item d-block d-md-none" href="{{route('blogs')}}">
                                 Blogs
                             </a>
-                            @if(Auth::user()->rol == \App\Utils\Constantes::ROL_ADMIN)
+                            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS))
                                 <a class="dropdown-item d-block d-md-none" href="{{route('users.index')}}">
                                     Users
+                                </a>
+                            @endif
+                            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SAVE_PETTY_CASH))
+                                <a class="dropdown-item d-block d-md-none" href="{{route('pettyCash.index')}}">
+                                    Caja Menor
+                                </a>
+                            @endif
+                            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_ACHIEVEMENTS_WEEKS_RANK))
+                                <a class="dropdown-item d-block d-md-none" href="{{route('achievementsWeeksRank')}}">
+                                    Ranking
                                 </a>
                             @endif
                             <a class="dropdown-item" href="{{ route('logout') }}"
@@ -224,6 +251,24 @@
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
         });
+    </script>
+
+    <script>
+        function handleAjaxResponse(data) {
+            appendAjaxAlert(data.msg, data.level);
+        }
+
+        function appendAjaxAlert(msg, level) {
+            const alert = $('<div class="alert alert-' + level + ' alert-dismissible fade show" role="alert">' + msg +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span></button></div>');
+
+            $('#ajax-alerts').append(alert);
+
+            setTimeout(function() {
+                alert.alert('close');
+            }, 3000);
+        }
     </script>
 
     <!--subscribers

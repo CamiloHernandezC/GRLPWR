@@ -28,6 +28,7 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Telefono</th>
+                <th>Padrino</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -37,6 +38,7 @@
                     <td><input type="text" id="name" name="name" placeholder="Nombre"></td>
                     <td><input type="text" id="email" name="email" placeholder="Correo"></td>
                     <td><input type="number" id="phone" name="phone" placeholder="Celular"></td>
+                    <td><input type="number" id="assigned" name="assigned" placeholder="assigned"></td>
                     <td>F. Expiración</td>
                     <td>
                         <div class="form-check m-auto">
@@ -53,7 +55,15 @@
                     <td><a class="client-icon theme-color" href="{{route('visitarPerfil', ['user'=>  $user->slug])}}"><div style="max-height:3rem; overflow:hidden">{{ $user->nombre . ' ' .  $user->apellido_1 . ' ' .  $user->apellido_2}}</div></a></td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->telefono }}</td>
-                    <td>{{ $user->expiration_date }}</td>
+                    <td>
+                        <select onchange="onChangeAssignment({{ $user->id }},this.value)" {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}>
+                            <option style="color: black" value="" disabled selected>Seleccione...</option>
+                            @foreach ($clientFollowers as $clientFollower)
+                                <option value="{{ $clientFollower->id }}" {{$user->assigned_id == $clientFollower->id ? 'selected' : ''}}>{{ $clientFollower->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
+                    <td>{{ str_limit($user->expiration_date,10, '') }}</td>
                     <td><a class="client-icon theme-color" href="{{route('healthTest', ['user'=>  $user->slug])}}">Valoración</a></td>
                 </tr>
             @endforeach
@@ -64,7 +74,26 @@
 @endsection
 @push('scripts')
     <script>
+        function onChangeAssignment(userId, padrinoId) {
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url: "{{ route('assigned.update') }}",
+                method: "POST",
+                data: {
+                    userId: userId,
+                    assigned: padrinoId
+                },
+            });
+        }
+
         $(document).ready(function() {
+            @if($clientFollowers)
+                let options = @foreach ($clientFollowers as $clientFollower)
+                    '<option value="{{$clientFollower->id}}" >{{ $clientFollower->nombre }}</option>' @if(!$loop->last)+@endif
+                @endforeach
+            @endif
 
             function filter(){
                 var idValue = $('#id').val();
@@ -72,6 +101,7 @@
                 var emailValue = $('#email').val();
                 var phoneValue = $('#phone').val();
                 var needAssessmentValue = $('#needAssessment').prop('checked');
+                var assignedValue = $('#assigned').val();
                 var expirationTypeValue = $('input[name="expirationType"]:checked').val();
 
                 $.ajax({
@@ -86,6 +116,7 @@
                         email: emailValue,
                         phone: phoneValue,
                         needAssessment : needAssessmentValue,
+                        assigned: assignedValue,
                         expirationType : expirationTypeValue,
                     },
                     dataType: 'json',
@@ -94,15 +125,35 @@
                         $('tbody[name="table"] .user-row').remove();
                         data.forEach(function(result) {
                             $('tbody[name="table"]').append(
-                                '<tr class="user-row">' +
+                                '<tr class="user-row" id=row_'+ result.id +'>' +
                                 '<td>' + result.id + '</td>' +
                                 '<td><a class="client-icon theme-color" href="{{env('APP_URL')}}/visitar/' + result.slug + '"><div style="max-height:3rem; overflow:hidden">' + result.nombre + ' ' +  result.apellido_1 + ' ' +  result.apellido_2 + '</div></a></td>' +
                                 '<td>' + result.email + '</td>' +
                                 '<td>' + result.telefono + '</td>' +
-                                '<td>' + result.expiration_date + '</td>'+
+                                '<td>' +
+                                    '<select id="select_'+ result.id +'" onchange="onChangeAssignment(' + result.id + ', this.value)"'+ {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}+'>' +
+                                        '<option style="color: black" value="" disabled selected>Seleccione...</option>' +
+                                            options +
+                                    '</select>' +
+                                '</td>' +
+                                '<td>' + result.expiration_date?.slice(0, 10)+ '</td>'+
                                 '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">Valoración</a></td>' +
                                 '</tr>'
                             );
+
+                            if(result.assigned_id){
+                                $('#select_'+result.id).val(result.assigned_id);
+                            }
+                            if(result.expiration_date){
+                                var today = new Date();
+                                today.setHours(0,0,0,0);
+                                const expirationDate = new Date(result.expiration_date);
+                                if(expirationDate < today){
+                                    $('#row_'+result.id).addClass('bg-danger');
+                                }else{
+                                    $('#row_'+result.id).addClass('bg-success');
+                                }
+                            }
                         });
                         $('.pagination').hide();
                     },
@@ -112,7 +163,7 @@
                 });
             }
 
-            $('#id, #name, #email, #phone').on('input', function() {
+            $('#id, #name, #email, #phone, #assigned').on('input', function() {
                 filter();
             });
 

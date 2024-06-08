@@ -34,9 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Comment;
 use App\Achievements\AssistedToClassAchievement;
 
-
-
-
 class SesionClienteController extends Controller
 {
     public function __construct(KangooService $kangooService)
@@ -57,13 +54,11 @@ class SesionClienteController extends Controller
             $sesionCliente->fecha_fin = $endDate;
         }
         $sesionCliente->save();
-        $sesionCliente->unlock(new AssistedToClassAchievement());
     }
 
     public function scheduleEvent(Request $request){
         try {
             $client = Cliente::find($request->clientId);
-
             return $this->schedule($request->eventId, $request->startDate, $request->startHour, $request->endDate, $request->endHour, $client, $request->rentEquipment, $request->isCourtesy ?? false, $request->validateVacancy ?? true);
         }catch (Exception $exception){
             Session::put('msg_level', 'danger');
@@ -74,7 +69,6 @@ class SesionClienteController extends Controller
     }
 
     public function scheduleCourtesy(Request $request){
-
         $user = User::where('email', $request->email)
                     ->orWhere('telefono', $request->cellphone)
                     ->first();
@@ -104,14 +98,12 @@ class SesionClienteController extends Controller
             ]
         );
         $client->usuario_id = $user->id;
-
         if($request->weight){
             Peso::updateOrCreate(
                 ['usuario_id' => $user->id],
                 ['peso' => $request->weight, 'unidad_medida' => 0]
             );
         }
-
         try {
             $eventArray = json_decode($request->event, true);
             return $this->schedule($eventArray['id'], $eventArray['startDate'], $eventArray['startHour'], $eventArray['endDate'], $eventArray['endHour'], $client, $request->get('rentEquipment'), true, true);
@@ -123,7 +115,6 @@ class SesionClienteController extends Controller
     public function scheduleGuest(Request $request){
 
         $user = User::where('telefono', $request->cellphone)->first();
-
         if($user) {
             $client = Cliente::where('usuario_id', $user->id)->first();
         }
@@ -193,12 +184,18 @@ class SesionClienteController extends Controller
      */
     private function schedule($id, $startDate, $startHour, $endDate, $endHour, $client, $isRenting, $isCourtesy, $validateVacancy, bool $isGuest = false): JsonResponse|\Illuminate\Http\RedirectResponse
     {
+        $formattedStartDate = Carbon::parse($startDate)->format('Y-m-d');
         $editedEvent = EditedEvent::where('evento_id', $id)
-            ->where('fecha_inicio', '=', $startDate)
+            ->where('fecha_inicio', '=', $formattedStartDate)
             ->where('start_hour', '=', $startHour)
             ->first();
-        $event = $editedEvent ?: Evento::find($id);
-        $startDateTime = Carbon::parse($startDate)->format('Y-m-d') . ' ' . $startHour;
+        if($editedEvent){
+            $event = $editedEvent;
+            $event->id = $editedEvent->evento_id;
+        }else{
+            $event =  Evento::find($id);
+        }
+        $startDateTime = $formattedStartDate . ' ' . $startHour;
         $endDateTime = Carbon::parse($endDate)->format('Y-m-d') . ' ' . $endHour;
         if($validateVacancy){
             $this->validateVacancy($event, $startDateTime, $endDateTime);
@@ -215,12 +212,11 @@ class SesionClienteController extends Controller
      * @throws NoAvailableEquipmentException
      * @throws WeightNotSupportedException
      */
-    public function assignEquipment(Evento $event, $shoeSize, $weight, $startDateTime, $endDateTime){
+    public function assignEquipment($event, $shoeSize, $weight, $startDateTime, $endDateTime){
         if(strcasecmp($event->classType->type, PlanTypesEnum::KANGOO->value) == 0 || strcasecmp($event->classType->type, PlanTypesEnum::KANGOO_KIDS->value) == 0){
             return $this->kangooService->assignKangoo($shoeSize, $weight, $startDateTime, $endDateTime);
         }
     }
-
 
     /**
      *Renta
@@ -243,7 +239,6 @@ class SesionClienteController extends Controller
     public function registerSession($client, $event, $startDateTime, $endDateTime, $isCourtesy, $kangooId=null, bool $isGuest=false)
     {
         DB::beginTransaction();
-
         try{
             $sesionCliente = new SesionCliente;
             $sesionCliente->cliente_id = $client->usuario_id;
@@ -260,7 +255,6 @@ class SesionClienteController extends Controller
 
             if($isCourtesy){
                 $sesionCliente->save();
-
                 Mail::to($client->usuario->email)
                     ->queue(new CourtesyScheduled($sesionCliente));
 
@@ -273,7 +267,9 @@ class SesionClienteController extends Controller
 
             $clientPlanRepository = new ClientPlanRepository();
             $event->fecha_inicio = $startDateTime;
+            $event->start_hour = substr($startDateTime, 11);
             $event->fecha_fin = $endDateTime;
+            $event->end_hour = substr($endDateTime, 11);
             $clientPlan = $clientPlanRepository->findValidClientPlan($event,  $isGuest ? Auth::id() : $client->usuario_id);
 
             if ($clientPlan) {
@@ -311,6 +307,7 @@ class SesionClienteController extends Controller
                 return response()->json(['status' =>  'reserved', 'sesionClienteId' => $sesionCliente->id], 200);
             }
             DB::commit();
+            Session::forget('msg');//FIT-107: Clear message from morning plan
             return response()->json(['status' =>  'goToPay'], 200);
         }catch (Exception $exception) {
             DB::rollBack();
@@ -396,7 +393,7 @@ class SesionClienteController extends Controller
         }
     }
 
-    public function checkAttendee(Request $request)
+    public function checkAttendee(Request $request): JsonResponse
     {
         $clientSession = SesionCliente::find($request->clientSessionId);
         $clientSession->attended = $request->checked === "true";
