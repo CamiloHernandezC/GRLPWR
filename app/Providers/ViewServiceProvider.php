@@ -13,6 +13,8 @@ use App\Utils\Constantes;
 use App\View\Composers\EventComposer;
 use App\View\Composers\HighlightComposer;
 use App\View\Composers\HistoricActiveClientsComposer;
+use App\View\Composers\HistoricPercentRetainedClientsComposer;
+use App\View\Composers\HistoricRetainedClientsComposer;
 use App\View\Composers\LatestClassesComposer;
 use App\View\Composers\PhysicalAssessmentComposer;
 use App\View\Composers\TrainingPreferencesComposer;
@@ -74,7 +76,7 @@ class ViewServiceProvider extends ServiceProvider
                 ->get();
             $view->with(
                 ['clientPlans' => $clientPlans,
-                'expiredPlans' => $expiredPlans]
+                    'expiredPlans' => $expiredPlans]
             );
         });
 
@@ -84,6 +86,8 @@ class ViewServiceProvider extends ServiceProvider
         Facades\View::composer('highlightSection', HighLightComposer::class);
         Facades\View::composer('components.lastClasses', LatestClassesComposer::class);
         Facades\View::composer('components.historicActiveClients', HistoricActiveClientsComposer::class);
+        Facades\View::composer('components.historicActiveClients', HistoricRetainedClientsComposer::class);
+        Facades\View::composer('components.historicActiveClients', HistoricPercentRetainedClientsComposer::class);
         Facades\View::composer('achievements.achievementsResume', AchievementsComposer::class);
     }
 }
