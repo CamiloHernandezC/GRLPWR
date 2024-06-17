@@ -56,10 +56,10 @@
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->telefono }}</td>
                     <td>
-                        <select onchange="onChangeAssignment({{ $user->id }},this.value)" {{$user->assigned_id ? 'disabled' : ''}}>
+                        <select onchange="onChangeAssignment({{ $user->id }},this.value)" {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}>
                             <option style="color: black" value="" disabled selected>Seleccione...</option>
-                            @foreach ($adminUsers as $adminUser)
-                                <option value="{{ $adminUser->id }}" {{$user->assigned_id == $adminUser->id ? 'selected' : ''}}>{{ $adminUser->nombre }}</option>
+                            @foreach ($clientFollowers as $clientFollower)
+                                <option value="{{ $clientFollower->id }}" {{$user->assigned_id == $clientFollower->id ? 'selected' : ''}}>{{ $clientFollower->nombre }}</option>
                             @endforeach
                         </select>
                     </td>
@@ -89,9 +89,11 @@
         }
 
         $(document).ready(function() {
-            let options = @foreach ($adminUsers as $adminUser)
-                '<option value="{{$adminUser->id}}" >{{ $adminUser->nombre }}</option>' @if(!$loop->last)+@endif
-            @endforeach
+            @if($clientFollowers)
+                let options = @foreach ($clientFollowers as $clientFollower)
+                    '<option value="{{$clientFollower->id}}" >{{ $clientFollower->nombre }}</option>' @if(!$loop->last)+@endif
+                @endforeach
+            @endif
 
             function filter(){
                 var idValue = $('#id').val();
@@ -129,7 +131,7 @@
                                 '<td>' + result.email + '</td>' +
                                 '<td>' + result.telefono + '</td>' +
                                 '<td>' +
-                                    '<select id="select_'+ result.id +'" onchange="onChangeAssignment(' + result.id + ', this.value)">' +
+                                    '<select id="select_'+ result.id +'" onchange="onChangeAssignment(' + result.id + ', this.value)"'+ {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}+'>' +
                                         '<option style="color: black" value="" disabled selected>Seleccione...</option>' +
                                             options +
                                     '</select>' +
@@ -141,7 +143,6 @@
 
                             if(result.assigned_id){
                                 $('#select_'+result.id).val(result.assigned_id);
-                                $('#select_'+result.id).prop('disabled', true);
                             }
                             if(result.expiration_date){
                                 var today = new Date();
