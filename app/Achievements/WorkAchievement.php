@@ -14,7 +14,7 @@ class WorkAchievement extends Achievement
      * @package App\Achievements
      */
     public $name = "Work pin";
-    public $slug = "Wheel-of-life-pin";
-    public $description = "Felicidades, tienes tu pin por ser feliz!";
+    public $slug = "Work-pin";
+    public $description = "Felicidades! tienes tu pin de trabajo!";
     public $points = 1;
 }

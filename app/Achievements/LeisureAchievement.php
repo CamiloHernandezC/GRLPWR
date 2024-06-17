@@ -14,7 +14,7 @@ class LeisureAchievement extends Achievement
      * @package App\Achievements
      */
     public $name = "Leisure pin";
-    public $slug = "Wheel-of-life-pin";
-    public $description = "Felicidades, tienes tu pin por ser feliz!";
+    public $slug = "Leisure-pin";
+    public $description = "Felicidades! tienes tu pin de ocio!";
     public $points = 1;
 }

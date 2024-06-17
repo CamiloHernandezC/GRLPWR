@@ -14,7 +14,7 @@ class FamilyAndFriendsAchievement extends Achievement
      * @package App\Achievements
      */
     public $name = "Family and friends pin";
-    public $slug = "Wheel-of-life-pin";
-    public $description = "Felicidades, tienes tu pin por ser feliz!";
+    public $slug = "Family-and-friends-pin";
+    public $description = "Felicidades! tienes tu pin de familia y amigos";
 
 }

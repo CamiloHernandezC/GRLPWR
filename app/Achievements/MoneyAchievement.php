@@ -14,7 +14,7 @@ class MoneyAchievement extends Achievement
      * @package App\Achievements
      */
     public $name = "Money pin";
-    public $slug = "Wheel-of-life-pin";
-    public $description = "Felicidades, tienes tu pin por ser feliz!";
+    public $slug = "Money-pin";
+    public $description = "Felicidades! tienes tu pin de dinero!";
     public $points = 1;
 }

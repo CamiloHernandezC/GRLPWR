@@ -14,7 +14,7 @@ class LoveAchievement extends Achievement
      * @package App\Achievements
      */
     public $name = "Love pin";
-    public $slug = "Wheel-of-life-pin";
-    public $description = "Felicidades, tienes tu pin por ser feliz!";
+    public $slug = "Love-pin";
+    public $description = "Felicidades! tienes tu pin de amor!";
     public $points = 1;
 }

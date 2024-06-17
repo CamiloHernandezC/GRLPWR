@@ -12,8 +12,8 @@ class HomeAchievement extends Achievement
      *
      * @package App\Achievements
      */
-    public $name = "home pin";
-    public $slug = "Wheel-of-life-pin";
-    public $description = "Felicidades, tienes tu pin por ser feliz!";
+    public $name = "Home pin";
+    public $slug = "Home-pin";
+    public $description = "Felicidades! tienes tu pin de hogar!";
     public $points = 1;
 }

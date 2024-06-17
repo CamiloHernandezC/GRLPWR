@@ -13,8 +13,8 @@ class HealthAchievement extends Achievement
      * @package App\Achievements
      */
     public $name = "Health pin";
-    public $slug = "Wheel-of-life-pin";
-    public $description = "Felicidades, tienes tu pin por ser feliz!";
+    public $slug = "Health-pin";
+    public $description = "Felicidades! tienes tu pin de salud!";
     public $points = 1;
 
 }
