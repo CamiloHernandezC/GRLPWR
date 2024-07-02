@@ -24,7 +24,4 @@ class PhysicalAssessment extends model
         'updated_at'
     ];
     use HasFactory;
-
-
-
 }

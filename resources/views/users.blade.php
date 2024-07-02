@@ -56,14 +56,14 @@
             @foreach ($users as $user)
                 <tr class="user-row">
                     <td>{{ $user->id }}</td>
-                    <td><a class="client-icon theme-color" href="{{ route('visitarPerfil', ['user' => $user->slug]) }}">{{ $user->nombre . ' ' . $user->apellido_1 . ' ' . $user->apellido_2 }}</a></td>
+                    <td><a class="client-icon theme-color" href="{{ route('visitarPerfil', ['user' => $user->slug]) }}"><div style="max-height:3rem; overflow:hidden">{{$user->nombre . ' ' .  $user->apellido_1 . ' ' .  $user->apellido_2}}</div></a></td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->telefono }}</td>
                     <td>
-                        <select onchange="onChangeAssignment({{ $user->id }}, this.value)" {{ !Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : '' }}>
+                        <select onchange="onChangeAssignment({{ $user->id }},this.value)" {{ !Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}>
                             <option style="color: black" value="" disabled selected>Seleccione...</option>
                             @foreach ($clientFollowers as $clientFollower)
-                                <option value="{{ $clientFollower->id }}" {{ $user->assigned_id == $clientFollower->id ? 'selected' : '' }}>{{ $clientFollower->nombre }}</option>
+                                <option value="{{ $clientFollower->id }}" {{ $user->assigned_id == $clientFollower->id ? 'selected' : ''}}>{{ $clientFollower->nombre }}</option>
                             @endforeach
                         </select>
                     </td>

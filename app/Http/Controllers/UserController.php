@@ -30,7 +30,7 @@ class UserController extends controller
             ->where('user_roles.role_id', RolsEnum::CLIENT_FOLLOWER->value)->select('usuarios.*')->get();
         return view('users', [
             'users' => $users,
-            'clientFollowers' => $clientFollowers,
+            'clientFollowers' => $clientFollowers
         ]);
     }
 

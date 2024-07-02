@@ -116,8 +116,6 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
     Route::post('/wheelOfLifeTest', [WellBeingController::class, 'saveWheelOfLifeTest'])->name('saveWheelOfLifeTest');
     Route::post('/updateWaGroupStatus/{user}', [UserController::class, 'updateWaGroupStatus']);
     Route::post('/update-physical-photo-status/{user}', [UserController::class, 'updatePhysicalPhotoStatus']);
-
-
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER->value])->group(function () {
