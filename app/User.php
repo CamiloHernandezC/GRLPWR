@@ -35,6 +35,7 @@ class User extends Authenticatable
         'password',
         'nivel',
         'slug',
+        'wa_group',
         'foto',
         'document_id',
         'eps',

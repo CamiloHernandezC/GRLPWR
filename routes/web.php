@@ -25,6 +25,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\WellBeingController;
 use App\Http\Controllers\AccountingFlowController;
+use App\Http\Controllers\WellBeignStatusController;
 use App\Model\Cliente;
 use App\Model\ClientPlan;
 use App\PaymentMethod;
@@ -113,6 +114,10 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
     Route::post('/trainingTest', [WellBeingController::class, 'saveTrainingTest'])->name('saveTrainingTest');
     Route::post('/wellbeingTest', [WellBeingController::class, 'saveWellBeingTest'])->name('saveWellBeingTest');
     Route::post('/wheelOfLifeTest', [WellBeingController::class, 'saveWheelOfLifeTest'])->name('saveWheelOfLifeTest');
+    Route::post('/updateWaGroupStatus/{user}', [UserController::class, 'updateWaGroupStatus']);
+    Route::post('/update-physical-photo-status/{user}', [UserController::class, 'updatePhysicalPhotoStatus']);
+
+
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER->value])->group(function () {

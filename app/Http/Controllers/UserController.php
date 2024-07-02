@@ -20,20 +20,35 @@ class UserController extends controller
     {
         $users = DB::table('usuarios')
             ->join('client_plans', 'usuarios.id', '=', 'client_plans.client_id')
+            ->leftJoin('physical_assessments', 'usuarios.id', '=', 'physical_assessments.user_id')
             ->orderBy('client_plans.expiration_date', 'desc')
+            ->orderBy('physical_assessments.created_at', 'desc')
             ->orderBy('usuarios.id', 'desc')
-            ->select('usuarios.*', 'client_plans.expiration_date')
+            ->select('usuarios.*', 'client_plans.expiration_date', 'physical_assessments.created_at as physical_assessments_created_at')
             ->paginate(15);
         $clientFollowers = User::join('user_roles', 'usuarios.id', '=', 'user_roles.user_id')
             ->where('user_roles.role_id', RolsEnum::CLIENT_FOLLOWER->value)->select('usuarios.*')->get();
-
-
         return view('users', [
             'users' => $users,
-            'clientFollowers' => $clientFollowers
+            'clientFollowers' => $clientFollowers,
         ]);
     }
 
+    public function updateWaGroupStatus(Request $request, User $user)
+    {
+        $user->wa_group = $request->wa_group;
+        $user->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function updatePhysicalPhotoStatus(Request $request, User $user)
+    {
+        $user->physical_photo = $request->physical_photo;
+        $user->save();
+
+        return response()->json(['success' => true]);
+    }
     public function search(Request $request)
     {
         $id = $request->input('id');
