@@ -30,47 +30,45 @@
                 <th>Telefono</th>
                 <th>Padrino</th>
                 <th>Acciones</th>
-                <th></th>
                 <th>Estado de valoracion</th>
                 <th>Tiene foto?</th>
                 <th>Pertenece al grupo de WA?</th>
             </tr>
             </thead>
             <tbody name="table">
-            <tr>
-                <td><input type="number" id="id" name="id" placeholder="Id" ></td>
-                <td><input type="text" id="name" name="name" placeholder="Nombre"></td>
-                <td><input type="text" id="email" name="email" placeholder="Correo"></td>
-                <td><input type="number" id="phone" name="phone" placeholder="Celular"></td>
-                <td><input type="number" id="assigned" name="assigned" placeholder="assigned"></td>
-                <td>F. Expiración</td>
-                <td>
-                    <div class="form-check m-auto">
-                        <input class="form-check-input" type="checkbox" name="needAssessment" id="needAssessment">
-                        <label class="form-check-label terms-label" for="needAssessment">
-                            Val. pendiente
-                        </label>
-                    </div>
-                </td>
-            </tr>
+                <tr>
+                    <td><input type="number" id="id" name="id" placeholder="Id" ></td>
+                    <td><input type="text" id="name" name="name" placeholder="Nombre"></td>
+                    <td><input type="text" id="email" name="email" placeholder="Correo"></td>
+                    <td><input type="number" id="phone" name="phone" placeholder="Celular"></td>
+                    <td><input type="number" id="assigned" name="assigned" placeholder="assigned"></td>
+                    <td>F. Expiración</td>
+                    <td>
+                        <div class="form-check m-auto">
+                            <input class="form-check-input" type="checkbox" name="needAssessment" id="needAssessment">
+                            <label class="form-check-label terms-label" for="needAssessment">
+                                Val. pendiente
+                            </label>
+                        </div>
+                    </td>
+                </tr>
             @foreach ($users as $user)
                 <tr class="user-row">
                     <td>{{ $user->id }}</td>
-                    <td><a class="client-icon theme-color" href="{{ route('visitarPerfil', ['user' => $user->slug]) }}"><div style="max-height:3rem; overflow:hidden">{{$user->nombre . ' ' .  $user->apellido_1 . ' ' .  $user->apellido_2}}</div></a></td>
+                    <td><a class="client-icon theme-color" href="{{route('visitarPerfil', ['user'=> $user->slug]) }}"><div style="max-height:3rem; overflow:hidden">{{$user->nombre . ' ' .  $user->apellido_1 . ' ' .  $user->apellido_2}}</div></a></td>
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->telefono }}</td>
                     <td>
-                        <select onchange="onChangeAssignment({{ $user->id }},this.value)" {{ !Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}>
+                        <select onchange="onChangeAssignment({{ $user->id }},this.value)" {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}>
                             <option style="color: black" value="" disabled selected>Seleccione...</option>
                             @foreach ($clientFollowers as $clientFollower)
-                                <option value="{{ $clientFollower->id }}" {{ $user->assigned_id == $clientFollower->id ? 'selected' : ''}}>{{ $clientFollower->nombre }}</option>
+                                <option value="{{ $clientFollower->id }}" {{$user->assigned_id == $clientFollower->id ? 'selected' : ''}}>{{ $clientFollower->nombre }}</option>
                             @endforeach
                         </select>
                     </td>
                     <td>{{ $user->expiration_date ? str_limit($user->expiration_date, 10) : '' }}</td>
-                    <td><a class="client-icon theme-color" href="{{ route('healthTest', ['user' => $user->slug]) }}">Valoración</a></td>
                     <td>
-                        <a class="client-icon theme-color" href="{{route('visitarPerfil', ['user' => $user->slug])}}">
+                        <a class="client-icon theme-color" href="{{route('healthTest', ['user' => $user->slug])}}">
                             @if($user->physical_assessments_created_at)
                                 {{ $user->physical_assessments_created_at }}
                             @else
@@ -147,78 +145,85 @@
 
         $(document).ready(function() {
             @if($clientFollowers)
-            let options = @foreach ($clientFollowers as $clientFollower)
+                let options = @foreach ($clientFollowers as $clientFollower)
                     '<option value="{{$clientFollower->id}}" >{{ $clientFollower->nombre }}</option>' @if(!$loop->last)+@endif
-                    @endforeach
-                    @endif
+                @endforeach
+            @endif
 
-                function filter(){
-                    var idValue = $('#id').val();
-                    var nameValue = $('#name').val();
-                    var emailValue = $('#email').val();
-                    var phoneValue = $('#phone').val();
-                    var needAssessmentValue = $('#needAssessment').prop('checked');
-                    var assignedValue = $('#assigned').val();
-                    var expirationTypeValue = $('input[name="expirationType"]:checked').val();
+            function filter() {
+                var idValue = $('#id').val();
+                var nameValue = $('#name').val();
+                var emailValue = $('#email').val();
+                var phoneValue = $('#phone').val();
+                var needAssessmentValue = $('#needAssessment').prop('checked');
+                var assignedValue = $('#assigned').val();
+                var expirationTypeValue = $('input[name="expirationType"]:checked').val();
 
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: '/users/search',
-                        method: 'GET',
-                        data: {
-                            id: idValue,
-                            name: nameValue,
-                            email: emailValue,
-                            phone: phoneValue,
-                            needAssessment : needAssessmentValue,
-                            assigned: assignedValue,
-                            expirationType : expirationTypeValue,
-                        },
-                        dataType: 'json',
-                        success: function(data) {
-                            // Limpiar la tabla
-                            $('tbody[name="table"] .user-row').remove();
-                            data.forEach(function(result) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: '/users/search',
+                    method: 'GET',
+                    data: {
+                        id: idValue,
+                        name: nameValue,
+                        email: emailValue,
+                        phone: phoneValue,
+                        needAssessment: needAssessmentValue,
+                        assigned: assignedValue,
+                        expirationType: expirationTypeValue,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        // Limpiar la tabla
+                        $('tbody[name="table"] .user-row').remove();
+                        data.forEach(function (result) {
+                            let assessmentText = result.physical_assessments_created_at
+                                ? result.physical_assessments_created_at
+                                : 'Valoración no realizada o incompleta';
+
+                            // Si needAssessment está marcado, solo mostrar usuarios sin valoración
+                            if (!needAssessmentValue || (needAssessmentValue && result.physical_assessments_created_at)) {
                                 $('tbody[name="table"]').append(
-                                    '<tr class="user-row" id=row_'+ result.id +'>' +
+                                    '<tr class="user-row" id=row_' + result.id + '>' +
                                     '<td>' + result.id + '</td>' +
-                                    '<td><a class="client-icon theme-color" href="{{env('APP_URL')}}/visitar/' + result.slug + '"><div style="max-height:3rem; overflow:hidden">' + result.nombre + ' ' +  result.apellido_1 + ' ' +  result.apellido_2 + '</div></a></td>' +
+                                    '<td><a class="client-icon theme-color" href="{{env('APP_URL')}}/visitar/' + result.slug + '"><div style="max-height:3rem; overflow:hidden">' + result.nombre + ' ' + result.apellido_1 + ' ' + result.apellido_2 + '</div></a></td>' +
                                     '<td>' + result.email + '</td>' +
                                     '<td>' + result.telefono + '</td>' +
                                     '<td>' +
-                                    '<select id="select_'+ result.id +'" onchange="onChangeAssignment(' + result.id + ', this.value)"'+ '{{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? "disabled" : ''}}' + '>' +
+                                    '<select id="select_' + result.id + '" onchange="onChangeAssignment(' + result.id + ', this.value)"' + '{{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? "disabled" : ''}}' + '>' +
                                     '<option style="color: black" value="" disabled selected>Seleccione...</option>' +
                                     options +
                                     '</select>' +
                                     '</td>' +
-                                    '<td>' + result.expiration_date?.slice(0, 10)+ '</td>'+
-                                    '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">Valoración</a></td>' +
+                                    '<td>' + (result.expiration_date ? result.expiration_date.slice(0, 10) : '') + '</td>' +
+                                    '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">' + assessmentText + '</a></td>' +
                                     '</tr>'
                                 );
 
-                                if(result.assigned_id){
-                                    $('#select_'+result.id).val(result.assigned_id);
+                                if (result.assigned_id) {
+                                    $('#select_' + result.id).val(result.assigned_id);
                                 }
-                                if(result.expiration_date){
+                                if (result.expiration_date) {
                                     var today = new Date();
-                                    today.setHours(0,0,0,0);
+                                    today.setHours(0, 0, 0, 0);
                                     const expirationDate = new Date(result.expiration_date);
-                                    if(expirationDate < today){
-                                        $('#row_'+result.id).addClass('bg-danger');
-                                    }else{
-                                        $('#row_'+result.id).addClass('bg-success');
+                                    if (expirationDate < today) {
+                                        $('#row_' + result.id).addClass('bg-danger');
+                                    } else {
+                                        $('#row_' + result.id).addClass('bg-success');
                                     }
                                 }
-                            });
-                            $('.pagination').hide();
-                        },
-                        error: function(data) {
-                            alert('Error al filtrar usuarios');
-                        }
-                    });
-                }
+                            }
+                        });
+                        $('.pagination').hide();
+                    },
+                    error: function (data) {
+                        alert('Error al filtrar usuarios');
+                    }
+                });
+            }
 
             $('#id, #name, #email, #phone, #assigned').on('input', function() {
                 filter();

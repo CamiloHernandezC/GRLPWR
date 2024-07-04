@@ -49,6 +49,7 @@ class UserController extends controller
 
         return response()->json(['success' => true]);
     }
+
     public function search(Request $request)
     {
         $id = $request->input('id');
