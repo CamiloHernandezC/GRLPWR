@@ -51,6 +51,22 @@
                             </label>
                         </div>
                     </td>
+                    <td>
+                        <div class="form-check m-auto">
+                            <input class="form-check-input" type="checkbox" name="photoAssessment" id="photoAssessment">
+                            <label class="form-check-label terms-label" for="photoAssessment">
+                                Foto. pendiente
+                            </label>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-check m-auto">
+                            <input class="form-check-input" type="checkbox" name="waAssessment" id="waAssessment">
+                            <label class="form-check-label terms-label" for="waAssessment">
+                                No pertenece
+                            </label>
+                        </div>
+                    </td>
                 </tr>
             @foreach ($users as $user)
                 <tr class="user-row">
@@ -156,6 +172,8 @@
                 var emailValue = $('#email').val();
                 var phoneValue = $('#phone').val();
                 var needAssessmentValue = $('#needAssessment').prop('checked');
+                var photoAssessmentValue = $('#photoAssessment').prop('checked');
+                var waAssessmentValue = $('#waAssessment').prop('checked');
                 var assignedValue = $('#assigned').val();
                 var expirationTypeValue = $('input[name="expirationType"]:checked').val();
 
@@ -171,6 +189,8 @@
                         email: emailValue,
                         phone: phoneValue,
                         needAssessment: needAssessmentValue,
+                        photoAssessment: photoAssessmentValue,
+                        waAssessment: waAssessmentValue,
                         assigned: assignedValue,
                         expirationType: expirationTypeValue,
                     },
@@ -184,7 +204,11 @@
                                 : 'Valoración no realizada o incompleta';
 
                             // Si needAssessment está marcado, solo mostrar usuarios sin valoración
-                            if (!needAssessmentValue || (needAssessmentValue && result.physical_assessments_created_at)) {
+                            if (
+                                (!needAssessmentValue || (needAssessmentValue && !result.physical_assessments_created_at)) &&
+                                (!photoAssessmentValue || (photoAssessmentValue && !result.physical_photo)) &&
+                                (!waAssessmentValue || (waAssessmentValue && !result.wa_group))
+                            ) {
                                 $('tbody[name="table"]').append(
                                     '<tr class="user-row" id=row_' + result.id + '>' +
                                     '<td>' + result.id + '</td>' +
@@ -199,6 +223,8 @@
                                     '</td>' +
                                     '<td>' + (result.expiration_date ? result.expiration_date.slice(0, 10) : '') + '</td>' +
                                     '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">' + assessmentText + '</a></td>' +
+                                    '<td><input type="checkbox" class="photo-checkbox" data-user-id="' + result.id + '" ' + (result.physical_photo ? 'checked' : '') + '></td>' +
+                                    '<td><input type="checkbox" class="wa-group-checkbox" data-user-id="' + result.id + '" ' + (result.wa_group ? 'checked' : '') + '></td>' +
                                     '</tr>'
                                 );
 
@@ -219,8 +245,8 @@
                         });
                         $('.pagination').hide();
                     },
-                    error: function (data) {
-                        alert('Error al filtrar usuarios');
+                    error: function(data) {
+                        alert('Error filtering users');
                     }
                 });
             }
@@ -229,11 +255,12 @@
                 filter();
             });
 
-            $('#needAssessment').on('change', function() {
+            $('#needAssessment, #photoAssessment, #waAssessment').on('change', function() {
                 filter();
             });
+
             $('input[name="expirationType"]').change(function(){
-                filter()
+                filter();
             });
         });
     </script>
