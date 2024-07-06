@@ -24,7 +24,7 @@ class UserController extends controller
             ->orderBy('client_plans.expiration_date', 'desc')
             ->orderBy('physical_assessments.created_at', 'desc')
             ->orderBy('usuarios.id', 'desc')
-            ->select('usuarios.*', 'client_plans.expiration_date', 'physical_assessments.created_at as physical_assessments_created_at','usuarios.wa_group', 'usuarios.physical_photo')
+            ->select('usuarios.*', 'client_plans.expiration_date', 'physical_assessments.created_at as physical_assessments_created_at')
             ->paginate(15);
         $clientFollowers = User::join('user_roles', 'usuarios.id', '=', 'user_roles.user_id')
             ->where('user_roles.role_id', RolsEnum::CLIENT_FOLLOWER->value)->select('usuarios.*')->get();
