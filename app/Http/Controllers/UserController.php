@@ -56,6 +56,8 @@ class UserController extends controller
         $name = $request->input('name');
         $email = $request->input('email');
         $phone = $request->input('phone');
+        $isNotInWhatsappGroup = $request->input('isNotInWhatsappGroup');
+        $needPhoto = $request->input('needPhoto');
         $needAssessment = $request->input('needAssessment');
         $assigned = $request->input('assigned');
         $expirationType = $request->input('expirationType');
@@ -81,19 +83,25 @@ class UserController extends controller
         if ($phone) {
             $query->where('usuarios.telefono', 'LIKE', "%$phone%");
         }
+        if ($needPhoto === "true") {
+            $query->where('usuarios.physical_photo', '=', 0);
+        }
+        if ($isNotInWhatsappGroup === "true") {
+            $query->where('usuarios.wa_group', '=', 0);
+        }
+        $query->leftJoin('physical_assessments', 'usuarios.id', '=', 'physical_assessments.user_id');
         if ($needAssessment === "true") {
-            $query->leftJoin('physical_assessments', 'usuarios.id', '=', 'physical_assessments.user_id')
-                ->where(function ($query) {
-                    $query->whereNull('physical_assessments.user_id')
-                        ->orWhere(function ($query)  {
-                            $query->where('physical_assessments.created_at', '<', Carbon::today()->subMonths(MONTHS_FOR_NEW_HEALTH_ASSESSMENT)->format('Y-m-d'))
-                                ->whereRaw('physical_assessments.created_at = (
-                                    SELECT MAX(pa.created_at) 
-                                    FROM physical_assessments pa 
-                                    WHERE pa.user_id = usuarios.id
-                                )');
-                        });
-                });
+            $query->where(function ($query) {
+                $query->whereNull('physical_assessments.user_id')
+                    ->orWhere(function ($query)  {
+                        $query->where('physical_assessments.created_at', '<', Carbon::today()->subMonths(MONTHS_FOR_NEW_HEALTH_ASSESSMENT)->format('Y-m-d'))
+                            ->whereRaw('physical_assessments.created_at = (
+                                SELECT MAX(pa.created_at)
+                                FROM physical_assessments pa 
+                                WHERE pa.user_id = usuarios.id
+                            )');
+                    });
+            });
         }
         $currentDate = Carbon::today();
         switch ($expirationType){
@@ -117,7 +125,7 @@ class UserController extends controller
                 });
                 break;
         }
-        $users = $query->selectRaw('usuarios.*, MAX(expiration_date) as expiration_date')
+        $users = $query->selectRaw('usuarios.*, MAX(expiration_date) as expiration_date, MAX(physical_assessments.created_at) as physical_assessments_created_at')
             ->orderBy('expiration_date', 'DESC')
             ->groupBy('usuarios.id')
             ->get();

@@ -114,13 +114,13 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
     Route::post('/trainingTest', [WellBeingController::class, 'saveTrainingTest'])->name('saveTrainingTest');
     Route::post('/wellbeingTest', [WellBeingController::class, 'saveWellBeingTest'])->name('saveWellBeingTest');
     Route::post('/wheelOfLifeTest', [WellBeingController::class, 'saveWheelOfLifeTest'])->name('saveWheelOfLifeTest');
-    Route::post('/updateWaGroupStatus/{user}', [UserController::class, 'updateWaGroupStatus']);
-    Route::post('/update-physical-photo-status/{user}', [UserController::class, 'updatePhysicalPhotoStatus']);
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER->value])->group(function () {
     Route::post('/users/assigned', [UserController::class, 'updateAssigned'])->name('assigned.update');
 });
+
+
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::LOAD_CLIENT_PLAN->value])->group(function () {
     Route::get('/admin/loadPlan', [ClientPlanController::class, 'showLoadClientPlan']);
@@ -143,6 +143,8 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' . \App\Utils\FeaturesEnum::SEE_USERS->value])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+    Route::post('/update-physical-photo-status/{user}', [UserController::class, 'updatePhysicalPhotoStatus']);
+    Route::post('/updateWaGroupStatus/{user}', [UserController::class, 'updateWaGroupStatus']);
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' . \App\Utils\FeaturesEnum::SEE_ACHIEVEMENTS_WEEKS_RANK->value])->group(function () {

@@ -53,16 +53,16 @@
                     </td>
                     <td>
                         <div class="form-check m-auto">
-                            <input class="form-check-input" type="checkbox" name="photoAssessment" id="photoAssessment">
-                            <label class="form-check-label terms-label" for="photoAssessment">
+                            <input class="form-check-input" type="checkbox" name="needPhoto" id="needPhoto">
+                            <label class="form-check-label terms-label" for="needPhoto">
                                 Foto. pendiente
                             </label>
                         </div>
                     </td>
                     <td>
                         <div class="form-check m-auto">
-                            <input class="form-check-input" type="checkbox" name="waAssessment" id="waAssessment">
-                            <label class="form-check-label terms-label" for="waAssessment">
+                            <input class="form-check-input" type="checkbox" name="isNotInWhatsappGroup" id="isNotInWhatsappGroup">
+                            <label class="form-check-label terms-label" for="isNotInWhatsappGroup">
                                 No pertenece
                             </label>
                         </div>
@@ -93,10 +93,10 @@
                         </a>
                     </td>
                     <td>
-                        <input type="checkbox" class="photo-checkbox" data-user-id="{{ $user->id }}" {{ $user->physical_photo ? 'checked' : '' }}>
+                        <input type="checkbox" onclick="onChangePhotoStatus({{ $user->id }},this)" data-user-id="{{ $user->id }}" {{ $user->physical_photo ? 'checked' : '' }}>
                     </td>
                     <td>
-                        <input type="checkbox" class="wa-group-checkbox" data-user-id="{{ $user->id }}" {{ $user->wa_group ? 'checked' : '' }}>
+                        <input type="checkbox" onclick="onChangeWhatsappStatus({{ $user->id }},this)" data-user-id="{{ $user->id }}" {{ $user->wa_group ? 'checked' : '' }}>
                     </td>
                 </tr>
             @endforeach
@@ -135,29 +135,17 @@
             });
         }
 
-        // Función para actualizar el estado de pertenencia al grupo de WA
-        document.querySelectorAll('.wa-group-checkbox').forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                let userId = this.getAttribute('data-user-id');
-                let belongsToGroup = this.checked;
-
-                performAjaxRequest(`/updateWaGroupStatus/${userId}`, {
-                    wa_group: belongsToGroup
-                });
+        function onChangePhotoStatus(userId, checkbox){
+            performAjaxRequest(`/update-physical-photo-status/${userId}`, {
+                physical_photo: $(checkbox).is(':checked')
             });
-        });
+        }
 
-        // Función para actualizar el estado de la foto física
-        document.querySelectorAll('.photo-checkbox').forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                let userId = this.getAttribute('data-user-id');
-                let hasPhysicalPhoto = this.checked;
-
-                performAjaxRequest(`/update-physical-photo-status/${userId}`, {
-                    physical_photo: hasPhysicalPhoto
-                });
+        function onChangeWhatsappStatus(userId, checkbox){
+            performAjaxRequest(`/updateWaGroupStatus/${userId}`, {
+                wa_group: $(checkbox).is(':checked')
             });
-        });
+        }
 
         $(document).ready(function() {
             @if($clientFollowers)
@@ -172,8 +160,8 @@
                 var emailValue = $('#email').val();
                 var phoneValue = $('#phone').val();
                 var needAssessmentValue = $('#needAssessment').prop('checked');
-                var photoAssessmentValue = $('#photoAssessment').prop('checked');
-                var waAssessmentValue = $('#waAssessment').prop('checked');
+                var needPhotoValue = $('#needPhoto').prop('checked');
+                var isNotInWhatsappGroupValue = $('#isNotInWhatsappGroup').prop('checked');
                 var assignedValue = $('#assigned').val();
                 var expirationTypeValue = $('input[name="expirationType"]:checked').val();
 
@@ -189,8 +177,8 @@
                         email: emailValue,
                         phone: phoneValue,
                         needAssessment: needAssessmentValue,
-                        photoAssessment: photoAssessmentValue,
-                        waAssessment: waAssessmentValue,
+                        needPhoto: needPhotoValue,
+                        isNotInWhatsappGroup: isNotInWhatsappGroupValue,
                         assigned: assignedValue,
                         expirationType: expirationTypeValue,
                     },
@@ -203,43 +191,36 @@
                                 ? result.physical_assessments_created_at
                                 : 'Valoración no realizada o incompleta';
 
-                            // Si needAssessment está marcado, solo mostrar usuarios sin valoración
-                            if (
-                                (!needAssessmentValue || (needAssessmentValue && !result.physical_assessments_created_at)) &&
-                                (!photoAssessmentValue || (photoAssessmentValue && !result.physical_photo)) &&
-                                (!waAssessmentValue || (waAssessmentValue && !result.wa_group))
-                            ) {
-                                $('tbody[name="table"]').append(
-                                    '<tr class="user-row" id=row_' + result.id + '>' +
-                                    '<td>' + result.id + '</td>' +
-                                    '<td><a class="client-icon theme-color" href="{{env('APP_URL')}}/visitar/' + result.slug + '"><div style="max-height:3rem; overflow:hidden">' + result.nombre + ' ' + result.apellido_1 + ' ' + result.apellido_2 + '</div></a></td>' +
-                                    '<td>' + result.email + '</td>' +
-                                    '<td>' + result.telefono + '</td>' +
-                                    '<td>' +
-                                    '<select id="select_' + result.id + '" onchange="onChangeAssignment(' + result.id + ', this.value)"' + '{{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? "disabled" : ''}}' + '>' +
-                                    '<option style="color: black" value="" disabled selected>Seleccione...</option>' +
-                                    options +
-                                    '</select>' +
-                                    '</td>' +
-                                    '<td>' + (result.expiration_date ? result.expiration_date.slice(0, 10) : '') + '</td>' +
-                                    '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">' + assessmentText + '</a></td>' +
-                                    '<td><input type="checkbox" class="photo-checkbox" data-user-id="' + result.id + '" ' + (result.physical_photo ? 'checked' : '') + '></td>' +
-                                    '<td><input type="checkbox" class="wa-group-checkbox" data-user-id="' + result.id + '" ' + (result.wa_group ? 'checked' : '') + '></td>' +
-                                    '</tr>'
-                                );
+                            $('tbody[name="table"]').append(
+                                '<tr class="user-row" id=row_' + result.id + '>' +
+                                '<td>' + result.id + '</td>' +
+                                '<td><a class="client-icon theme-color" href="{{env('APP_URL')}}/visitar/' + result.slug + '"><div style="max-height:3rem; overflow:hidden">' + result.nombre + ' ' + result.apellido_1 + ' ' + result.apellido_2 + '</div></a></td>' +
+                                '<td>' + result.email + '</td>' +
+                                '<td>' + result.telefono + '</td>' +
+                                '<td>' +
+                                '<select id="select_' + result.id + '" onchange="onChangeAssignment(' + result.id + ', this.value)"' + '{{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? "disabled" : ''}}' + '>' +
+                                '<option style="color: black" value="" disabled selected>Seleccione...</option>' +
+                                options +
+                                '</select>' +
+                                '</td>' +
+                                '<td>' + (result.expiration_date ? result.expiration_date.slice(0, 10) : '') + '</td>' +
+                                '<td><a class="client-icon theme-color" href="/user/' + result.slug + '/wellBeingTest">' + assessmentText + '</a></td>' +
+                                '<td><input type="checkbox" onclick="onChangePhotoStatus(' + result.id + ', this)" data-user-id="' + result.id + '" ' + (result.physical_photo ? 'checked' : '') + '></td>' +
+                                '<td><input type="checkbox" onclick="onChangeWhatsappStatus(' + result.id + ', this)" data-user-id="' + result.id + '" ' + (result.wa_group ? 'checked' : '') + '></td>' +
+                                '</tr>'
+                            );
 
-                                if (result.assigned_id) {
-                                    $('#select_' + result.id).val(result.assigned_id);
-                                }
-                                if (result.expiration_date) {
-                                    var today = new Date();
-                                    today.setHours(0, 0, 0, 0);
-                                    const expirationDate = new Date(result.expiration_date);
-                                    if (expirationDate < today) {
-                                        $('#row_' + result.id).addClass('bg-danger');
-                                    } else {
-                                        $('#row_' + result.id).addClass('bg-success');
-                                    }
+                            if (result.assigned_id) {
+                                $('#select_' + result.id).val(result.assigned_id);
+                            }
+                            if (result.expiration_date) {
+                                var today = new Date();
+                                today.setHours(0, 0, 0, 0);
+                                const expirationDate = new Date(result.expiration_date);
+                                if (expirationDate < today) {
+                                    $('#row_' + result.id).addClass('bg-danger');
+                                } else {
+                                    $('#row_' + result.id).addClass('bg-success');
                                 }
                             }
                         });
@@ -255,7 +236,7 @@
                 filter();
             });
 
-            $('#needAssessment, #photoAssessment, #waAssessment').on('change', function() {
+            $('#needAssessment, #needPhoto, #isNotInWhatsappGroup').on('change', function() {
                 filter();
             });
 
