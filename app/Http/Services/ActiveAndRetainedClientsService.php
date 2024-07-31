@@ -9,6 +9,11 @@ use Carbon\Carbon;
 
 class ActiveAndRetainedClientsService
 {
+    /**
+     * @param $date
+     * Los $countActiveOldClients: son clientes que renovaron su plan o que tienen planes activos hace más de un mes. Pueden ser clientes que estuvieron activos hace 1 año y volvieron
+     * Los $countRetainedClients: son clientes que se les vencía su plan en el mes pasado y que renovaron
+     */
     public function saveActiveClients($date):void
     {
         $currentDate = Carbon::parse($date);
@@ -18,21 +23,36 @@ class ActiveAndRetainedClientsService
 
         $countActiveClients = ClientPlan::where('created_at', '<=', $date)
             ->where('expiration_date', '>=', $date)
-            ->count();
+            ->distinct('client_id')
+            ->count('client_id');
 
-        $countActiveNewClients = ClientPlan::where('created_at', '>=', $thirtyDaysAgo)
+        $countActiveNewClients = ClientPlan::where('created_at', '<=', $date)
+            ->where('created_at', '>=', $thirtyDaysAgo)
             ->where('expiration_date', '>=', $date)
-            ->whereNotExists(function ($query) {
+            ->whereNotExists(function ($query) use ($date) {
                 $query->selectRaw(1)
                     ->from('client_plans as cp2')
                     ->whereRaw('cp2.client_id = client_plans.client_id')
                     ->whereRaw('cp2.id != client_plans.id')
-                    ->whereRaw('cp2.expiration_date >= client_plans.expiration_date');
+                    ->whereRaw('cp2.expiration_date <= client_plans.expiration_date')
+                    ->where('cp2.created_at', '<=', $date);
             })
-            ->count();
+            ->distinct('client_id')
+            ->count('client_id');
 
-        $countActiveOldClients = ClientPlan::where('created_at', '<', $thirtyDaysAgo)
+        $countActiveOldClients = ClientPlan::where('created_at', '<=', $date)
             ->where('expiration_date', '>=', $date)
+            ->where(function($q) use ($date, $thirtyDaysAgo) {
+                $q->whereExists(function ($query) use ($date) {
+                    $query->selectRaw(1)
+                        ->from('client_plans as cp2')
+                        ->whereRaw('cp2.client_id = client_plans.client_id')
+                        ->whereRaw('cp2.id != client_plans.id')
+                        ->whereRaw('cp2.expiration_date <= client_plans.expiration_date')
+                        ->where('cp2.created_at', '<=', $date);
+                })
+                ->orWhere('created_at', '<=', $thirtyDaysAgo);
+            })
             ->distinct('client_id')
             ->count('client_id');
 
@@ -49,6 +69,8 @@ class ActiveAndRetainedClientsService
                 $query->selectRaw(1)
                     ->from('client_plans as cp2')
                     ->whereRaw('cp2.client_id = client_plans.client_id')
+                    ->whereRaw('cp2.id != client_plans.id')
+                    ->where('cp2.created_at', '<=', $currentDate)
                     ->where('cp2.expiration_date', '>=' ,$currentDate);
             })
             ->distinct('client_id')
@@ -58,7 +80,7 @@ class ActiveAndRetainedClientsService
 
 
         HistoricalActiveClient::updateOrCreate(
-            ['date' => now()],
+            ['date' => $currentDate],
             ['active_clients' => $countActiveClients,
              'active_new_clients' => $countActiveNewClients,
              'active_old_clients' => $countActiveOldClients,
