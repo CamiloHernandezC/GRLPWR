@@ -177,4 +177,8 @@ class WellBeingController extends controller
             'level' => 'success',
         ], 200);
     }
+
+    public function examResult(User $user){
+        return view('cliente.wellBeingResult', compact('user'));
+    }
 }

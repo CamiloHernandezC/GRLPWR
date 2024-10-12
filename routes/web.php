@@ -55,12 +55,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/autocomplete', 'AutoCompleteController@index');
     Route::post('/autocomplete/fetch', 'AutoCompleteController@fetch')->name('autocomplete.fetch');
 
+    Route::get('/user/{user}', 'ProfileController@index')->name('profile');
+
     Route::get('/user/{user}/home', 'HomeController@index')->name('home');
     Route::delete('/{user}/home', 'SolicitudServicioController@eliminar')->name('eliminarSolicitud');
     Route::put('/user/{user}/home', [ProfileController::class, 'actualizarPerfil'])->name('actualizarPerfil');
+
     Route::get('/visitar/{user}', [HomeController::class, 'visitar'])->name('visitarPerfil');
 
-    Route::get('/user/{user}', 'ProfileController@index')->name('profile');
+    Route::get('/user/{user}/exam_result', [WellBeingController::class, 'examResult'])->name('examResult');
 
     Route::put('completar_registro_redes_sociales', 'HomeController@completarRegistroRedesSociales')->name('completarRegistroRedesSociales');
 
