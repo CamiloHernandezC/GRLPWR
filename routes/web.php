@@ -11,6 +11,7 @@
 |
 */
 
+use App\Http\Controllers\AccountingFlowController;
 use App\Http\Controllers\ActiveClientsController;
 use App\Http\Controllers\ClientPlanController;
 use App\Http\Controllers\EventController;
@@ -24,7 +25,7 @@ use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\WellBeingController;
-use App\Http\Controllers\AccountingFlowController;
+use App\Http\Controllers\AccountingCloseController;
 use App\Http\Controllers\WellBeignStatusController;
 use App\Model\Cliente;
 use App\Model\ClientPlan;
@@ -127,6 +128,12 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
     Route::post('/admin/loadPlan', [ClientPlanController::class, 'saveClientPlan'])->name('saveClientPlan');
     Route::get('/admin/freezePlan', [ClientPlanController::class, 'showFreezeClientPlan']);
     Route::post('/admin/freezePlan', [ClientPlanController::class, 'freezePlan'])->name('freezePlan');
+});
+
+Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' . \App\Utils\FeaturesEnum::SEE_MAYOR_CASH->value])->group(function () {
+    Route::get('/AccountingClose', [AccountingCloseController::class, 'AccountingClose'])->name('AccountingClose');
+    Route::get('/AccountingDetails', [AccountingCloseController::class, 'AccountingDetails'])->name('AccountingDetails');
+    Route::get('/transactions/search', [AccountingCloseController::class, 'search'])->name('transactions.search');
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' . \App\Utils\FeaturesEnum::SEE_MAYOR_CASH->value . ',' . \App\Utils\FeaturesEnum::class . '-' . \App\Utils\FeaturesEnum::SEE_PETTY_CASH->value])->group(function () {
