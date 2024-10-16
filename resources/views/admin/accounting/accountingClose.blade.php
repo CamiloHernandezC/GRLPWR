@@ -8,11 +8,11 @@
     <div class="container">
         <form action="{{ route('AccountingClose') }}" method="GET" class="text-center mb-5">
             @csrf
-            <label for="start_date">Fecha de inicio:</label>
-            <input type="date" name="start_date" id="start_date">
+            <label for="startDate">Fecha de inicio:</label>
+            <input type="date" name="startDate" id="startDate">
 
-            <label for="end_date">Fecha de fin:</label>
-            <input type="date" name="end_date" id="end_date">
+            <label for="endDate">Fecha de fin:</label>
+            <input type="date" name="endDate" id="endDate">
 
             <button type="submit" class="btn btn-primary">Enviar</button>
         </form>

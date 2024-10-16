@@ -8,12 +8,25 @@
     <div class="container">
         <h2 class="text-center">Transacciones</h2>
         <form action="{{ route('AccountingDetails') }}" method="GET" class="text-center mb-5">
+            @if ($errors->any())
+                <div class="alert alert-danger redondeado">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $error}}</strong>
+                         </span>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             @csrf
-            <label for="start_date">Fecha de inicio:</label>
-            <input type="date" name="start_date" id="start_date">
+            <label for="startDate">Fecha de inicio:</label>
+            <input type="date" name="startDate" id="startDate" value="{{!$errors->has('startDate') ? old('startDate', request('startDate')) : '' }}">
 
-            <label for="end_date">Fecha de fin:</label>
-            <input type="date" name="end_date" id="end_date">
+            <label for="endDate">Fecha de fin:</label>
+            <input type="date" name="endDate" id="endDate" value="{{ !$errors->has('endDate') ? old('endDate', request('endDate')) : '' }}">
 
             <button type="submit" class="btn btn-primary">Enviar</button>
         </form>
@@ -36,8 +49,8 @@
                         <tr>
                             <td><input type="number" id="id" name="id" placeholder="Id"></td>
                             <td>
-                                <select onchange="onChangeAssignment({{ Auth::user()->id }},this.value)" {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}>
-                                    <option style="color: black" value="" disabled selected>Seleccione...</option>
+                                <select id="payment_method">
+                                    <option style="color: black" value="all" selected>Todos</option>
                                     @foreach ($paymentMethods as $paymentMethod)
                                         <option value="{{ $paymentMethod->id }}">{{ $paymentMethod->name }}</option>
                                     @endforeach
@@ -45,8 +58,8 @@
                             </td>
                             <td><input type="number" id="amount" name="amount" placeholder="Valor"></td>
                             <td>
-                                <select onchange="onChangeAssignment({{ Auth::user()->id }},this.value)" {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}>
-                                    <option style="color: black" value="" disabled selected>Seleccione...</option>
+                                <select id="category">
+                                    <option style="color: black" value="all" selected>Todas</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -62,10 +75,10 @@
                             <td>{{ $transaction->payment->name }}</td>
                             <td class="currency">$ {{ number_format($transaction->amount, 0, ',', '.') }}</td>
                             <td>
-                                <select onchange="onChangeAssignment({{ Auth::user()->id }},this.value)" {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? 'disabled' : ''}}>
-                                    <option style="color: black" value="" disabled selected>Seleccione...</option>
-                                    @foreach ($paymentMethods as $paymentMethod)
-                                        <option value="{{ $paymentMethod->id }}" {{$transaction->category?->id == $paymentMethod->id ? 'selected' : ''}}>{{ $paymentMethod->name }}</option>
+                                <select onchange="onChangeCategory({{ $transaction->id }},this.value)" {{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_TRANSACTION_CATEGORY) ? 'disabled' : ''}}>
+                                    <option style="color: black" value="" selected>Seleccione...</option>
+                                    @foreach ($categories as $category)
+                                        <option value="{{ $category->id }}" {{$transaction->category?->id == $category->id ? 'selected' : ''}}>{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -103,18 +116,17 @@
             });
         }
 
-        // Función para actualizar el estado de asignación
-        function onChangeAssignment(userId, godmotherId) {
-            performAjaxRequest("{{ route('assigned.update') }}", {
-                userId: userId,
-                assigned: godmotherId
+        function onChangeCategory(transactionId, categoryId) {
+            performAjaxRequest("{{ route('transactions.category.update') }}", {
+                transactionId: transactionId,
+                categoryId: categoryId
             });
         }
 
         $(document).ready(function() {
-            @if($paymentMethods)
-                let options = @foreach ($paymentMethods as $paymentMethod)
-                    '<option value="{{$paymentMethod->id}}" >{{ $paymentMethod->name }}</option>' @if(!$loop->last)+@endif
+            @if($categories)
+                let options = @foreach ($categories as $category)
+                    '<option value="{{$category->id}}" >{{ $category->name }}</option>' @if(!$loop->last)+@endif
                     @endforeach
             @endif
 
@@ -125,6 +137,9 @@
                 var categoryValue = $('#category').val();
                 var dataValue = $('#data').val();
                 var userValue = $('#user').val();
+                var startDateValue = $('#startDate').val();
+                var endDateValue = $('#endDate').val();
+                var filterDateValue = $('#filter_date').val();
 
                 $.ajax({
                     headers: {
@@ -139,6 +154,9 @@
                         category : categoryValue,
                         data : dataValue,
                         user : userValue,
+                        startDate : startDateValue,
+                        endDate : endDateValue,
+                        filterDate: filterDateValue,
                     },
                     dataType: 'json',
                     success: function (data) {
@@ -153,17 +171,20 @@
                                 '<td>' + result.payment.name + '</td>' +
                                 '<td>' + result.amount + '</td>' +
                                 '<td>' +
-                                '<select id="select_' + result.id + '" onchange="onChangeAssignment(' + result.id + ', this.value)"' + '{{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_CLIENT_FOLLOWER) ? "disabled" : ''}}' + '>' +
-                                    '<option style="color: black" value="" disabled selected>Seleccione...</option>' +
+                                '<select id="select_' + result.id + '" onchange="onChangeCategory(' + result.id + ', this.value)"' + '{{!Auth::user()->hasFeature(\App\Utils\FeaturesEnum::CHANGE_TRANSACTION_CATEGORY) ? "disabled" : ''}}' + '>' +
+                                    '<option style="color: black" value="" selected>Seleccione...</option>' +
                                     options +
                                 '</select>' +
                                 '</td>' +
-                                '<td>' + result.created_at + '</td>' +
-                                '<td>' + result.user.fullName + '</td>' +
+                                '<td>' + (result.created_at ? result.created_at.slice(0, 10) : '') + '</td>' +
+                                '<td>' + result.user.nombre + ' ' + (result.user.apellido_1 ? result.user.apellido_1 : '') + ' ' + (result.user.apellido_2 ? result.user.apellido_2 : '') + '</td>' +
+                                '<td>' + result.data.slice(0, 32) + '</td>' +
                                 '</tr>'
                             );
 
-                            $('#select_' + result.id).val(result.assigned_id);
+                            if (result.category) {
+                                $('#select_' + result.id).val(result.category.id);
+                            }
                         });
                         $('.pagination').hide();
                     },
@@ -173,7 +194,7 @@
                 });
             }
 
-            $('#id, #amount, #data, #user').on('input', function () {
+            $('#id, #amount, #data, #user, #payment_method, #category, #filter_date').on('input', function () {
                 filter();
             });
         });
