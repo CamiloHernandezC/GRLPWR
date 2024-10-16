@@ -11,6 +11,7 @@
 |
 */
 
+use App\Category;
 use App\Http\Controllers\AccountingFlowController;
 use App\Http\Controllers\ActiveClientsController;
 use App\Http\Controllers\ClientPlanController;
@@ -147,7 +148,8 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
     Route::get('/savePettyCash', function () {
         $clients = Cliente::all();
         $paymentMethods = PaymentMethod::where('enabled', true)->get();
-        return view('admin.savePettyCash', compact('clients', 'paymentMethods'));
+        $categories = Category::all();
+        return view('admin.savePettyCash', compact('clients', 'paymentMethods', 'categories'));
     })->name('pettyCash.index');
     Route::post('/savePettyCash', [PagosController::class, 'savePettyCash'])->name('pettyCash.save');
 });
