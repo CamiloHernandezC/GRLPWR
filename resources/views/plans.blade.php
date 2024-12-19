@@ -4,6 +4,13 @@
     @lang('general.Plans')
 @endsection
 
+@push('head-content')
+    <script
+            type="text/javascript"
+            src="https://checkout.wompi.co/widget.js"
+    ></script>
+@endpush
+
 @section('content')
     <div class="d-md-flex justify-content-between justify-content-md-around w-75 m-auto flex-wrap">
         @foreach($plans as $plan)
@@ -19,35 +26,23 @@
     <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
 
     <script>
-        var handler = ePayco.checkout.configure({
-            key: "{{env('EPAYCO_PUBLIC_KEY')}}",
-            test: Boolean({{env('EPAYCO_TEST')}})
-        });
-        var data = {
-            //Parametros compra (obligatorio)
-            name: "{{__('general.transaction_name')}}",
-            description: "{{__('general.transaction_name')}}",
-            invoice: "",
-            tax_base: "0",
-            tax: "0",
-            country: "co",
-            lang: "es",
-
-            //Onpage="false" - Standard="true"
-            external: "false",
-
-            //Atributos opcionales
-            response: "{{config('app.url')}}/response_payment",
-        };
 
         function showPayModal(plan) {
-            data.currency = '{{\Illuminate\Support\Facades\Session::get('currency_id') ? \Illuminate\Support\Facades\Session::get('currency_id') : 'COP'}}';
-            data.amount = plan.price
-                data.extra1 = '{{ \App\Utils\PayTypesEnum::Plan }}'
-            data.extra2 = {{ \Illuminate\Support\Facades\Auth::id() }}
-                data.extra3 = plan.id
-                data.type_doc_billing = "cc";
-            handler.open(data)
+            var checkout = new WidgetCheckout({
+                currency: '{{\Illuminate\Support\Facades\Session::get('currency_id') ? \Illuminate\Support\Facades\Session::get('currency_id') : 'COP'}}',
+                amountInCents: plan.price,
+                reference: 'GP{{ \App\Utils\PayTypesEnum::Plan }}{{ \Illuminate\Support\Facades\Auth::id() }}01',
+                publicKey: 'pub_test_X0zDA9xoKdePzhd8a0x9HAez7HgGO2fH',
+                signature: {integrity : '3a4bd1f3e3edb5e88284c8e1e9a191fdf091ef0dfca9f057cb8f408667f054d0'},
+                redirectUrl: '{{config('app.url')}}/response_payment', // Opcional
+                widgetOperation: 'tokenize',
+            })
+
+            checkout.open(function (result) {
+                var transaction = result.transaction;
+                console.log("Transaction ID: ", transaction.id);
+                console.log("Transaction object: ", transaction);
+            });
         }
     </script>
     <!--END PAYMENT-->
