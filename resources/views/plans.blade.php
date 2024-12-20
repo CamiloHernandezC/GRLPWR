@@ -26,28 +26,6 @@
     <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
 
     <script>
-        /*
-        function getIntegritySignature(amountInCents) {
-            return new Promise((resolve, reject) => {
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: "{{ route('paymentIntegritySignature') }}",
-                    method: "GET",
-                    data: {
-                        amountInCents: amountInCents,
-                    },
-                    success: function (data) {
-                        resolve(data);
-                    },
-                    error: function (error) {
-                        reject(error);
-                    }
-                });
-            });
-        }*/
-
         function createSubscription(token, amountInCents, currency) {
             return new Promise((resolve, reject) => {
                 $.ajax({
@@ -76,24 +54,20 @@
             const currency= '{{\Illuminate\Support\Facades\Session::get('currency_id') ?? 'COP'}}';
             const checkoutOptions = {
                 publicKey: 'pub_test_oAWNq7eMtFofu3M2iCbhgiIH5K1437n1',
-                /*
-                currency: currency,
-                reference: 'GP{{ \App\Utils\PayTypesEnum::Plan }}{{ \Illuminate\Support\Facades\Auth::id() }}01',
-
-                redirectUrl: '{{config('app.url')}}/response_payment', // Opcional
-                */
             };
 
             if (paymentOption === 'automatic') {
                 checkoutOptions.widgetOperation = 'tokenize';
-                var amountInCents= {{$plan->automatic_debt_price ?? 0}};
+                var amountInCents= plan.automatic_debt_price ?? 0;
             }else{
-                checkoutOptions.amountInCents= {{$plan->price}};
+                checkoutOptions.amountInCents= plan.price;
+                checkoutOptions.currency= currency;
+                checkoutOptions.reference='GP{{ \App\Utils\PayTypesEnum::Plan }}{{ \Illuminate\Support\Facades\Auth::id() }}01';//TODO generate reference
+                checkoutOptions.redirectUrl= '{{config('app.url')}}/response_payment'; // Opcional
             }
 
             try {
-                //const integritySignature = await getIntegritySignature(checkoutOptions.amountInCents);
-                //checkoutOptions.signature = { integrity: integritySignature.signature };
+
 
                 const checkout = new WidgetCheckout(checkoutOptions);
 

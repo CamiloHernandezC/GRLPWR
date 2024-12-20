@@ -223,7 +223,6 @@ class PagosController extends Controller
         if ($response->successful()) {
             $data = $response->json();
             $id = $data['data']['id'];
-            $validUntil = $data['data']['validity_ends_at'];
             //TODO guardar el id en la base de datos
             return $id;
         } else {
@@ -237,26 +236,25 @@ class PagosController extends Controller
     private function makePayment(string $id, float $amount, string $currency)
     {
         $signature = $this->paymentIntegritySignature($amount, $currency);
-        $url = env('WOMPI_URL', 'https://sandbox.wompi.co/').'/v1/transactions';
+        $url = env('WOMPI_URL', 'https://sandbox.wompi.co/').'v1/transactions';
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . env('WOMPI_PRIVATE_KEY'),
         ])->post($url, [
             'amount_in_cents' => $amount,
             'currency' => $currency,
-            'signature' => $signature->signature,
+            'signature' => $signature['signature'],
             'customer_email' => auth()->user()->email,//TODO get email from user when second automatic pay
             'payment_method' => [
                 "installments" => 12
             ],
-            'reference' => $signature->reference,
+            'reference' => $signature['reference'],
             'payment_source_id' => $id
         ]);
 
         if ($response->successful()) {
             $data = $response->json();
             $id = $data['data']['id'];
-            $validUntil = $data['data']['validity_ends_at'];
             //TODO guardar el id en la base de datos
             return $id;
         } else {
