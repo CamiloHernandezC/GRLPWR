@@ -9,7 +9,7 @@
     <div class="mx-auto w-75">
         <div class="form-group">
             @if($plan->automatic_debt_price)
-                <select id="options" name="options" class="form-control">
+                <select id="paymentOptions" name="paymentOptions" class="form-control">
                     <option value="automatic" selected>Débito Automático</option>
                     <option value="single">Pago Único</option>
                 </select>
@@ -47,11 +47,9 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const select = document.getElementById('options');
+                const select = document.getElementById('paymentOptions');
                 const originalPrice = document.getElementById('price-original');
                 const discountedPrice = document.getElementById('price-discounted');
-                const planPrice = {{ $plan->price }};
-                const debtPrice = {{ $plan->automatic_debt_price }};
 
                 // Manejar el cambio de selección
                 select.addEventListener('change', function () {
@@ -156,5 +154,6 @@
             </tbody>
         </table>
     </div>
-    <a style="bottom: -20px" class="btn color-white themed-btn mt-3 position-absolute" @if(auth()->guest()) href="{{ route('register') }}" @else onclick="showPayModal({{$plan}})" @endif>Seleccionar</a>
+
+    <a style="bottom: -20px" class="btn color-white themed-btn mt-3 position-absolute"    onclick="showPayModal({{ $plan }}, this.parentElement.querySelector('#paymentOptions'))">Seleccionar</a>
 </div>

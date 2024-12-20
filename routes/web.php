@@ -102,6 +102,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('{comment}/reply/', [UserCommentController::class, 'reply'])->name('replyUserComment');
 
     Route::post('/reorderKangoos', [EventController::class, 'reorderKangoos'])->name('reorderKangoos');
+
+
 });
 
 Route::group(['middleware' => 'admin'], function () {
@@ -192,4 +194,8 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
     Route::get('/TyC', function () {
         return view('termsAndConditionsPage');
     });
+
+Route::get('/paymentIntegritySignature',[PagosController::class, 'paymentIntegritySignature'])->name('paymentIntegritySignature');
+Route::post('/paymentSubscription',[PagosController::class, 'paymentSubscription'])->name('paymentSubscription');
+
 /*End Open routes*/

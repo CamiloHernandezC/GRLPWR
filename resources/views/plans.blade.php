@@ -26,23 +26,87 @@
     <script type="text/javascript" src="https://checkout.epayco.co/checkout.js"></script>
 
     <script>
-
-        function showPayModal(plan) {
-            var checkout = new WidgetCheckout({
-                currency: '{{\Illuminate\Support\Facades\Session::get('currency_id') ? \Illuminate\Support\Facades\Session::get('currency_id') : 'COP'}}',
-                amountInCents: plan.price,
-                reference: 'GP{{ \App\Utils\PayTypesEnum::Plan }}{{ \Illuminate\Support\Facades\Auth::id() }}01',
-                publicKey: 'pub_test_X0zDA9xoKdePzhd8a0x9HAez7HgGO2fH',
-                signature: {integrity : '3a4bd1f3e3edb5e88284c8e1e9a191fdf091ef0dfca9f057cb8f408667f054d0'},
-                redirectUrl: '{{config('app.url')}}/response_payment', // Opcional
-                widgetOperation: 'tokenize',
-            })
-
-            checkout.open(function (result) {
-                var transaction = result.transaction;
-                console.log("Transaction ID: ", transaction.id);
-                console.log("Transaction object: ", transaction);
+        /*
+        function getIntegritySignature(amountInCents) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{ route('paymentIntegritySignature') }}",
+                    method: "GET",
+                    data: {
+                        amountInCents: amountInCents,
+                    },
+                    success: function (data) {
+                        resolve(data);
+                    },
+                    error: function (error) {
+                        reject(error);
+                    }
+                });
             });
+        }*/
+
+        function createSubscription(token, amountInCents, currency) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{ route('paymentSubscription') }}",
+                    method: "POST",
+                    data: {
+                        token: token,
+                        amount: amountInCents,
+                        currency: currency
+                    },
+                    success: function (data) {
+                        resolve(data);
+                    },
+                    error: function (error) {
+                        reject(error);
+                    }
+                });
+            });
+        }
+
+        async function showPayModal(plan, selectElement) {
+            const paymentOption = selectElement.value;
+            const currency= '{{\Illuminate\Support\Facades\Session::get('currency_id') ?? 'COP'}}';
+            const checkoutOptions = {
+                publicKey: 'pub_test_oAWNq7eMtFofu3M2iCbhgiIH5K1437n1',
+                /*
+                currency: currency,
+                reference: 'GP{{ \App\Utils\PayTypesEnum::Plan }}{{ \Illuminate\Support\Facades\Auth::id() }}01',
+
+                redirectUrl: '{{config('app.url')}}/response_payment', // Opcional
+                */
+            };
+
+            if (paymentOption === 'automatic') {
+                checkoutOptions.widgetOperation = 'tokenize';
+                var amountInCents= {{$plan->automatic_debt_price ?? 0}};
+            }else{
+                checkoutOptions.amountInCents= {{$plan->price}};
+            }
+
+            try {
+                //const integritySignature = await getIntegritySignature(checkoutOptions.amountInCents);
+                //checkoutOptions.signature = { integrity: integritySignature.signature };
+
+                const checkout = new WidgetCheckout(checkoutOptions);
+
+                checkout.open(function (result) {
+                    if (paymentOption === 'automatic') {
+                        var token = result.payment_source.token;
+                        createSubscription(token, amountInCents, currency);
+                    }
+                    //TODO process unique payment
+                });
+            } catch (error) {
+                console.error("Error fetching integrity signature: ", error);
+            }
         }
     </script>
     <!--END PAYMENT-->

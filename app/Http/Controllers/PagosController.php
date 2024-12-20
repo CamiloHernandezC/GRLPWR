@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 
 class PagosController extends Controller
@@ -163,5 +164,107 @@ class PagosController extends Controller
         Session::put('msg', __('general.success_save_petty_cash'));
         Session::save();
         return redirect()->back();
+    }
+
+    public function paymentIntegritySignature(float $amount, string $currency, string $expirationTime = null){
+        $userId = auth()->id();
+        $prefix = "PAY";
+        $timestamp = now()->timestamp;
+        $reference = "{$prefix}{$userId}{$timestamp}";
+        $expirationTime = $expirationTime ?? '';
+        $integrity =env('INTEGRITY_SIGNATURE');
+        $signature = hash('sha256', "{$reference}{$amount}{$currency}{$expirationTime}{$integrity}");
+        return [
+            'reference' => $reference,
+            'signature' => $signature,
+            'currency' => $currency,
+        ];
+    }
+
+    public function paymentSubscription(Request $request){
+        list($acceptanceToken, $personalDataAuth) = $this->getAcceptanceTokens();
+        $id = $this->createPaymentSource($request->token, $acceptanceToken, $personalDataAuth);
+        $this->makePayment($id, $request->amount, $request->currency);
+    }
+
+    private function getAcceptanceTokens()
+    {
+        $url = env('WOMPI_URL').'v1/merchants/'.env('WOMPI_PUBLIC_KEY');
+        $response = Http::get($url);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            $acceptanceToken = $data['data']['presigned_acceptance']['acceptance_token'];
+            $personalDataAuthToken = $data['data']['presigned_personal_data_auth']['acceptance_token'];
+            return [$acceptanceToken, $personalDataAuthToken];
+
+        } else {
+            return [
+                'error' => $response->status(),
+                'message' => $response->body(),
+            ];
+        }
+    }
+
+    private function createPaymentSource(string $token, string $acceptanceToken, string $personalDataAuth)
+    {
+        $url = env('WOMPI_URL', 'https://sandbox.wompi.co/').'v1/payment_sources';
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . env('WOMPI_PRIVATE_KEY'),
+        ])->post($url, [
+            'customer_email' => auth()->user()->email,
+            'type' => 'CARD',
+            'token' => $token,
+            'acceptance_token' => $acceptanceToken,
+            'accept_personal_auth' => $personalDataAuth
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            $id = $data['data']['id'];
+            $validUntil = $data['data']['validity_ends_at'];
+            //TODO guardar el id en la base de datos
+            return $id;
+        } else {
+            return [
+                'error' => $response->status(),
+                'message' => $response->body(),
+            ];
+        }
+    }
+
+    private function makePayment(string $id, float $amount, string $currency)
+    {
+        $signature = $this->paymentIntegritySignature($amount, $currency);
+        $url = env('WOMPI_URL', 'https://sandbox.wompi.co/').'/v1/transactions';
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . env('WOMPI_PRIVATE_KEY'),
+        ])->post($url, [
+            'amount_in_cents' => $amount,
+            'currency' => $currency,
+            'signature' => $signature->signature,
+            'customer_email' => auth()->user()->email,//TODO get email from user when second automatic pay
+            'payment_method' => [
+                "installments" => 12
+            ],
+            'reference' => $signature->reference,
+            'payment_source_id' => $id
+        ]);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            $id = $data['data']['id'];
+            $validUntil = $data['data']['validity_ends_at'];
+            //TODO guardar el id en la base de datos
+            return $id;
+        } else {
+            return [
+                'error' => $response->status(),
+                'message' => $response->body(),
+            ];
+        }
+
     }
 }
