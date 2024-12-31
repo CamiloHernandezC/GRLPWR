@@ -93,6 +93,11 @@
     @stack('head-content')
 </head>
 <body>
+    <div id="loading-spinner" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
     <div id="ajax-alerts" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
 
     <div class="modal fade justify-content-center align-items-center" id="msgModal" tabindex="-1" role="dialog">

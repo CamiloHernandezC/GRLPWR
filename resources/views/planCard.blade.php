@@ -155,5 +155,5 @@
         </table>
     </div>
 
-    <a style="bottom: -20px" class="btn color-white themed-btn mt-3 position-absolute"    onclick="showPayModal({{ $plan }}, this.parentElement.querySelector('#paymentOptions'))">Seleccionar</a>
+    <a style="bottom: -20px" class="btn color-white themed-btn mt-3 position-absolute" @if(auth()->guest()) href="{{ route('register') }}" @else onclick="showPayModal({{ $plan }}, this.parentElement.querySelector('#paymentOptions'))" @endif>Seleccionar</a>
 </div>
