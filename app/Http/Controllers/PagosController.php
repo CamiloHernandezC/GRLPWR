@@ -33,14 +33,12 @@ class PagosController extends Controller
     
     public function responsePayment(Request $request)
     {
-        //$data = json_decode($response->getBody()->getContents())->data;//Transforma a array porque en el response tambien se usa array y ambos usan el mismo método de procesar el pago;
-        //dd($request->data['transaction']);
         $signature = $request->header('X-Event-Checksum');
         $status = $request->data['transaction']['status'];
         $amount = $request->data['transaction']['amount_in_cents'];
         $timestamp = $request->timestamp;
         $reference = $request->data['transaction']['reference'];
-        //$this->verifySignature($signature, $reference, $status, $amount, $timestamp);
+        $this->verifySignature($signature, $reference, $status, $amount, $timestamp);
         $paymentInfo = $this->paymentService->getPaymentInfo($reference);
         $response_code = PayStatusMapper::getMappedValue($status);
         if($this->verifyProcessing($reference, $response_code)){

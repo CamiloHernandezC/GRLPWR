@@ -89,8 +89,16 @@ class ClientPlanController extends Controller
             $transaction->category_id = Category::where('name', CategoriesEnum::PLANES)->first()->id;
             $transaction->save();
 
+            $lastPlan = ClientPlan::find($request->lastPlanId);
+            if($lastPlan && ($request->accumulateClasses === "on" || !$lastPlan->remaining_shared_classes)){
+                if($lastPlan->expiration_date->greaterThan($payDay)){
+                    $payDay =  $lastPlan->expiration_date;
+                }
+                $lastPlan->expiration_date = now();
+                $lastPlan->save();
+            }
 
-            $this->save($request->clientId, $request->planId, $transaction->id,$payDay, $request->accumulateClasses === "on");
+            $this->save($request->clientId, $request->planId, $transaction->id,$payDay, $request->accumulateClasses === "on" ? (int)($request->remainingClases) : 0);
 
             Session::put('msg_level', 'success');
             Session::put('msg', __('general.success_save_client_plan'));
