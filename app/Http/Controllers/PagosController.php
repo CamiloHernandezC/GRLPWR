@@ -226,7 +226,13 @@ class PagosController extends Controller
     public function paymentSubscription(Request $request){
         list($acceptanceToken, $personalDataAuth) = $this->getAcceptanceTokens();
         $id = $this->createPaymentSource($request->token, $acceptanceToken, $personalDataAuth);
-
+        Subscriptions::create([
+            'user_id' => auth()->user()->id,
+            'payment_source_id' => $id,
+            'plan_id' => $request->planId,
+            'amount' => $request->amount,
+            'currency' => $request->currency,
+        ]);
         $this->makePayment($id, $request->amount, $request->currency, $request->planId);
     }
 
