@@ -102,7 +102,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/reorderKangoos', [EventController::class, 'reorderKangoos'])->name('reorderKangoos');
 
-
+    Route::post('/paymentSubscription',[PagosController::class, 'paymentSubscription'])->name('paymentSubscription');
 });
 
 Route::group(['middleware' => 'admin'], function () {
@@ -194,7 +194,5 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
         return view('termsAndConditionsPage');
     });
 
-Route::get('/paymentIntegritySignature',[PagosController::class, 'paymentIntegritySignature'])->name('paymentIntegritySignature');
-Route::post('/paymentSubscription',[PagosController::class, 'paymentSubscription'])->name('paymentSubscription');
-Route::post('/webhook_payment', [PagosController::class, 'responsePayment']);
+    Route::post('/webhook_payment', [PagosController::class, 'responsePayment']);
 /*End Open routes*/
