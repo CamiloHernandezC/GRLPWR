@@ -135,7 +135,7 @@
     </div>
 
     <div id="app">
-        <div id="top-navbar" class="navbar themed-navbar fixed-top">
+        <div id="top-navbar" class="navbar themed-navbar fixed-top navbar-light bg-light">
             <a class="navbar-brand position-absolute" style="width: 60px" href="@auth{{route('home', ['user'=> Auth::user()->slug])}}@else # @endauth">
                 <img width="120%" alt="logo" src="{{asset('images/brand/Imago_fondo_claro.png')}}">
             </a>
@@ -152,9 +152,6 @@
                 <a class="banner-icon" href="#">
                     <img width="100%" alt="calendar" src="{{asset('images/calendar.png')}}">
                 </a>
-                <a class="banner-icon" href="#">
-                    <img width="100%" alt="stats" src="{{asset('images/stats.png')}}">
-                </a>
 
                 <a class="d-none d-md-inline-block" href="{{route('blogs')}}">
                     Blogs
@@ -163,28 +160,13 @@
                 <a class="d-none d-md-inline-block" href="{{route('plans')}}">
                     Planes
                 </a>
-                <a class="d-none d-md-inline-block" href="{{route('agreements')}}">
-                    Convenios
-                </a>
                 @auth
-                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS))
-                        <a class="d-none d-md-inline-block" href="{{route('users.index')}}">
-                            Users
-                        </a>
-                    @endif
-                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SAVE_PETTY_CASH))
-                        <a class="d-none d-md-inline-block" href="{{route('pettyCash.index')}}">
-                            Caja Menor
-                        </a>
-                    @endif
+                    <a class="d-none d-md-inline-block" href="{{route('agreements')}}">
+                        Convenios
+                    </a>
                     @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_ACHIEVEMENTS_WEEKS_RANK))
                         <a class="d-none d-md-inline-block" href="{{route('achievementsWeeksRank')}}">
                             Ranking
-                        </a>
-                    @endif
-                    @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_PETTY_CASH) || Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_MAYOR_CASH))
-                        <a class="d-none d-md-inline-block" href="{{route('AccountingFlow')}}">
-                            Flujo contable
                         </a>
                     @endif
                     {{--<notification class="cursor-pointer" v-bind:unread_notifications="unread_notifications" v-bind:notifications="notifications"></notification>--}}
@@ -206,13 +188,29 @@
                             </a>
                             -->
                             @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS))
-                                <a class="dropdown-item d-block d-md-none" href="{{route('users.index')}}">
+                                <a class="dropdown-item" href="{{route('users.index')}}">
                                     Users
                                 </a>
                             @endif
                             @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SAVE_PETTY_CASH))
-                                <a class="dropdown-item d-block d-md-none" href="{{route('pettyCash.index')}}">
+                                <a class="dropdown-item" href="{{route('pettyCash.index')}}">
                                     Caja Menor
+                                </a>
+                            @endif
+                            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_MAYOR_CASH))
+                                <a class="dropdown-item" href="{{route('AccountingFlow')}}">
+                                    Flujo Contable
+                                </a>
+                                <a class="dropdown-item" href="{{route('statistics')}}">
+                                    Estadísticas
+                                </a>
+                                <a class="dropdown-item" href="{{route('AccountingClose')}}">
+                                    Cierre Contable
+                                </a>
+                            @endif
+                            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::LOAD_CLIENT_PLAN))
+                                <a class="dropdown-item" href="{{route('loadPlan')}}">
+                                    Cargar Plan
                                 </a>
                             @endif
                             @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_ACHIEVEMENTS_WEEKS_RANK))
@@ -238,10 +236,10 @@
                     <div class="dropdown d-inline-block d-inline-block d-md-none">
                         <span class="navbar-toggler-icon cursor-pointer" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
 
-                        <div class="dropdown-menu dropdown-menu-right floating-card bg-dark" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{route('blogs')}}">Blogs</a>
+                        <div class="dropdown-menu dropdown-menu-right floating-card" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{{ route('login') }}">Login</a>
                             <a class="dropdown-item" href="{{ route('register') }}">Registro</a>
+                            <a class="dropdown-item" href="{{ route('register') }}">Planes</a>
                         </div>
                     </div>
                 @endauth
