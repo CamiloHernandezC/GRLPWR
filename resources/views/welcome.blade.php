@@ -72,7 +72,7 @@
             <img src="{{asset('images/brand/Imago_fondo_claro.png')}}" width="70%" height="70%">
         </a>
         <div class="top-right links">
-            <a href="{{ route('blogs') }}">Blogs</a>
+            <a href="{{ route('plans') }}">Planes</a>
         @auth
             <a href="{{route('home', ['user'=> Auth::user()->slug])}}">Home</a>
         @else
