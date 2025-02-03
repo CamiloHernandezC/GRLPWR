@@ -353,9 +353,11 @@ class SesionClienteController extends Controller
                     return back();
                 }
                 if($session->fecha_inicio->subHours(HOURS_TO_CANCEL_TRAINING) < now() && $session->event->discounts_session){
+                    $session->class_type_id = $session->event->class_type_id;
+                    $this->penalizeService->savedPenalization($session);
                     $session->delete();
                     Session::put('msg_level', 'warning');
-                    Session::put('msg', __('general.message_enable_late_cancellation'));
+                    Session::put('msg', __('general.message_enable_late_cancellation', ['hours' => HOURS_TO_CANCEL_TRAINING]));
                     Session::save();
                     return back();
                 }

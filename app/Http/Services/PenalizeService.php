@@ -35,8 +35,6 @@ class PenalizeService
     }
     /**
      * @param $date
-     * Los $countActiveOldClients: son clientes que renovaron su plan o que tienen planes activos hace más de un mes. Pueden ser clientes que estuvieron activos hace 1 año y volvieron
-     * Los $countRetainedClients: son clientes que se les vencía su plan en el mes pasado y que renovaron
      */
     public function penalizeEvent($date):void
     {
@@ -62,13 +60,7 @@ class PenalizeService
 
         foreach ($nonAttendedSessions as $nonAttendedSession){
 
-            $penalized = new Penalized();
-            $penalized->user_id = $nonAttendedSession->cliente_id;
-            $penalized->class_type = $nonAttendedSession->class_type_id;
-            $penalized->from_date = today();
-
-            $penalized->to_date = $endOfPenalization;
-            $penalized->save();
+            $this->savedPenalization($nonAttendedSession, $endOfPenalization);
 
             /* If you want to delete the next session for penalization remove the assign of to_date and the save, and uncomment this code
                 $sessionToDelete = SesionCliente::join('eventos', 'sesiones_cliente.evento_id', 'eventos.id')
@@ -93,5 +85,20 @@ class PenalizeService
             });
             */
         }
+    }
+
+    /**
+     * @param mixed $nonAttendedSession
+     * @param Carbon|null $endOfPenalization
+     */
+    public function savedPenalization(mixed $nonAttendedSession, Carbon $endOfPenalization = null): void
+    {
+        $penalized = new Penalized();
+        $penalized->user_id = $nonAttendedSession->cliente_id;
+        $penalized->class_type = $nonAttendedSession->class_type_id;
+        $penalized->from_date = today()->endOfWeek();
+
+        $penalized->to_date = $endOfPenalization ?? today()->endOfWeek()->addDays(7);
+        $penalized->save();
     }
 }
