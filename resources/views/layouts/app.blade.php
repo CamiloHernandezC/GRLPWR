@@ -212,6 +212,9 @@
                                 <a class="dropdown-item" href="{{route('loadPlan')}}">
                                     Cargar Plan
                                 </a>
+                                <a class="dropdown-item" href="{{route('freezePlan.index')}}">
+                                    Congelar Plan
+                                </a>
                             @endif
                             @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_ACHIEVEMENTS_WEEKS_RANK))
                                 <a class="dropdown-item d-block d-md-none" href="{{route('achievementsWeeksRank')}}">

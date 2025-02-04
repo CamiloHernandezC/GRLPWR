@@ -135,7 +135,7 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::LOAD_CLIENT_PLAN->value])->group(function () {
     Route::get('/admin/loadPlan', [ClientPlanController::class, 'showLoadClientPlan'])->name('loadPlan');
     Route::post('/admin/loadPlan', [ClientPlanController::class, 'saveClientPlan'])->name('saveClientPlan');
-    Route::get('/admin/freezePlan', [ClientPlanController::class, 'showFreezeClientPlan']);
+    Route::get('/admin/freezePlan', [ClientPlanController::class, 'showFreezeClientPlan'])->name('freezePlan.index');
     Route::post('/admin/freezePlan', [ClientPlanController::class, 'freezePlan'])->name('freezePlan');
 });
 
