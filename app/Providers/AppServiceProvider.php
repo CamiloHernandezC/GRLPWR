@@ -41,8 +41,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        define('HOURS_TO_CANCEL_TRAINING', 4);
-        define('MONTHS_FOR_NEW_HEALTH_ASSESSMENT', 2);
+        define('HOURS_TO_CANCEL_TRAINING', env('HOURS_TO_CANCEL_TRAINING'));
+        define('MONTHS_FOR_NEW_HEALTH_ASSESSMENT', env('MONTHS_FOR_NEW_HEALTH_ASSESSMENT'));
         $this->app->bind(SendMessageInterface::class, SendWhatsAppMessage::class);
         $this->app->bind(ProcessPaymentInterface::class, ProcessPaymentWompi::class);
     }
