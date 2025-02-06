@@ -11,7 +11,6 @@
         @if($plan->automatic_debt_price)
                 <select name="paymentOptions" class="form-control payment-options">
                     <option value="automatic" selected>Débito Automático</option>
-                    <option value="single">Pago Único</option>
                 </select>
 
                 <div class="mt-3">
