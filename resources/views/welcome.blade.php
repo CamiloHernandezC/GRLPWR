@@ -114,7 +114,7 @@
     </div>
 
     <div class="w-100 text-center p-5 bg-brand-primary-gradient color-white">
-        <h3>CENTRO DE BIENESTAR EXCLUSIVO PARA MUJERES</h3>
+        <h3>EL MEJOR GIMNASIO FEMENINO DE BOGOTÁ</h3>
     </div>
 
     <x-type-section title="Fit Flyr" description="Entrenamiento de rebote que reduce 80% el impacto y quema 20% más calorías" img="{{asset('images/exercise/kangoo.JPG')}}" background="white" color="black"></x-type-section>
@@ -139,7 +139,7 @@
     <div class="section d-flex flex-column">
         <div class="mx-auto mb-4">
             <h1 class="w-75  text-center mx-auto mb-5">¿Porqué <br> Girl Power?</h1>
-            <p class="w-50 m-auto text-justify">
+            <p class="col-10 col-md-6 m-auto text-justify">
             En GRL PWR ofrecemos un refugio para que puedas encontrar y desarrollar todo tu POWER. Unimos cuerpo, mente y espíritu, para que te sientas cómoda entrenando en la gran variedad de ejercicios que ofrecemos.
             </p>
         </div>
