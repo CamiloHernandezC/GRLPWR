@@ -11,8 +11,12 @@
                data-toggle="collapse" data-target="#collapseReplies{{$i}}" aria-expanded="false"
                aria-controls="collapseReplies{{$i}}">{{$user->comments[$i]->replies->count()}} replies</a>
         @endif
+        <div class="comment-info">
+            <p>Comentario realizado el {{ $user->comments[$i]->created_at->format('d/m/Y H:i') }}</p>
+        </div>
         <div id="collapse{{$i}}" aria-expanded="false" class="collapse ml-5 mt-3">
-            <form id="replyForm{{$i}}" method="POST"
+
+                <form id="replyForm{{$i}}" method="POST"
                   action="{{route('replyUserComment', ['comment'=>$user->comments[$i]])}}"
                   autocomplete="off">
                 @csrf
