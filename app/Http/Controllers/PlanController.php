@@ -6,6 +6,7 @@ use App\Model\Plan;
 use App\Repositories\ClientPlanRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Validator;
 
 class PlanController extends Controller
@@ -32,11 +33,13 @@ class PlanController extends Controller
 
     public function enabledPlans(bool $old)
     {
+
         return Plan::where(function($q) {
             $q->where('available_plans', '>', 0)
                 ->orWhereNull('available_plans');
             })
             ->where('old', $old)
+            ->where('branch_id', Session::get('branch'))
             ->whereNull('deleted_at')
             ->get();
     }

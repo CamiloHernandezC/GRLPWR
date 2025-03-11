@@ -15,6 +15,7 @@ use App\Category;
 use App\Http\Controllers\AccountingFlowController;
 use App\Http\Controllers\ActiveClientsController;
 use App\Http\Controllers\AgreementsController;
+use App\Http\Controllers\BranchController;
 use App\Http\Controllers\ClientPlanController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
@@ -41,50 +42,18 @@ use App\Http\Controllers\AchievementController;
 
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('/mis_solicitudes/crear', 'SolicitudServicioController@irCrear')->name('irCrearSolicitud');
-    Route::post('/mis_solicitudes/crear', 'SolicitudServicioController@save')->name('crearSolicitud');
-    Route::get('/{user}/mis_solicitudes/{solicitud}/editar', 'SolicitudServicioController@irEditar')->name('irEditarSolicitud');
-    Route::put('/mis_solicitudes/{solicitud}/editar', 'SolicitudServicioController@editar')->name('editarSolicitud');
-    Route::post('/mis_solicitudes/tutorialCreacion', 'SolicitudServicioController@tutorialCreacionCompletado');
-
-    Route::get('/{user}/mis_solicitudes/{solicitud}', 'SolicitudServicioController@show')->where(['solicitud' => '[0-9]+'])->name('solicitud');
-
-    Route::get('/busquedaProyectos/', 'BusquedaProyectoController@buscarProyectos')->name('buscarProyecto');
-    Route::post('/busquedaProyectos/', 'BusquedaProyectoController@filtrar')->name('buscarProyecto.filtrar');
-
-    Route::get('/ofertar/{solicitud}', 'BusquedaProyectoController@irOfertar')->name('ofertar');
-    Route::post('/ofertar/{solicitud}', 'BusquedaProyectoController@crearOferta')->name('crearPropuesta');
-    Route::put('/ofertar/{solicitud}', 'BusquedaProyectoController@actualizarOferta')->name('actualizarPropuesta');
-    Route::delete('/ofertar/{solicitud}', 'BusquedaProyectoController@eliminarOferta')->name('eliminarPropuesta');
-    Route::put('confirmarPropuesta', 'BusquedaProyectoController@confirmarOferta')->name('confirmarPropuesta');
-
-    Route::get('/autocomplete', 'AutoCompleteController@index');
-    Route::post('/autocomplete/fetch', 'AutoCompleteController@fetch')->name('autocomplete.fetch');
-
-    Route::get('/user/{user}/home', 'HomeController@index')->name('home');
-    Route::delete('/{user}/home', 'SolicitudServicioController@eliminar')->name('eliminarSolicitud');
+    Route::get('/{branch}/user/{user}/home', 'HomeController@index')->name('home');
     Route::put('/user/{user}/home', [ProfileController::class, 'actualizarPerfil'])->name('actualizarPerfil');
     Route::get('/visitar/{user}', [HomeController::class, 'visitar'])->name('visitarPerfil');
 
     Route::get('/user/{user}', 'ProfileController@index')->name('profile');
 
-    Route::put('completar_registro_redes_sociales', 'HomeController@completarRegistroRedesSociales')->name('completarRegistroRedesSociales');
-
-    Route::get('/busquedaEntrenadores/', 'BusquedaEntrenadorController@buscarEntrenador')->name('buscarEntrenadores');
-    Route::post('/busquedaEntrenadores/', 'BusquedaEntrenadorController@filtrar')->name('buscarEntrenadores.filtrar');
-
-    Route::post('/crearBlog', 'BlogsController@crearBlog')->name('crearBlog');
-    Route::post('/editarBlog', 'BlogsController@editarBlog')->name('editarBlog');
-
-    Route::post('/insert-image', 'BlogsController@insertImage');
-    Route::post('/upload-image', 'BlogsController@uploadImage');
-    Route::post('/rotate-image', 'BlogsController@uploadImage');//TODO ROTATE AND CROP
-
+    Route::get('/{branch}/eventos/{event}/{date}/{hour}/{isEdited}', [EventController::class, 'show'])->name('eventos.show');
+    //TODO: crear, actualizar y borrar evento
     Route::get('/eventos/crear', [EventController::class, 'create'])->name('eventos.create');
-    Route::get('/eventos/{event}/{date}/{hour}/{isEdited}', [EventController::class, 'show'])->name('eventos.show');
     Route::post('/eventos/crear', [EventController::class, 'save'])->name('eventos.store');
-
     //Route::get('/eventos', [SesionEventoController::class, 'fullcalendar'])->name('eventos');
+
     Route::post('/agendar', [SesionClienteController::class, 'save'])->name('agendar');
 
     Route::get('/response_payment', [PagosController::class, 'responsePayment']);
@@ -98,7 +67,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/clientLastPlanWithRemainingClasses', [ClientPlan::class, 'clientLastPlanWithRemainingClasses'])->name('clientLastPlanWithRemainingClasses');
 
 
-    Route::get('/nextSessions/{branchId}', [EventController::class, 'nextSessions'])->name('nextSessions');
+    Route::get('/{branch}/nextSessions', [EventController::class, 'nextSessions'])->name('nextSessions');
 
     Route::post('/admin/checkAttendee', [SesionClienteController::class, 'checkAttendee'])->name('checkAttendee');
 
@@ -118,9 +87,9 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'admin'], function () {
-    Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
+    Route::get('/{branch}/statistics', [StatisticsController::class, 'index'])->name('statistics');
 
-    Route::get('/admin/saveActiveClients/{date}', [ActiveClientsController::class, 'saveActiveClientByDate']);
+    Route::get('/admin/saveActiveClients/{date}', [ActiveClientsController::class, 'saveActiveClientByDate']);//TODO: add logic for branch
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::MAKE_WELLBEING_TEST->value])->group(function () {
@@ -145,8 +114,8 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' . \App\Utils\FeaturesEnum::SEE_MAYOR_CASH->value])->group(function () {
-    Route::get('/AccountingClose', [AccountingCloseController::class, 'AccountingClose'])->name('AccountingClose');
-    Route::get('/AccountingDetails', [AccountingCloseController::class, 'AccountingDetails'])->name('AccountingDetails');
+    Route::get('/AccountingClose', [AccountingCloseController::class, 'AccountingClose'])->name('AccountingClose');//TODO: add logic for branch
+    Route::get('/AccountingDetails', [AccountingCloseController::class, 'AccountingDetails'])->name('AccountingDetails');//TODO: add logic for branch
     Route::get('/transactions/search', [AccountingCloseController::class, 'search'])->name('transactions.search');
 });
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::CHANGE_TRANSACTION_CATEGORY->value])->group(function () {
@@ -154,11 +123,11 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' . \App\Utils\FeaturesEnum::SEE_MAYOR_CASH->value . ',' . \App\Utils\FeaturesEnum::class . '-' . \App\Utils\FeaturesEnum::SEE_PETTY_CASH->value])->group(function () {
-    Route::get('/AccountingFlow', [AccountingFlowController::class, 'AccountingFlow'])->name('AccountingFlow');
+    Route::get('/AccountingFlow', [AccountingFlowController::class, 'AccountingFlow'])->name('AccountingFlow');//TODO: add logic for branch
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::SAVE_PETTY_CASH->value])->group(function () {
-    Route::get('/savePettyCash', function () {
+    Route::get('/savePettyCash', function () {//TODO: add logic for branch
         $clients = Cliente::all();
         $paymentMethods = PaymentMethod::where('enabled', true)->get();
         $categories = Category::all();
@@ -207,4 +176,6 @@ Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '
     });
 
     Route::post('/webhook_payment', [PagosController::class, 'responsePayment']);
+
+    Route::post('/change-branch', [BranchController::class, 'changeBranch'])->name('change-branch');
 /*End Open routes*/

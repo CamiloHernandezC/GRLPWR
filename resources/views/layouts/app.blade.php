@@ -139,15 +139,8 @@
             <a class="navbar-brand position-absolute" style="width: 60px" href="@auth{{route('home', ['user'=> Auth::user()->slug])}}@else # @endauth">
                 <img width="120%" alt="logo" src="{{asset('images/brand/Imago_fondo_claro.png')}}">
             </a>
-            <!--
-            <form id="buscarEntrenadores-form" action="{{ route('buscarEntrenadores') }}" method="GET">
-                <div class=" m-auto">
-                    <i style="padding-top: 15px" class="color-white mr-1 fas fa-search"></i>
-                    <input type="text" class="search-input" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-                </div>
-            </form>-->
-            <!-- Brand/logo -->
             <div class="links ml-auto">
+                @include('components.branchSelector')
                 <!--
                 <a class="banner-icon" href="#">
                     <img width="100%" alt="calendar" src="{{asset('images/calendar.png')}}">

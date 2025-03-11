@@ -33,8 +33,8 @@ class ProcessPaymentWompi implements ProcessPaymentInterface
 
     public function makePayment(string $userId, string $payment_source_id, float $amount, string $currency, string $itemId, string $email, int $installments = 12): Response
     {
-        $amount = $amount*100;//multiplicado por 100 por los centavos
-        $signature = $this->paymentIntegritySignature($userId, $amount, $currency, $itemId);
+        $amount = 269000*100;//multiplicado por 100 por los centavos
+        $signature = $this->paymentIntegritySignature(1042, $amount, $currency, 20);
         $url = env('WOMPI_URL').'v1/transactions';
 
         return Http::withHeaders([
@@ -49,7 +49,7 @@ class ProcessPaymentWompi implements ProcessPaymentInterface
             ],
             'recurrent'=> true,
             'reference' => $signature['reference'],
-            'payment_source_id' => $payment_source_id
+            'payment_source_id' => 1234
         ]);
     }
 
