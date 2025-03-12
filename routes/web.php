@@ -19,6 +19,7 @@ use App\Http\Controllers\ClientPlanController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagosController;
+use App\Http\Controllers\SubscriptionsController;
 use App\Http\Controllers\VirtualTrainingsController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
@@ -115,6 +116,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/generate-qr', [AgreementsController::class, 'generateQr'])->name('generate.qr');
 
     Route::get('/virtualTrainings', [VirtualTrainingsController::class, 'index'])->name('virtualTrainings');
+
+    Route::put('/users/subscription', [SubscriptionsController::class, 'updateSubscription'])->name('subscription.update');
 });
 
 Route::group(['middleware' => 'admin'], function () {
