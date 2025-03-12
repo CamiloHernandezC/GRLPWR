@@ -77,13 +77,7 @@
 
             @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_GENERAL_INFO) || Auth::user()->id == $user->id)
                 @include('cliente.clientPlan')
-            @endif
-
-            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_GENERAL_INFO) || Auth::user()->id == $user->id)
                 @include('cliente.subscription')
-            @endif
-
-            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_GENERAL_INFO) || Auth::user()->id == $user->id)
                 @include('components.lastClasses')
                 @include('assessmentResults.physicalAssessment')
                 @include('assessmentResults.wheelOfLife')
