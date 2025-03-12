@@ -31,7 +31,7 @@
     <div class="container-fluid">
         <div class="perfil-container col-12 col-md-10 m-auto">
             <img src="{{asset('images/avatars/'.$user->foto)}}" class="user-profile-icon">
-            @if($user==Auth::user()){
+            @if($user==Auth::user())
                 <button class="btn themed-btn d-block ml-auto mr-auto" data-toggle="modal"
                         data-target="#completarPerfilModal">Editar perfil
                 </button>
@@ -77,8 +77,14 @@
 
             @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_GENERAL_INFO) || Auth::user()->id == $user->id)
                 @include('cliente.clientPlan')
-                @include('components.lastClasses')
+            @endif
 
+            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_GENERAL_INFO) || Auth::user()->id == $user->id)
+                @include('cliente.subscription')
+            @endif
+
+            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_USERS_GENERAL_INFO) || Auth::user()->id == $user->id)
+                @include('components.lastClasses')
                 @include('assessmentResults.physicalAssessment')
                 @include('assessmentResults.wheelOfLife')
                 @include('assessmentResults.trainingPreferences')
