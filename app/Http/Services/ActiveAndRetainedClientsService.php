@@ -23,6 +23,7 @@ class ActiveAndRetainedClientsService
 
         $countActiveClients = ClientPlan::where('created_at', '<=', $date)
             ->where('expiration_date', '>=', $date)
+            ->where('plan_id', '!=', 12) //removing show stars
             ->where(function ($query)  {
                 $query->where('remaining_shared_classes', '>', 0)
                     ->orWhereNull('remaining_shared_classes');
@@ -34,6 +35,7 @@ class ActiveAndRetainedClientsService
         $countActiveNewClients = ClientPlan::where('created_at', '<=', $date)
             ->where('created_at', '>=', $thirtyDaysAgo)
             ->where('expiration_date', '>=', $date)
+            ->where('plan_id', '!=', 12) //removing show stars
             ->where(function ($query)  {
                 $query->where('remaining_shared_classes', '>', 0)
                     ->orWhereNull('remaining_shared_classes');
@@ -52,6 +54,7 @@ class ActiveAndRetainedClientsService
         //The active old clients are those who have a plan before the current plan, or have plans created more than 30 day ago (ie: annual or promos)
         $countActiveOldClients = ClientPlan::where('created_at', '<=', $date)
             ->where('expiration_date', '>=', $date)
+            ->where('plan_id', '!=', 12) //removing show stars
             ->where(function ($query)  {
                 $query->where('remaining_shared_classes', '>', 0)
                     ->orWhereNull('remaining_shared_classes');
@@ -74,11 +77,13 @@ class ActiveAndRetainedClientsService
 
         $totalExpiredLastMonth = ClientPlan::where('expiration_date', '<=', $endOfLastMonth)
             ->where('expiration_date', '>=', $startOfLastMonth)
+            ->where('plan_id', '!=', 12) //removing show stars
             ->distinct('client_id')
             ->count('client_id');
 
         $countRetainedClients = ClientPlan::where('expiration_date', '<=', $endOfLastMonth)
             ->where('expiration_date', '>=', $startOfLastMonth)
+            ->where('plan_id', '!=', 12) //removing show stars
             ->whereExists(function ($query) use ($currentDate) {
                 $query->selectRaw(1)
                     ->from('client_plans as cp2')
