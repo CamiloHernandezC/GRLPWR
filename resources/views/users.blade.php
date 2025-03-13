@@ -19,6 +19,10 @@
                     <input type="radio" id="expirationType3" name="expirationType" value="inactive" class="custom-control-input">
                     <label class="custom-control-label" for="expirationType3">Inactivos</label>
                 </div>
+                <div class="form-check m-auto">
+                    <input class="form-check-input" type="checkbox" name="showStars" id="showStars">
+                    <label class="form-check-label" for="showStars">Incluir Show Stars</label>
+                </div>
             </div>
         </div>
         <table class="table">
@@ -164,6 +168,7 @@
                 var isNotInWhatsappGroupValue = $('#isNotInWhatsappGroup').prop('checked');
                 var assignedValue = $('#assigned').val();
                 var expirationTypeValue = $('input[name="expirationType"]:checked').val();
+                var showStarsValue = $('input[name="showStars"]:checked').val();
 
                 $.ajax({
                     headers: {
@@ -181,6 +186,7 @@
                         isNotInWhatsappGroup: isNotInWhatsappGroupValue,
                         assigned: assignedValue,
                         expirationType: expirationTypeValue,
+                        showStars: showStarsValue,
                     },
                     dataType: 'json',
                     success: function (data) {
@@ -245,6 +251,10 @@
             });
 
             $('input[name="expirationType"]').change(function(){
+                filter();
+            });
+
+            $('input[name="showStars"]').change(function(){
                 filter();
             });
         });
