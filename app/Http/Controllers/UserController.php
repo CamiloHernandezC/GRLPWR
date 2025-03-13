@@ -60,6 +60,7 @@ class UserController extends controller
         $needAssessment = $request->input('needAssessment');
         $assigned = $request->input('assigned');
         $expirationType = $request->input('expirationType');
+        $showStars = $request->input('showStars')  === "on" ;
 
         $query = User::query();
 
@@ -108,9 +109,12 @@ class UserController extends controller
                 $query->leftJoin('client_plans', 'usuarios.id', '=', 'client_plans.client_id');
                 break;
             case "active":
-                $query->join('client_plans', function ($join) use ($currentDate) {
+                $query->join('client_plans', function ($join) use ($showStars, $currentDate) {
                     $join->on('usuarios.id', '=', 'client_plans.client_id')
                         ->where('client_plans.expiration_date', '>=', $currentDate->copy()->startOfDay())
+                        ->when(!$showStars, function ($query) {
+                            return $query->where('client_plans.plan_id', '!=', 12); //removing show stars
+                        })
                         ->where(function ($query)  {
                             $query->where('remaining_shared_classes', '>', 0)
                                 ->orWhereNull('remaining_shared_classes');
@@ -118,8 +122,11 @@ class UserController extends controller
                 });
                 break;
             case "inactive":
-                $query->join('client_plans', function ($join) use ($currentDate) {
+                $query->join('client_plans', function ($join) use ($showStars, $currentDate) {
                     $join->on('usuarios.id', '=', 'client_plans.client_id')
+                        ->when(!$showStars, function ($query) {
+                            return $query->where('client_plans.plan_id', '!=', 12); //removing show stars
+                        })
                         ->where(function ($query) use ($currentDate) {
                             $query->where('client_plans.expiration_date', '<', $currentDate->copy()->startOfDay())
                                 ->orWhere('remaining_shared_classes', '=', 0);
