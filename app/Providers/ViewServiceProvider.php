@@ -6,10 +6,10 @@ use App\Branch;
 use App\ClassType;
 use App\Model\ClientPlan;
 use App\Model\Evento;
+use App\Model\Subscriptions;
 use App\Repositories\ClientPlanRepository;
 use App\Utils\RolsEnum;
 use App\View\Composers\AchievementsComposer;
-use App\Utils\Constantes;
 use App\View\Composers\EventComposer;
 use App\View\Composers\HighlightComposer;
 use App\View\Composers\HistoricActiveClientsComposer;
@@ -80,6 +80,21 @@ class ViewServiceProvider extends ServiceProvider
             $view->with(
                 ['clientPlans' => $clientPlans,
                     'expiredPlans' => $expiredPlans]
+            );
+        });
+
+        Facades\View::composer('cliente.subscription', function (View $view) {
+            $route = Route::current(); // Illuminate\Routing\Route
+            $subscription = Subscriptions::where('user_id', '=', $route->parameter('user')->id)
+                ->where(function ($query) {
+                    return $query->where('subscriptions.deleted_at', '>', Carbon::now())
+                        ->orWhereNull('subscriptions.deleted_at');
+                })
+                ->join('plans', 'plans.id', '=', 'plan_id')
+                ->select('subscriptions.*', 'plans.name')
+                ->first();
+            $view->with(
+                ['subscription' => $subscription,]
             );
         });
 

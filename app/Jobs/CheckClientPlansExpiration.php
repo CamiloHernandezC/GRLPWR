@@ -46,8 +46,9 @@ class CheckClientPlansExpiration
                             ->orWhereNull('deleted_at');
                     })->first();
                 if($subscription){
+                    Log::info('Processing payment for subscription: '. $subscription->id);
                     $paymentService = app(ProcessPaymentInterface::class);
-                    $response = $paymentService->makePayment($subscription->user_id, $subscription->payment_source_id, $subscription->amount, $subscription->currency, $subscription->plan_id, $subscription->user->email);
+                    $response = $paymentService->makePayment($subscription->user_id, $subscription->payment_source_id, $subscription->amount, $subscription->currency, $subscription->plan_id, $subscription->user->email, $subscription->installments);
                     Log::info('Result of subscription payment: '. $response->body());
                 }else{
                     $expirationDate = Carbon::parse($info->expiration_date);
