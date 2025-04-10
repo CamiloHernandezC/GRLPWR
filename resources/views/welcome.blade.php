@@ -206,22 +206,6 @@
     <footer style="margin: 0" class="footer-distributed">
 
         <div class="footer-left">
-
-            <img class="mb-3" src="{{asset('images/brand/imago_sin_fondo_oscuro.png')}}" width="70%" height="70%">
-
-            <!--<p class="footer-links">
-                <a href="#quienesSomos">Quienes somos</a>
-                ·
-                <a href="#nuestoCompromiso">Nuestro compromiso</a>
-                ·
-                <a href="#mision">Mision</a>
-                ·
-                <a href="#valores">Valores</a>
-                ·
-                <a href="#equipo">Equipo de trabajo</a>
-            </p>-->
-
-
             <p class="footer-company-name mt-4 d-none d-md-block">Desarrollado por: Educlick &copy; 2018</p>
             <p class="footer-company-name d-none d-md-block">322 243 42 96</p>
         </div>
