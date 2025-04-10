@@ -15,6 +15,11 @@
 <h2 class="section-title text-center">Historico clientes activos:</h2>
 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
     <x-chart id="historic-active-users" type="line" :labels="$dates" :datasets="$activeClientsDatasets" ></x-chart>
+</div>
+<h2 class="section-title text-center">Historico clientes nuevos:</h2>
+<div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
+    <x-chart id="historic-new-users" type="line" :labels="$dates" :datasets="$newClientsDataset" ></x-chart>
+</div>
 <h2 class="section-title text-center">Historico clientes retenidos:</h2>
 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
     <x-chart id="historic-retained-users" type="line" :labels="$dates" :datasets="$retainedClientsDataset" ></x-chart>
@@ -23,4 +28,23 @@
 <div class="themed-block col-12 col-md-10 mx-auto mt-4 p-2">
     <x-chart id="historic-percent-retained-users" type="line" :labels="$dates" :datasets="$percentRetainedClientsDataset" ></x-chart>
 </div>
-</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Fecha</th>
+        <th>Clientes nuevos</th>
+        <th>IDs</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach($newClientsTableData as $row)
+        <tr>
+            <td>{{ $row['date'] }}</td>
+            <td>{{ $row['clients_count'] }}</td>
+            <td>{{ implode(', ', $row['client_ids']) }}</td>
+        </tr>
+    @endforeach
+    </tbody>
+</table>
+
