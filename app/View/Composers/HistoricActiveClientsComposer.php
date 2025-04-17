@@ -115,6 +115,7 @@ class HistoricActiveClientsComposer
                 ->select('plans.name', DB::raw('COUNT(*) as plan_count'))
                 ->join('plans', 'plans.id', '=', 'client_plans.plan_id')
                 ->where('client_plans.expiration_date', '>=', $endDate->endOfDay()->toDateTimeString())
+                ->whereNotIn('client_plans.client_id', [1, 2, 3])
                 ->groupBy('plans.name')
                 ->orderByDesc('plan_count')
                 ->get();
