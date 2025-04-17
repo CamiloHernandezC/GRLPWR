@@ -108,12 +108,11 @@ class HistoricActiveClientsComposer
             ],
         ];
 
-
         // Distribución de planes
         $plansSummary = DB::table('client_plans')
             ->select('plans.name', DB::raw('COUNT(*) as plan_count'))
             ->join('plans', 'plans.id', '=', 'client_plans.plan_id')
-            ->where('client_plans.expiration_date', '>=', $endDate->endOfDay())
+            ->where('client_plans.expiration_date', '>=', $endDate)
             ->groupBy('plans.name')
             ->orderByDesc('plan_count')
             ->get();
