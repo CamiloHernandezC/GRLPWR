@@ -69,10 +69,12 @@ class HistoricActiveClientsComposer
         $rawData = DB::table('client_plans as cp')
             ->selectRaw('DATE(cp.created_at) as date, cp.client_id')
             ->whereBetween(DB::raw('DATE(cp.created_at)'), [$startDate, $endDate])
+            ->where('cp.plan_id', '!=', 12)
             ->whereRaw('cp.created_at = (
                 SELECT MIN(cp2.created_at)
                 FROM client_plans cp2
                 WHERE cp2.client_id = cp.client_id
+                AND cp2.plan_id != 12
             )')
             ->orderBy('cp.created_at') // ASCENDENTE
             ->get();
@@ -101,6 +103,8 @@ class HistoricActiveClientsComposer
                 'backgroundColor' => 'rgba(255, 205, 86, 0.2)',
                 'borderColor' => 'rgba(255, 205, 86, 1)',
                 'borderWidth' => 1,
+                'showLine' => false, // <<< This disables the connecting line
+                'pointRadius' => 5,   // Optional: make the points more visible
             ],
         ];
 
