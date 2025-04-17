@@ -108,23 +108,26 @@ class HistoricActiveClientsComposer
             ],
         ];
 
-        // Distribución de planes
-        $plansSummary = DB::table('client_plans')
-            ->select('plans.name', DB::raw('COUNT(*) as plan_count'))
-            ->join('plans', 'plans.id', '=', 'client_plans.plan_id')
-            ->where('client_plans.expiration_date', '>=', $endDate)
-            ->groupBy('plans.name')
-            ->orderByDesc('plan_count')
-            ->get();
+        $plansSummary = [];
 
-        // Obtener el total
-        $totalPlans = $plansSummary->sum('plan_count');
+        if ($endDate) {
+            $plansSummary = DB::table('client_plans')
+                ->select('plans.name', DB::raw('COUNT(*) as plan_count'))
+                ->join('plans', 'plans.id', '=', 'client_plans.plan_id')
+                ->where('client_plans.expiration_date', '>=', $endDate->endOfDay()->toDateTimeString())
+                ->groupBy('plans.name')
+                ->orderByDesc('plan_count')
+                ->get();
 
-        // Agregar el porcentaje a cada item
-        $plansSummary->transform(function ($item) use ($totalPlans) {
-            $item->percentage = round(($item->plan_count * 100) / $totalPlans, 2);
-            return $item;
-        });
+            // Obtener el total
+            $totalPlans = $plansSummary->sum('plan_count');
+
+            // Agregar el porcentaje a cada item
+            $plansSummary->transform(function ($item) use ($totalPlans) {
+                $item->percentage = round(($item->plan_count * 100) / $totalPlans, 2);
+                return $item;
+            });
+        }
 
         $view->with([
             'dates' => $datesCollection->toJson(),
