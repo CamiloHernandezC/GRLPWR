@@ -108,6 +108,25 @@ class HistoricActiveClientsComposer
             ],
         ];
 
+
+        // Distribución de planes
+        $plansSummary = DB::table('client_plans')
+            ->select('plans.name', DB::raw('COUNT(*) as plan_count'))
+            ->join('plans', 'plans.id', '=', 'client_plans.plan_id')
+            ->where('client_plans.expiration_date', '>=', $endDate->endOfDay())
+            ->groupBy('plans.name')
+            ->orderByDesc('plan_count')
+            ->get();
+
+        // Obtener el total
+        $totalPlans = $plansSummary->sum('plan_count');
+
+        // Agregar el porcentaje a cada item
+        $plansSummary->transform(function ($item) use ($totalPlans) {
+            $item->percentage = round(($item->plan_count * 100) / $totalPlans, 2);
+            return $item;
+        });
+
         $view->with([
             'dates' => $datesCollection->toJson(),
             'activeClientsDatasets' => $activeClientsDatasets,
@@ -115,6 +134,7 @@ class HistoricActiveClientsComposer
             'percentRetainedClientsDataset' => $percentRetainedClientsDataset,
             'newClientsDataset' => $newClientsDataset,
             'newClientsTableData' => $newClientsTableData,
+            'plansSummary' => $plansSummary,
         ]);
     }
 }
