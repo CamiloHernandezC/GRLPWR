@@ -108,7 +108,6 @@ class HistoricActiveClientsComposer
             ],
         ];
 
-
         // Distribución de planes
         $plansSummary = DB::table('client_plans')
             ->select('plans.name', DB::raw('COUNT(*) as plan_count'))
