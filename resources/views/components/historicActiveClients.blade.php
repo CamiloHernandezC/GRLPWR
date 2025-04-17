@@ -128,3 +128,34 @@
         </tbody>
     </table>
 </div>
+
+<h2 style="text-align: center; margin-top: 60px;">Retención por plan</h2>
+
+<div class="centered-table-container">
+    <table class="styled-table">
+        <thead>
+        <tr>
+            <th>Plan ID</th>
+            <th>Total Clients</th>
+            <th>Retained Clients</th>
+            <th>Retention Rate (%)</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach($retentionData as $data)
+            @php
+                // Calculate retention rate
+                $retentionRate = $data->total_clients > 0
+                    ? round(($data->retained_clients / $data->total_clients) * 100, 2)
+                    : 0;
+            @endphp
+            <tr>
+                <td>{{ $data->plan_id }}</td>
+                <td>{{ $data->total_clients }}</td>
+                <td>{{ $data->retained_clients }}</td>
+                <td>{{ $retentionRate }}%</td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+</div>

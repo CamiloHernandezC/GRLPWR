@@ -3,6 +3,7 @@
 namespace App\View\Composers;
 
 use App\HistoricalActiveClient;
+use App\Model\ClientPlan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use App\Traits\DateRangeTrait;
@@ -130,6 +131,29 @@ class HistoricActiveClientsComposer
             });
         }
 
+        // Retention data
+        $retentionData = [];
+        if ($endDate) {
+            $startOfLastMonth = $endDate->subMonth()->startOfMonth();  // Start of the last month
+            $endOfLastMonth = $endDate->subMonth()->endOfMonth();  // End of the last month
+
+            $retentionData = ClientPlan::select('plan_id')
+                ->selectRaw('COUNT(DISTINCT client_id) as total_clients')
+                ->selectRaw('SUM(CASE WHEN EXISTS (
+                SELECT 1 FROM client_plans as cp2
+                WHERE cp2.client_id = client_plans.client_id
+                    AND cp2.id != client_plans.id
+                    AND cp2.plan_id != 12
+                    AND cp2.created_at <= ?
+                    AND cp2.expiration_date >= ?
+            ) THEN 1 ELSE 0 END) as retained_clients', [$endDate, $endDate])
+                ->where('expiration_date', '<=', $endOfLastMonth)
+                ->where('expiration_date', '>=', $startOfLastMonth)
+                ->where('plan_id', '!=', 12) // skip 'Show Stars' from the source plans
+                ->groupBy('plan_id')
+                ->get();
+        }
+
         $view->with([
             'dates' => $datesCollection->toJson(),
             'activeClientsDatasets' => $activeClientsDatasets,
@@ -138,6 +162,7 @@ class HistoricActiveClientsComposer
             'newClientsDataset' => $newClientsDataset,
             'newClientsTableData' => $newClientsTableData,
             'plansSummary' => $plansSummary,
+            'retentionData' => $retentionData,
         ]);
     }
 }
