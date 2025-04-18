@@ -134,10 +134,11 @@ class HistoricActiveClientsComposer
         // Retention data
         $retentionData = [];
         if ($endDate) {
-            $startOfLastMonth = $endDate->subMonth()->startOfMonth();  // Start of the last month
-            $endOfLastMonth = $endDate->subMonth()->endOfMonth();  // End of the last month
+            $startOfLastMonth = $endDate->clone()->subMonth()->startOfMonth();  // Start of the last month
+            $endOfLastMonth = $endDate->clone()->subMonth()->endOfMonth();  // End of the last month
 
-            $retentionData = ClientPlan::select('plan_id')
+
+            $retentionData = ClientPlan::select('name')
                 ->selectRaw('COUNT(DISTINCT client_id) as total_clients')
                 ->selectRaw('SUM(CASE WHEN EXISTS (
                 SELECT 1 FROM client_plans as cp2
@@ -147,8 +148,9 @@ class HistoricActiveClientsComposer
                     AND cp2.created_at <= ?
                     AND cp2.expiration_date >= ?
             ) THEN 1 ELSE 0 END) as retained_clients', [$endDate, $endDate])
-                ->where('expiration_date', '<=', $endOfLastMonth)
-                ->where('expiration_date', '>=', $startOfLastMonth)
+                ->join('plans', 'plans.id', '=', 'client_plans.plan_id')
+                ->where('client_plans.expiration_date', '<=', $endOfLastMonth)
+                ->where('client_plans.expiration_date', '>=', $startOfLastMonth)
                 ->where('plan_id', '!=', 12) // skip 'Show Stars' from the source plans
                 ->groupBy('plan_id')
                 ->get();

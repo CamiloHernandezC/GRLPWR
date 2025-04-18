@@ -150,7 +150,7 @@
                     : 0;
             @endphp
             <tr>
-                <td>{{ $data->plan_id }}</td>
+                <td>{{ $data->name }}</td>
                 <td>{{ $data->total_clients }}</td>
                 <td>{{ $data->retained_clients }}</td>
                 <td>{{ $retentionRate }}%</td>
