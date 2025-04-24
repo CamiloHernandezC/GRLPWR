@@ -192,6 +192,11 @@
                                     Users
                                 </a>
                             @endif
+                            @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SEE_COURTESIES_REPORT))
+                                <a class="dropdown-item" href="{{route('courtesies')}}">
+                                    Cortesías
+                                </a>
+                            @endif
                             @if(Auth::user()->hasFeature(\App\Utils\FeaturesEnum::SAVE_PETTY_CASH))
                                 <a class="dropdown-item" href="{{route('pettyCash.index')}}">
                                     Caja Menor

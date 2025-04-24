@@ -16,6 +16,7 @@ use App\Http\Controllers\AccountingFlowController;
 use App\Http\Controllers\ActiveClientsController;
 use App\Http\Controllers\AgreementsController;
 use App\Http\Controllers\ClientPlanController;
+use App\Http\Controllers\CourtesiesReportController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PagosController;
@@ -124,6 +125,11 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
 
     Route::get('/admin/saveActiveClients/{date}', [ActiveClientsController::class, 'saveActiveClientByDate']);
+});
+
+Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::SEE_COURTESIES_REPORT->value])->group(function () {
+    Route::get('/courtesies', [CourtesiesReportController::class, 'CourtesiesReport'])->name('courtesies');
+    Route::post('/courtesies/update-field', [CourtesiesReportController::class, 'updateField'])->name('courtesies.update-field');
 });
 
 Route::middleware(['auth', 'check.feature:' . \App\Utils\FeaturesEnum::class . '-' .\App\Utils\FeaturesEnum::MAKE_WELLBEING_TEST->value])->group(function () {
