@@ -29,6 +29,7 @@ class ProcessSubscriptions
                     ->orWhere('subscriptions.deleted_at', '>', $today);
             })
             ->select(
+                'subscriptions.id',
                 'subscriptions.user_id',
                 'subscriptions.payment_source_id',
                 'subscriptions.amount',
@@ -57,7 +58,7 @@ class ProcessSubscriptions
 
         foreach ($subscriptionsToCharge as $subscription) {
             try {
-                Log::info('Processing payment for subscription: '. $subscription->id);
+                Log::info('Processing payment for subscription: ' . $subscription->id);
                 $response = $paymentService->makePayment(
                     $subscription->user_id,
                     $subscription->payment_source_id,

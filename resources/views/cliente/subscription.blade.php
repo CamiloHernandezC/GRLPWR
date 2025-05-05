@@ -27,7 +27,7 @@
                     </select>
                 </div>
 
-                <!-- Cuotas -->
+                <!-- Anticipation -->
                 <div class="d-flex flex-column flex-md-row align-items-md-center">
                     <strong class="mr-2">Anticipación: </strong><small>(días)</small>
                     <select class="ml-md-2" onchange="updateSubscriptionAnticipation({{ $subscription->id }}, this.value)" {{ !Auth::user()->id == $user->id ? 'disabled' : '' }}>
