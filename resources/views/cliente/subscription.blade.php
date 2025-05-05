@@ -19,10 +19,21 @@
                 <!-- Cuotas -->
                 <div class="d-flex flex-column flex-md-row align-items-md-center">
                     <strong class="mr-2">Cuotas:</strong>
-                    <select class="ml-md-2" onchange="updateSubscription({{ $subscription->id }}, this.value)" {{ !Auth::user()->id == $user->id ? 'disabled' : '' }}>
+                    <select class="ml-md-2" onchange="updateSubscriptionInstallments({{ $subscription->id }}, this.value)" {{ !Auth::user()->id == $user->id ? 'disabled' : '' }}>
                         <option style="color: black" value="" disabled selected>Seleccione...</option>
                         @for ($i = 1; $i <= 12; $i++)
                             <option value="{{ $i }}" {{ $subscription->installments == $i ? 'selected' : '' }}>{{ $i }}</option>
+                        @endfor
+                    </select>
+                </div>
+
+                <!-- Anticipation -->
+                <div class="d-flex flex-column flex-md-row align-items-md-center">
+                    <strong class="mr-2">Anticipación: </strong><small>(días)</small>
+                    <select class="ml-md-2" onchange="updateSubscriptionAnticipation({{ $subscription->id }}, this.value)" {{ !Auth::user()->id == $user->id ? 'disabled' : '' }}>
+                        <option style="color: black" value="" disabled selected>Seleccione...</option>
+                        @for ($i = 1; $i <= 7; $i++)
+                            <option value="{{ $i }}" {{ $subscription->days_advance_payment == $i ? 'selected' : '' }}>{{ $i }}</option>
                         @endfor
                     </select>
                 </div>
@@ -43,8 +54,8 @@
 
 @push('scripts')
     <script>
-        function updateSubscription(subscriptionId, installments) {
-            url = "{{ route('subscription.update') }}"
+        function updateSubscriptionInstallments(subscriptionId, installments) {
+            url = "{{ route('subscription.update.installments') }}"
             data = {
                 subscriptionId: subscriptionId,
                 installments: installments
@@ -64,6 +75,30 @@
                 }
             }).catch(error => {
                 console.error('Error en la actualización de la subscripción:', error);
+            });
+        }
+
+        function updateSubscriptionAnticipation(subscriptionId, anticipation) {
+            url = "{{ route('subscription.update.anticipation') }}"
+            data = {
+                subscriptionId: subscriptionId,
+                anticipation: anticipation
+            }
+            return fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Acticipación actualizada exitosamente');
+                } else {
+                    console.error('Error en la actualización de la anticipación de la subscripción');
+                }
+            }).catch(error => {
+                console.error('Error en la actualización de la anticipación de la subscripción:', error);
             });
         }
     </script>
