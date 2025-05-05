@@ -7,6 +7,7 @@ use App\Jobs\CalculateActiveClients;
 use App\Jobs\PenalizeNonattendance;
 use App\Jobs\CheckClientPlansExpiration;
 use App\Jobs\ClearAssistedAchievement;
+use App\Jobs\ProcessSubscriptions;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -29,7 +30,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(new CheckClientPlansExpiration())->dailyAt('09:00');
+        $schedule->call(new ProcessSubscriptions())->dailyAt('08:00');
+        $schedule->call(new CheckClientPlansExpiration())->dailyAt('17:00');
         $schedule->call(new CalculateActiveClients())->dailyAt('01:00');
         $schedule->call(new ClearAssistedAchievement())->sundays()->at('23:59:59');
         $schedule->command("validator:kangosReservados")->everyMinute();

@@ -118,7 +118,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('/virtualTrainings', [VirtualTrainingsController::class, 'index'])->name('virtualTrainings');
 
-    Route::put('/users/subscription', [SubscriptionsController::class, 'updateSubscription'])->name('subscription.update');
+    Route::put('/users/subscription/installments', [SubscriptionsController::class, 'updateSubscriptionInstallments'])->name('subscription.update.installments');
+    Route::put('/users/subscription/anticipation', [SubscriptionsController::class, 'updateSubscriptionAnticipation'])->name('subscription.update.anticipation');
 });
 
 Route::group(['middleware' => 'admin'], function () {

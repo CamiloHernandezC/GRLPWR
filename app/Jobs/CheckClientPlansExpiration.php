@@ -23,40 +23,40 @@ class CheckClientPlansExpiration
     public function __invoke(): void
     {
         DB::transaction(function () {
-
             $initialDate = Carbon::now()->startOfDay();
             $finalDate = Carbon::now()->addDays(7)->endOfDay();
-            $usersInfo =
-                ClientPlan::join('usuarios', 'usuarios.id', 'client_plans.client_id')
-                ->where('expiration_date', '>=', $initialDate)
-                ->where('expiration_date', '<=', $finalDate)
-                ->where('scheduled_renew_msg', '0')
+            $threeDaysFromNow = Carbon::now()->addDays(3)->endOfDay();
+
+            $usersInfo = DB::table('client_plans')
+                ->join('usuarios', 'usuarios.id', '=', 'client_plans.client_id')
+                ->leftJoin('subscriptions', function ($join) {
+                    $join->on('subscriptions.user_id', '=', 'usuarios.id')
+                        ->where(function ($query) {
+                            $query->whereNull('subscriptions.deleted_at')
+                                ->orWhere('subscriptions.deleted_at', '>', Carbon::now());
+                        });
+                })
+                ->whereNull('subscriptions.id') // << No tienen suscripción activa
+                ->whereBetween('client_plans.expiration_date', [$initialDate, $finalDate])
+                ->where('client_plans.scheduled_renew_msg', '0')
                 ->whereNotIn('usuarios.id', function ($query) use ($finalDate) {
                     $query->select('cp.client_id')
                         ->from('client_plans as cp')
                         ->where('cp.expiration_date', '>', $finalDate);
                 })
-                ->select('usuarios.telefono', 'client_plans.expiration_date', 'client_plans.id as client_plan_id', 'usuarios.id as user_id')
+                ->select(
+                    'usuarios.telefono',
+                    'client_plans.expiration_date',
+                    'client_plans.id as client_plan_id',
+                    'usuarios.id as user_id'
+                )
                 ->get();
 
-            $usersInfo->each(function ($info) {
-                $subscription = Subscriptions::where('user_id', $info->user_id)
-                    ->where(function ($query) {
-                        return $query->where('deleted_at', '>', Carbon::now())
-                            ->orWhereNull('deleted_at');
-                    })->first();
-                if($subscription){
-                    Log::info('Processing payment for subscription: '. $subscription->id);
-                    $paymentService = app(ProcessPaymentInterface::class);
-                    $response = $paymentService->makePayment($subscription->user_id, $subscription->payment_source_id, $subscription->amount, $subscription->currency, $subscription->plan_id, $subscription->user->email, $subscription->installments);
-                    Log::info('Result of subscription payment: '. $response->body());
-                }else{
-                    $expirationDate = Carbon::parse($info->expiration_date);
-                    $threeDaysFromNow = Carbon::now()->addDays(3)->endOfDay();
-                    if ($expirationDate->lte($threeDaysFromNow)) {
-                        $expirationInfo = new ExpirationInfo($info->telefono, $info->expiration_date, $info->client_plan_id);
-                        dispatch(new SendMessageToRenewPlan($expirationInfo));
-                    }
+            $usersInfo->each(function ($info) use ($threeDaysFromNow) {
+                $expirationDate = Carbon::parse($info->expiration_date);
+                if ($expirationDate->lte($threeDaysFromNow)) {
+                    $expirationInfo = new ExpirationInfo($info->telefono, $info->expiration_date, $info->client_plan_id);
+                    dispatch(new SendMessageToRenewPlan($expirationInfo));
                 }
             });
         });
