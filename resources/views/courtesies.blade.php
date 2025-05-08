@@ -34,7 +34,7 @@
                 </thead>
                 <tbody>
                 @foreach($upcomingCourtesies as $courtesy)
-                    <tr>
+                    <tr @if((isset($courtesy->level_of_interes) && $courtesy->level_of_interes == 0) or ($courtesy->next_contact_date && \Carbon\Carbon::parse($courtesy->next_contact_date)->lt(\Carbon\Carbon::now()))) class="table-danger" @endif>
                         <td>{{ $courtesy->nombre }}</td>
                         <td>{{ $courtesy->apellido_1 }}</td>
                         <td>{{ $courtesy->telefono }}</td>
@@ -52,8 +52,8 @@
                         </td>
                         <td><input type="date" class="form-control editable" value="{{ $courtesy->contact_date ? \Carbon\Carbon::parse($courtesy->contact_date)->format('Y-m-d') : '' }}" data-id="{{ $courtesy->cliente_id }}" data-field="contact_date" max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"></td>
                         <td><input type="date" class="form-control editable" value="{{ $courtesy->next_contact_date ? \Carbon\Carbon::parse($courtesy->next_contact_date)->format('Y-m-d') : '' }}" data-id="{{ $courtesy->cliente_id }}" data-field="next_contact_date" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"></td>
-                        <td><textarea class="form-control editable" rows="3" data-id="{{ $courtesy->cliente_id }}" data-field="response">{{ $courtesy->response }}</textarea></td>
-                        <td><textarea class="form-control editable" rows="3" data-id="{{ $courtesy->cliente_id }}" data-field="notes">{{ $courtesy->notes }}</textarea></td>
+                        <td><textarea style="min-width: 300px;" class="form-control editable" rows="3" data-id="{{ $courtesy->cliente_id }}" data-field="response">{{ $courtesy->response }}</textarea></td>
+                        <td><textarea style="min-width: 300px;" class="form-control editable" rows="3" data-id="{{ $courtesy->cliente_id }}" data-field="notes">{{ $courtesy->notes }}</textarea></td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -81,7 +81,7 @@
                 </thead>
                 <tbody>
                 @foreach($pastCourtesies as $courtesy)
-                    <tr>
+                    <tr @if((isset($courtesy->level_of_interes) && $courtesy->level_of_interes == 0) or ($courtesy->next_contact_date && \Carbon\Carbon::parse($courtesy->next_contact_date)->lt(\Carbon\Carbon::now()))) class="table-danger" @endif>
                         <td>{{ $courtesy->nombre }}</td>
                         <td>{{ $courtesy->apellido_1 }}</td>
                         <td>{{ $courtesy->telefono }}</td>
@@ -99,8 +99,8 @@
                         </td>
                         <td><input type="date" class="form-control editable" value="{{ $courtesy->contact_date ? \Carbon\Carbon::parse($courtesy->contact_date)->format('Y-m-d') : '' }}" data-id="{{ $courtesy->cliente_id }}" data-field="contact_date" max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"></td>
                         <td><input type="date" class="form-control editable" value="{{ $courtesy->next_contact_date ? \Carbon\Carbon::parse($courtesy->next_contact_date)->format('Y-m-d') : '' }}" data-id="{{ $courtesy->cliente_id }}" data-field="next_contact_date" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"></td>
-                        <td><textarea class="form-control editable" rows="3" data-id="{{ $courtesy->cliente_id }}" data-field="response">{{ $courtesy->response }}</textarea></td>
-                        <td><textarea class="form-control editable" rows="3" data-id="{{ $courtesy->cliente_id }}" data-field="notes">{{ $courtesy->notes }}</textarea></td>
+                        <td><textarea style="min-width: 300px;" class="form-control editable" rows="3" data-id="{{ $courtesy->cliente_id }}" data-field="response">{{ $courtesy->response }}</textarea></td>
+                        <td><textarea style="min-width: 300px;" class="form-control editable" rows="3" data-id="{{ $courtesy->cliente_id }}" data-field="notes">{{ $courtesy->notes }}</textarea></td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -127,7 +127,7 @@
                             'Content-Type': 'application/json',
                             'X-CSRF-TOKEN': token
                         },
-                        body: JSON.stringify({ id, field, value })
+                        body: JSON.stringify({id, field, value})
                     })
                         .then(response => response.json())
                         .then(data => {
@@ -165,7 +165,7 @@
                 });
             });
 
-            // Validación de solo números para level_of_interes
+// Validación de solo números para level_of_interes
             document.querySelectorAll('input[type="number"]').forEach(input => {
                 input.addEventListener('input', function () {
                     this.value = this.value.replace(/[^0-9]/g, ''); // Elimina todo lo que no sea número
