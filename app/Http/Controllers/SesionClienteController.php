@@ -2,7 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Achievements\FitBoxTypeAchievement;
+use App\Achievements\FitCombatTypeAchievement;
+use App\Achievements\FitDanceTypeAchievement;
+use App\Achievements\FitDefenseTypeAchievement;
+use App\Achievements\FitFlexTypeAchievement;
+use App\Achievements\FitFlyrTypeAchivevement;
 use App\Achievements\CreateThreeAchievements;
+use App\Achievements\FitFuncionalTypeAchievement;
+use App\Achievements\FitFuryTypeAchievement;
+use App\Achievements\FitMindTypeAchievement;
+use App\Achievements\FitPoundTypeAchievement;
+use App\Achievements\FitStepTypeAchievement;
+use App\Achievements\QueenAchivement;
+use App\Achievements\SpecialTypeAchievement;
+use App\ClassType;
 use App\EditedEvent;
 use App\Exceptions\NoAvailableEquipmentException;
 use App\Exceptions\AlreadyHasSessionException;
@@ -260,6 +274,7 @@ class SesionClienteController extends Controller
     {
         DB::beginTransaction();
         try{
+            $evento = Evento::find($event->id);
             $sesionCliente = new SesionCliente;
             $sesionCliente->cliente_id = $client->usuario_id;
             $sesionCliente->evento_id = $event->id;
@@ -424,6 +439,31 @@ class SesionClienteController extends Controller
         $clientSession->attended = $request->checked === "true";
         $clientSession->save();
         $user = User::find($clientSession->cliente_id);
+        $event = Evento::find($clientSession->evento_id);
+        $classType = ClassType::find($event->class_type_id);
+
+        if ($classType->unlockable == 1) {
+            $achievements = [
+                1 => FitFlyrTypeAchivevement::class,
+                2 => FitFuncionalTypeAchievement::class,
+                3 => FitBoxTypeAchievement::class,
+                4 => FitFlexTypeAchievement::class,
+                5 => FitDanceTypeAchievement::class,
+                6 => SpecialTypeAchievement::class,
+                7 => FitMindTypeAchievement::class,
+                8 => FitCombatTypeAchievement::class,
+                9 => FitStepTypeAchievement::class,
+                10 => FitPoundTypeAchievement::class,
+                11 => FitDefenseTypeAchievement::class,
+                12 => FitFuryTypeAchievement::class,
+            ];
+
+            if (isset($achievements[$classType->id])) {
+                $achievementClass = $achievements[$classType->id];
+                $user->unlock(new $achievementClass());
+                $user->addProgress( new QueenAchivement(), 1);
+            }
+        }
         if($request->checked === "true"){
             $user->addProgress(new AssistedToClassAchievement(), 1);
         }else{
