@@ -1,40 +1,51 @@
 <div class="m-auto text-center w-75">
     <h2>Asistentes:</h2>
-    <table class="w-100 table">
-        <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Es cortesía</th>
-                @if(strcasecmp($event->classType->type, \App\Utils\PlanTypesEnum::KANGOO->value) == 0)
-                    <th scope="col">Peso</th>
-                    <th scope="col">Talla</th>
-                    <th scope="col">Kangoo</th>
-                @endif
-                <th scope="col">Asistió</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach($event->attendees as $clientSession)
+    <div class="table-responsive">
+        <table class="w-100 table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Es cortesía</th>
+                    @if(strcasecmp($event->classType->type, \App\Utils\PlanTypesEnum::KANGOO->value) == 0)
+                        <th scope="col">Peso</th>
+                        <th scope="col">Talla</th>
+                        <th scope="col">Kangoo</th>
+                    @endif
+                    <th scope="col">Asistió</th>
+                    <th scope="col">Patologías</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach($event->attendees as $clientSession)
 
-            <tr>
-                <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->client->usuario_id}}</div></td>
-                <td><a class="client-icon"
-                       href="{{route('visitarPerfil', ['user'=> $clientSession->client->usuario->slug])}}"><div style="max-height:3rem; overflow:hidden">{{$clientSession->client->usuario->fullName}}</div></a></td>
-                <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->is_courtesy ? 'Si' : 'No'}}</div></td>
-                @if(strcasecmp($event->classType->type, \App\Utils\PlanTypesEnum::KANGOO->value) == 0 || strcasecmp($event->classType->type, \App\Utils\PlanTypesEnum::KANGOO_KIDS->value) == 0)
-                    <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->client->peso() ? $clientSession->client->peso()->peso : ''}}</div></td>
-                    <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->client->talla_zapato}}</div></td>
-                    <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->kangoo_id ? $clientSession->kangoo->SKU : ''}}</div></td>
-                @endif
-                <td><div style="max-height:3rem; overflow:hidden">
-                    <input class="form-check-input" type="checkbox" name="attended" id="attended_{{$clientSession->id}}" onclick="checkAttendee({{$clientSession->id}}, this)" {{$clientSession->attended ? 'checked' : ''}} required>
-                </div></td>
-            </tr>
-
-        @endforeach
-        <tbody>
-    </table>
+                <tr>
+                    <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->client->usuario_id}}</div></td>
+                    <td><a class="client-icon"
+                           href="{{route('visitarPerfil', ['user'=> $clientSession->client->usuario->slug])}}"><div style="max-height:3rem; overflow:hidden">{{$clientSession->client->usuario->fullName}}</div></a></td>
+                    <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->is_courtesy ? 'Si' : 'No'}}</div></td>
+                    @if(strcasecmp($event->classType->type, \App\Utils\PlanTypesEnum::KANGOO->value) == 0 || strcasecmp($event->classType->type, \App\Utils\PlanTypesEnum::KANGOO_KIDS->value) == 0)
+                        <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->client->peso() ? $clientSession->client->peso()->peso : ''}}</div></td>
+                        <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->client->talla_zapato}}</div></td>
+                        <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->kangoo_id ? $clientSession->kangoo->SKU : ''}}</div></td>
+                    @endif
+                    <td><div style="max-height:3rem; overflow:hidden">
+                        <input class="form-check-input" type="checkbox" name="attended" id="attended_{{$clientSession->id}}" onclick="checkAttendee({{$clientSession->id}}, this)" {{$clientSession->attended ? 'checked' : ''}} required>
+                    </div></td>
+                    <td>
+                        @if($clientSession->client->pathology)
+                            <p class="text-truncate" style="max-width: 150px;" data-toggle="tooltip" data-placement="top" title="{{ $clientSession->client->pathology }}">
+                                {{ $clientSession->client->pathology }}
+                            </p>
+                        @else
+                            <p class="text-muted">-</p>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+            <tbody>
+        </table>
+    </div>
 
     <div class="d-flex justify-content-around">
         <button class="btn themed-btn" data-toggle="modal" data-target="#registerAttendee">
