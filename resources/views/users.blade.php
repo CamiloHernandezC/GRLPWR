@@ -45,7 +45,14 @@
                     <td><input type="text" id="name" name="name" placeholder="Nombre"></td>
                     <td><input type="text" id="email" name="email" placeholder="Correo"></td>
                     <td><input type="number" id="phone" name="phone" placeholder="Celular"></td>
-                    <td><input type="number" id="assigned" name="assigned" placeholder="assigned"></td>
+                    <td>
+                        <select id="assigned" name="assigned">
+                            <option style="color: black" value="" disabled selected>Seleccione...</option>
+                            @foreach ($clientFollowers as $clientFollower)
+                                <option value="{{ $clientFollower->id }}">{{ $clientFollower->nombre }}</option>
+                            @endforeach
+                        </select>
+                    </td>
                     <td>F. Expiración</td>
                     <td>
                         <div class="form-check m-auto">
@@ -242,7 +249,10 @@
                 });
             }
 
-            $('#id, #name, #email, #phone, #assigned').on('input', function() {
+            $('#id, #name, #email, #phone').on('input', function() {
+                filter();
+            });
+            $('#assigned').on('change', function() {
                 filter();
             });
 
