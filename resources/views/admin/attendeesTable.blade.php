@@ -30,7 +30,7 @@
                         <td><div style="max-height:3rem; overflow:hidden">{{$clientSession->kangoo_id ? $clientSession->kangoo->SKU : ''}}</div></td>
                     @endif
                     <td><div style="max-height:3rem; overflow:hidden">
-                        <input class="form-check-input" type="checkbox" name="attended" id="attended_{{$clientSession->id}}" onclick="checkAttendee({{$clientSession->id}}, this)" {{$clientSession->attended ? 'checked' : ''}} required>
+g                        <input class="form-check-input position-relative" type="checkbox" name="attended" id="attended_{{$clientSession->id}}" onclick="checkAttendee({{$clientSession->id}}, this)" {{$clientSession->attended ? 'checked' : ''}} required>
                     </div></td>
                     <td>
                         @if($clientSession->client->pathology)
