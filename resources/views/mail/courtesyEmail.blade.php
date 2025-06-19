@@ -292,7 +292,7 @@
                                                                         </td>
                                                                         <td valign="top" align="center"
                                                                             class="es-p10r es-m-p0r"><a target="_blank"
-                                                                                                        href="https://api.whatsapp.com/send?phone=573123781174&text=Hola+quiero+empezar+un+nuevo+2024+%F0%9F%92%9C"><img
+                                                                                                        href="https://api.whatsapp.com/send?phone=573123781174&text=Hola+quiero+empezar+a+ejercitarme+%F0%9F%92%9C"><img
                                                                                         title="Whatsapp GirlPower"
                                                                                         alt="Whatsapp GirlPower"
                                                                                         width="32" height="32"
