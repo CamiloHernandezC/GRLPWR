@@ -220,7 +220,7 @@
             </div>
 
             <div>
-                <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" target="_blank">
+                <a href="https://api.whatsapp.com/send?phone=573123781174&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" target="_blank">
                     <i class="fa fa-phone m-0"></i>
                     <p>312 378 11 74</p>
                 </a>
@@ -245,7 +245,7 @@
 
     <div class="floating_button">
         <div class="chats">
-            <a href="https://api.whatsapp.com/send/?phone=573123781174<&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" class="icon-whatsapp" target="_blank">
+            <a href="https://api.whatsapp.com/send?phone=573123781174&text=Hola,%20quiero%20conocer%20Girl%20Power&app_absent=0" class="icon-whatsapp" target="_blank">
                 <img class="icon" width="100%" height="100%" alt="whatsapp" src="{{asset('images/wathsapp_icon.png')}}">
             </a>
         </div>
