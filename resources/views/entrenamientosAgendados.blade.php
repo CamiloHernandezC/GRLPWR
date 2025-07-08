@@ -41,9 +41,6 @@
                     <p class="d-block my-1"><strong>Día:</strong> {{$entrenamiento->fecha_inicio->isoFormat('dddd D MMMM')}}</p>
                     <p class="d-block my-1"><strong>Hora:</strong> {{$entrenamiento->fecha_inicio->format('g:i A')}}</p>
                     <p class="d-block my-1"><strong>Lugar: </strong>{{$entrenamiento->lugar}}</p>
-                    @isset($entrenamiento->SKU)
-                        <p class="d-block my-1"><strong>Kangoo: </strong>{{$entrenamiento->SKU}}</p>
-                    @endisset
                 </div>
                 <div class="ml-auto my-3">
                     <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#cancelarEntrenamientoModal" onclick="prepararCancelarEntrenamiento({{$entrenamiento->id}})">Cancelar</button>
